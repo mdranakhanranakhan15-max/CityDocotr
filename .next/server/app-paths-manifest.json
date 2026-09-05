@@ -1,7 +1,0 @@
-{
-  "/api/consultation/events/route": "app/api/consultation/events/route.js",
-  "/department/[category]/page": "app/department/[category]/page.js",
-  "/api/doctor/dashboard/route": "app/api/doctor/dashboard/route.js",
-  "/page": "app/page.js",
-  "/admin/doctors/page": "app/admin/doctors/page.js"
-}
