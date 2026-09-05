@@ -1,0 +1,173 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      String   @default("SUPERADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Doctor {
+  id              String        @id @default(cuid())
+  name            String
+  title           String?       @default("Consultant")
+  designation     String        @default("Consultant")
+  degrees         String        @default("MBBS, FCPS")
+  specialty       String        @default("General Physician")
+  specialties     String        @default("General Physician, Primary Care")
+  workplace       String        @default("Dhaka Medical College Hospital")
+  hospital        String        @default("Dhaka Medical College Hospital")
+  education       String        @default("Dhaka Medical College")
+  experienceYears Int           @default(5)
+  rating          Float         @default(5.0)
+  totalVisits     Int           @default(120)
+  reviewsCount    Int           @default(120)
+  fee             Int           @default(350)
+  consultationFee Float         @default(350.0)
+  email           String?       @unique // Login credential created by Admin
+  password        String? // Hashed login credential created by Admin
+  isOnline        Boolean       @default(true)
+  status          String        @default("ONLINE") // ONLINE, OFFLINE
+  image           String
+  languages       String        @default("English, Bengali")
+  bio             String        @default("Experienced physician dedicated to compassionate patient care and evidence-based clinical treatment.")
+  badge           String?
+  isVerified      Boolean       @default(true)
+
+  // --- Schedule & Slot Management ---
+  availableDays       String  @default("Sat, Sun, Mon, Tue") // Comma-separated booking days (SQLite has no String[]/JSON)
+  shiftStartTime      String  @default("10:00") // 24h format e.g. "14:00"
+  shiftEndTime        String  @default("18:00") // 24h format e.g. "18:00"
+  slotDuration        Int     @default(15) // Consultation minutes per patient (10/15/20/30)
+  maxPatientsPerSlot  Int     @default(1) // Patients allowed per single time slot
+
+  // --- Pricing & Tax Breakdown ---
+  vatPercent              Float @default(5) // VAT % charged on top of the consultation fee
+  platformFee             Float @default(29) // Fixed platform service charge in BDT
+  doctorCommissionPercent Float @default(80) // % share of the consultation fee earned by the doctor
+
+  // --- BMDC & Medical Compliance / Controls ---
+  bmdcRegNum             String  @default("") // BMDC registration number (BD medical compliance)
+  isInstantCallAvailable Boolean @default(true) // Enables "See Doctor Now" instant video call
+  isOnVacation           Boolean @default(false) // Pauses new appointment bookings (doctor on leave)
+
+  appointments    Appointment[]
+  callEvents      CallEvent[]
+  notifications   DoctorNotification[]
+  prescriptions   Prescription[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model Patient {
+  id           String        @id @default(cuid())
+  name         String
+  email        String?       @unique
+  phone        String?       @unique
+  location     String?
+  password     String?
+  resetOtp     String? // Temporary 4-digit OTP for self-service password reset
+  resetOtpExpiresAt DateTime? // When the temporary reset OTP stops being valid
+  age          Int?
+  gender       String?
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Appointment {
+  id              String   @id @default(cuid())
+  doctorId        String
+  doctor          Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patientId       String?
+  patient         Patient? @relation(fields: [patientId], references: [id], onDelete: SetNull)
+  patientName     String
+  patientEmail    String?
+  patientPhone    String?
+  patientLocation String?
+  timeSlot        String?
+  symptoms        String
+  status          String   @default("CONFIRMED") // PENDING, CONFIRMED, COMPLETED, CANCELLED
+  paymentStatus   String   @default("UNPAID")    // UNPAID, PAID, REFUNDED
+  paymentMethod   String?                        // BKASH, CARD
+  transactionId   String?
+  amountPaid      Float?
+  scheduledAt     DateTime @default(now())
+  meetingLink     String?
+  notes           String?
+  prescription    Prescription?
+  callEvents      CallEvent[]
+  notifications   DoctorNotification[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Real-time call notification events (patient waiting -> doctor accepts)
+model CallEvent {
+  id            String      @id @default(cuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctorId      String
+  doctor        Doctor      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patientName   String
+  type          String      @default("PATIENT_WAITING") // PATIENT_WAITING, CALL_ACCEPTED, CALL_ENDED
+  payload       String? // Extra JSON data (e.g. timeSlot, phone)
+  isRead        Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+}
+
+// Stored notification for the doctor (e.g. a call attempt while offline).
+// Unlike CallEvent — which drives the real-time "Incoming Call" modal — these
+// records are created when the patient calls but the doctor is NOT online, so
+// the modal must not fire. The doctor can read them once back on the dashboard.
+model DoctorNotification {
+  id            String       @id @default(cuid())
+  doctorId      String
+  doctor        Doctor       @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  appointmentId String?
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  type          String       @default("MISSED_CALL_OFFLINE") // MISSED_CALL_OFFLINE, PAYMENT_CONFIRMED, ...
+  channel       String       @default("DB") // DB, SMS
+  title         String
+  message       String
+  phone         String? // Doctor phone number the SMS alert was logged to
+  isRead        Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+}
+
+// Digital prescription saved by the doctor during the video consultation
+model Prescription {
+  id            String      @id @default(cuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctorId      String
+  doctor        Doctor      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patientId     String?
+  doctorName    String
+  patientName   String
+  diagnosis     String
+  medicines     String
+  tests         String?
+  advice        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model HeroBanner {
+  id        String   @id @default(cuid())
+  title     String?
+  subtitle  String?
+  imageUrl  String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
