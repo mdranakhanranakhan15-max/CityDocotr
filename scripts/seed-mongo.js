@@ -80,6 +80,17 @@ function optionalText(value) {
   return s === '' ? null : s;
 }
 
+/**
+ * "Cardiology" -> "cardiology"; "Gynae & Obs" -> "gynae-obs".
+ * Produces the same lowercase slugs used by the /department/[slug] pages.
+ */
+function slugify(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 // ---------------------------------------------------------------------------
 // Defaults
 // ---------------------------------------------------------------------------
@@ -390,11 +401,23 @@ async function upsertDoctors(doctors, doctorPasswordHash) {
   let created = 0;
   let updated = 0;
   for (const row of doctors) {
+    // Lowercase department slug matching /department/[slug] (e.g. "cardiology",
+    // "gynae-obs") so category pages filter doctors without case mismatches.
+    const departmentSlug =
+      row.departmentSlug || slugify(row.specialty || row.specialties || 'General Physician');
+
     // Merge default weekly shift availability, then override with the
     // doctor-specific schedule (so slots appear on the main site immediately).
     const data = compact({
       ...DEFAULT_SCHEDULE,
       ...row,
+      // Imported doctors are always approved and ACTIVE, so any public query
+      // filtering on isApproved / status keeps returning them. Live presence
+      // ("online now") is still tracked independently via isOnline.
+      departmentSlug,
+      isApproved: true,
+      status: 'ACTIVE',
+      isOnline: row.isOnline === undefined ? true : Boolean(row.isOnline),
       password: row.login ? doctorPasswordHash : undefined,
     });
     delete data.login;
@@ -409,6 +432,35 @@ async function upsertDoctors(doctors, doctorPasswordHash) {
     }
   }
   console.log(`[doctors] ${created} created, ${updated} updated.`);
+}
+
+/**
+ * Repair pass over doctors already stored in MongoDB Atlas (created by older
+ * imports/migrations before departmentSlug / isApproved existed): derive the
+ * lowercase department slug from their specialty and mark them approved/ACTIVE.
+ */
+async function repairDoctorDepartmentMetadata() {
+  const doctors = await prisma.doctor.findMany({
+    select: { id: true, name: true, specialty: true, departmentSlug: true },
+  });
+  let updated = 0;
+  for (const doctor of doctors) {
+    const slug = slugify(doctor.specialty || doctor.name || '');
+    if (slug && !doctor.departmentSlug) {
+      await prisma.doctor.update({
+        where: { id: doctor.id },
+        data: {
+          departmentSlug: slug,
+          isApproved: true,
+          status: 'ACTIVE',
+        },
+      });
+      updated += 1;
+    }
+  }
+  if (updated > 0) {
+    console.log(`[doctors] Backfilled departmentSlug/isApproved on ${updated} record(s).`);
+  }
 }
 
 async function upsertPatients(patients, passwordHash) {
@@ -485,6 +537,7 @@ async function seed() {
   const doctorPasswordHash = hashPassword('password123'); // demo doctor password
 
   await upsertDoctors(DOCTORS, doctorPasswordHash);
+  await repairDoctorDepartmentMetadata();
   await upsertPatients(DEFAULT_PATIENTS, doctorPasswordHash);
   await upsertAdmin(DEFAULT_ADMIN);
   await seedDepartments();

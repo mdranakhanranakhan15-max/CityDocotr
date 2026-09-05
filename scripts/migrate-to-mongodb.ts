@@ -34,6 +34,7 @@ const DOCTOR_FIELDS = [
   'workplace', 'hospital', 'education', 'experienceYears', 'rating',
   'totalVisits', 'reviewsCount', 'fee', 'consultationFee', 'email', 'password',
   'isOnline', 'status', 'image', 'languages', 'bio', 'badge', 'isVerified',
+  'departmentSlug', 'isApproved',
   'availableDays', 'shiftStartTime', 'shiftEndTime', 'slotDuration',
   'maxPatientsPerSlot', 'vatPercent', 'platformFee', 'doctorCommissionPercent',
   'bmdcRegNum', 'isInstantCallAvailable', 'isOnVacation',
@@ -76,6 +77,13 @@ const toBool = (v: any, fallback = false): boolean => {
   if (typeof v === 'string') return v.toLowerCase() === 'true' || v === '1';
   return Boolean(v);
 };
+
+/** "Cardiology" -> "cardiology"; "Gynae & Obs" -> "gynae-obs". */
+const slugify = (value: any): string =>
+  String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
 /** Keep only schema-safe fields, dropping undefined / null values. */
 const pick = (obj: any, fields: string[]): Record<string, any> => {
@@ -297,6 +305,9 @@ function normalizeLegacyDoctor(raw: Record<string, any>): Record<string, any> {
     maxPatientsPerSlot: toNum(raw.maxPatientsPerSlot, 1),
     isOnline: toBool(raw.isOnline, true),
     isVerified: toBool(raw.isVerified, true),
+    departmentSlug: raw.departmentSlug || slugify(raw.specialty || ''),
+    isApproved: toBool(raw.isApproved, true),
+    status: 'ACTIVE', // imported doctors are always approved/listed; isOnline tracks live presence
     isInstantCallAvailable: toBool(raw.isInstantCallAvailable, true),
     isOnVacation: toBool(raw.isOnVacation, false),
   };

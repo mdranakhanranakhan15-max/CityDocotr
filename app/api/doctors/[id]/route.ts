@@ -4,6 +4,14 @@ import { hashPassword } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
+/** "Cardiology" -> "cardiology"; "Gynae & Obs" -> "gynae-obs". */
+function toDepartmentSlug(value?: string | null): string {
+  return (value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 interface RouteParams {
   params: {
     id: string;
@@ -81,6 +89,10 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         designation: body.designation !== undefined ? body.designation : existing.designation,
         degrees: body.degrees !== undefined ? body.degrees : existing.degrees,
         specialty: body.specialty !== undefined ? body.specialty : existing.specialty,
+        departmentSlug:
+          body.specialty !== undefined
+            ? toDepartmentSlug(body.specialty)
+            : body.departmentSlug || existing.departmentSlug,
         specialties: body.specialties !== undefined ? body.specialties : existing.specialties,
         workplace: body.workplace !== undefined ? body.workplace : existing.workplace,
         hospital: body.hospital !== undefined ? body.hospital : body.workplace || existing.hospital,
@@ -93,6 +105,12 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         totalVisits: body.totalVisits !== undefined ? Number(body.totalVisits) : existing.totalVisits,
         isOnline: isOnline,
         status: isOnline ? 'ONLINE' : 'OFFLINE',
+        isApproved:
+          body.isApproved !== undefined
+            ? Boolean(body.isApproved)
+            : existing.isApproved === undefined || existing.isApproved === null
+              ? true // legacy records without the flag default to approved
+              : existing.isApproved,
         email: newEmail,
         ...(newPasswordHash ? { password: newPasswordHash } : {}),
         image: body.image !== undefined ? body.image : existing.image,

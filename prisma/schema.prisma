@@ -36,12 +36,18 @@ model Doctor {
   email           String?       @unique // Login credential created by Admin
   password        String? // Hashed login credential created by Admin
   isOnline        Boolean       @default(true)
-  status          String        @default("ONLINE") // ONLINE, OFFLINE
+  status          String        @default("ACTIVE") // ACTIVE (approved/listed); ONLINE/OFFLINE = live presence
   image           String
   languages       String        @default("English, Bengali")
   bio             String        @default("Experienced physician dedicated to compassionate patient care and evidence-based clinical treatment.")
   badge           String?
   isVerified      Boolean       @default(true)
+
+  // Lowercase department slug (e.g. "cardiology", "gynae-obs") so the
+  // /department/[slug] pages can match doctors case-insensitively on MongoDB.
+  departmentSlug  String?
+  // Admin approval gate — every seeded / imported doctor is approved (true).
+  isApproved      Boolean       @default(true)
 
   // --- Schedule & Slot Management ---
   availableDays       String  @default("Sat, Sun, Mon, Tue") // Comma-separated booking days (SQLite has no String[]/JSON)
