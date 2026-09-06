@@ -206,11 +206,21 @@ export function isValidDoctorScheduleSlot(
 
 /* ------------------------------------------------------------------ */
 /*  Consultation call window (patient may initiate/join a call).       */
-/*  A patient can start calling from 5 minutes BEFORE the scheduled    */
-/*  slot until the slot duration has elapsed.                          */
+/*  STANDARDISED slot/timeout rules shared by the patient appointment  */
+/*  list, the doctor dashboard and the video room:                     */
+/*    opensAt  = scheduled slot − 5 minutes  (join lead-in)            */
+/*    closesAt = scheduled slot + 15 minutes (fixed session timeout,   */
+/*               independent of the doctor's slotDuration setting)     */
 /* ------------------------------------------------------------------ */
 
 export const CONSULTATION_JOIN_LEAD_MS = 5 * 60 * 1000; // 5 minutes before slot
+
+/** Standardised number of minutes the room stays open AFTER the slot. */
+export const CONSULTATION_WINDOW_CLOSE_MINUTES = 15;
+
+/** Standardised window length AFTER the scheduled slot (timeout rule). */
+export const CONSULTATION_WINDOW_CLOSE_MS =
+  CONSULTATION_WINDOW_CLOSE_MINUTES * 60 * 1000;
 
 export interface ConsultationWindow {
   scheduledAt: Date | null;
@@ -237,10 +247,12 @@ export function getAppointmentScheduledAt(
 }
 
 /**
- * Build the call window for an appointment:
- *   opensAt  = scheduledAt - 5 minutes
- *   closesAt = scheduledAt + slotDuration
- * Slot duration is read from the doctor's saved setting (default 15 min).
+ * Build the call window for an appointment. The window is STANDARDISED so
+ * the patient list, doctor dashboard and video room all agree:
+ *   opensAt  = scheduledAt − 5 minutes
+ *   closesAt = scheduledAt + 15 minutes  (fixed session timeout)
+ * `slotDurationMinutes` is retained only for informational / backwards
+ * compatibility; it no longer shifts the join window.
  */
 export function getConsultationWindow(
   scheduledAt?: string | Date | null,
@@ -255,7 +267,7 @@ export function getConsultationWindow(
   return {
     scheduledAt: scheduled,
     opensAt: new Date(scheduled.getTime() - CONSULTATION_JOIN_LEAD_MS),
-    closesAt: new Date(scheduled.getTime() + duration * 60 * 1000),
+    closesAt: new Date(scheduled.getTime() + CONSULTATION_WINDOW_CLOSE_MS),
     slotDurationMinutes: duration,
   };
 }
@@ -270,6 +282,100 @@ export function getConsultationWindowStatus(
   if (t < window.opensAt.getTime()) return 'not_started';
   if (t > window.closesAt.getTime()) return 'ended';
   return 'open';
+}
+
+/* ------------------------------------------------------------------ */
+/*  Unified appointment state used by every surface that renders a     */
+/*  booking action / status (patient appointments, doctor dashboard).  */
+/*  Precedence (first match wins):                                     */
+/*    a) COMPLETED → "Session Completed", no call button               */
+/*    b) CANCELLED → "Cancelled", no call button                       */
+/*    c) NOW > slot + 15 min & status ≠ COMPLETED → "Session Timed Out"*/
+/*    d) NOW ∈ [slot−5m, slot+15m] & CONFIRMED → active "Join Call"    */
+/*    e) NOW < slot−5m → "Upcoming" with disabled "Opens at …" button  */
+/* ------------------------------------------------------------------ */
+
+export type AppointmentSlotState =
+  | 'COMPLETED' // terminal — static "Session Completed" badge
+  | 'CANCELLED' // terminal — static "Cancelled" badge
+  | 'TIMED_OUT' // past slot + 15 min and not completed — no call
+  | 'ACTIVE' // CONFIRMED and inside [slot−5m, slot+15m] — joinable now
+  | 'UPCOMING' // before slot−5m — "Upcoming" / disabled "Opens at …"
+  | 'NO_SLOT'; // no schedulable slot info on the record
+
+export interface AppointmentSlotInfo {
+  state: AppointmentSlotState;
+  scheduledAt: Date | null;
+  opensAt: Date | null;
+  closesAt: Date | null;
+  /** Whole minutes until the join window opens (0 when open/past). */
+  minutesUntilOpens: number;
+}
+
+const NO_SLOT_INFO: Pick<
+  AppointmentSlotInfo,
+  'scheduledAt' | 'opensAt' | 'closesAt' | 'minutesUntilOpens'
+> = { scheduledAt: null, opensAt: null, closesAt: null, minutesUntilOpens: 0 };
+
+/**
+ * Single source of truth for how a booking should be rendered right now:
+ * which static badge to show, and whether a live call action is allowed.
+ */
+export function getAppointmentSlotInfo(
+  appt: any,
+  now: Date = new Date()
+): AppointmentSlotInfo {
+  if (!appt) return { state: 'NO_SLOT', ...NO_SLOT_INFO };
+
+  // a) / b) Terminal booking statuses always win — never offer a call.
+  if (appt.status === 'COMPLETED' || appt.status === 'CANCELLED') {
+    return {
+      state: appt.status === 'COMPLETED' ? 'COMPLETED' : 'CANCELLED',
+      ...NO_SLOT_INFO,
+    };
+  }
+  if (appt.status === 'TIMED_OUT') {
+    return { state: 'TIMED_OUT', ...NO_SLOT_INFO };
+  }
+
+  const scheduled = getAppointmentScheduledAt(appt.scheduledAt, appt.timeSlot);
+  if (!scheduled) {
+    // No fixed slot recorded — legacy / flexible CONFIRMED bookings remain
+    // joinable; everything else renders without a call action.
+    return {
+      state: appt.status === 'CONFIRMED' ? 'ACTIVE' : 'NO_SLOT',
+      ...NO_SLOT_INFO,
+    };
+  }
+
+  const opensAt = new Date(scheduled.getTime() - CONSULTATION_JOIN_LEAD_MS);
+  const closesAt = new Date(scheduled.getTime() + CONSULTATION_WINDOW_CLOSE_MS);
+  const nowMs = now.getTime();
+
+  // c) Slot window (slot + 15 min) passed without COMPLETED → timed out.
+  if (nowMs > closesAt.getTime()) {
+    return { state: 'TIMED_OUT', scheduledAt: scheduled, opensAt, closesAt, minutesUntilOpens: 0 };
+  }
+
+  // e) Not yet inside the join lead-in → upcoming.
+  if (nowMs < opensAt.getTime()) {
+    return {
+      state: 'UPCOMING',
+      scheduledAt: scheduled,
+      opensAt,
+      closesAt,
+      minutesUntilOpens: Math.ceil((opensAt.getTime() - nowMs) / 60000),
+    };
+  }
+
+  // d) Inside [slot−5m, slot+15m] — only CONFIRMED bookings may join.
+  return {
+    state: appt.status === 'CONFIRMED' ? 'ACTIVE' : 'NO_SLOT',
+    scheduledAt: scheduled,
+    opensAt,
+    closesAt,
+    minutesUntilOpens: 0,
+  };
 }
 
 /** True when a patient may initiate/join the call right now. */

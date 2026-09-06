@@ -19,8 +19,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
-  getConsultationWindow,
-  getConsultationWindowStatus,
+  getAppointmentSlotInfo,
+  type AppointmentSlotInfo,
 } from '@/lib/timeSlot';
 
 const bdt = (n?: number | null) =>
@@ -70,8 +70,12 @@ const BookingBadge: React.FC<{ status: string }> = ({ status }) => {
       cls: 'text-emerald-700 border-emerald-200 bg-emerald-50',
     },
     PENDING: { label: 'Pending', cls: 'text-amber-700 border-amber-200 bg-amber-50' },
-    COMPLETED: { label: 'Completed', cls: 'text-blue-700 border-blue-200 bg-blue-50' },
+    COMPLETED: { label: 'Session Completed', cls: 'text-blue-700 border-blue-200 bg-blue-50' },
     CANCELLED: { label: 'Cancelled', cls: 'text-rose-700 border-rose-200 bg-rose-50' },
+    TIMED_OUT: {
+      label: 'Session Timed Out',
+      cls: 'text-slate-500 border-slate-200 bg-slate-50',
+    },
   };
   const s = map[status] || map.PENDING;
   return (
@@ -133,16 +137,13 @@ export default function PatientAppointmentsPage() {
     0
   );
 
-  const windowStatusFor = (appt: any) => {
-    if (appt?.status === 'COMPLETED' || appt?.status === 'CANCELLED') return 'closed';
-    if (!appt?.scheduledAt && !appt?.timeSlot) return 'open';
-    const win = getConsultationWindow(
-      appt?.scheduledAt,
-      appt?.timeSlot,
-      appt?.doctor?.slotDuration || 15
-    );
-    return getConsultationWindowStatus(win, new Date(nowTs));
-  };
+  // Standardised window/timeout decision (see lib/timeSlot.ts):
+  //   COMPLETED / CANCELLED → terminal badges, never a call action
+  //   slot −5m → slot +15m & CONFIRMED → "Enter Video Room"
+  //   before slot −5m → "Upcoming" (disabled "Opens at …")
+  //   after slot +15m without COMPLETED → "Session Timed Out"
+  const slotInfoFor = (appt: any): AppointmentSlotInfo =>
+    getAppointmentSlotInfo(appt, new Date(nowTs));
 
   // ---- Auth gate: patient must be logged in ----
   if (authLoading) {
@@ -290,20 +291,22 @@ export default function PatientAppointmentsPage() {
         ) : (
           <div className="space-y-4">
             {appointments.map((appt) => {
-              const isCompleted = appt.status === 'COMPLETED';
-              const isCancelled = appt.status === 'CANCELLED';
-              const isConfirmed = appt.status === 'CONFIRMED';
-              const status = windowStatusFor(appt);
-              // Only CONFIRMED bookings inside their active slot window show a
-              // live "Enter Video Room" action. Future ones are "Upcoming",
-              // and COMPLETED / CANCELLED never offer a join button.
-              const isUpcoming = isConfirmed && status === 'not_started';
-              const canEnter = isConfirmed && status === 'open';
+              const slotInfo = slotInfoFor(appt);
+              const slotState = slotInfo.state;
+              const isCompleted = slotState === 'COMPLETED';
+              const isCancelled = slotState === 'CANCELLED';
+              const isTimedOut = slotState === 'TIMED_OUT';
+              const isUpcoming = slotState === 'UPCOMING';
+              const canEnter = slotState === 'ACTIVE';
               const doctor = appt.doctor || {};
               const docName = doctor.name || 'CityDoctor Physician';
               const docInitial = (doctor.name || 'D').trim().charAt(0).toUpperCase();
               const isPaid = appt.paymentStatus === 'PAID';
-              const bookingBadgeStatus = isUpcoming ? 'UPCOMING' : appt.status;
+              const bookingBadgeStatus = isUpcoming
+                ? 'UPCOMING'
+                : isTimedOut
+                  ? 'TIMED_OUT'
+                  : appt.status;
               return (
                 <div
                   key={appt.id}
@@ -346,21 +349,23 @@ export default function PatientAppointmentsPage() {
                         <CalendarDays className="w-3.5 h-3.5 text-violet-600" /> Scheduled Slot
                       </div>
                       <div className="font-mono text-[11px] text-slate-700">{slotLabel(appt)}</div>
-                      {appt.status !== 'COMPLETED' && appt.status !== 'CANCELLED' && (
+                      {!isCompleted && !isCancelled && (
                         <div
                           className={`mt-1.5 text-[10px] font-semibold ${
-                            status === 'open'
+                            canEnter
                               ? 'text-emerald-600'
-                              : status === 'not_started'
+                              : isUpcoming
                                 ? 'text-amber-600'
                                 : 'text-slate-400'
                           }`}
                         >
-                          {status === 'open'
+                          {canEnter
                             ? 'Video room is open now'
-                            : status === 'not_started'
+                            : isUpcoming
                               ? `Opens at ${clockLabel(appt)}`
-                              : 'Consultation window ended'}
+                              : isTimedOut
+                                ? 'Session window has ended'
+                                : ''}
                         </div>
                       )}
                     </div>
@@ -403,10 +408,12 @@ export default function PatientAppointmentsPage() {
                   {/* Bottom: action */}
                   <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="text-[11px] text-slate-500">
-                      {appt.status === 'CANCELLED' ? (
+                      {isCancelled ? (
                         'This booking was cancelled.'
-                      ) : appt.status === 'COMPLETED' ? (
+                      ) : isCompleted ? (
                         'Consultation completed.'
+                      ) : isTimedOut ? (
+                        'The consultation window for this booking has ended.'
                       ) : (
                         <>
                           Slot: <span className="text-slate-700 font-semibold">{slotLabel(appt)}</span>
@@ -432,19 +439,28 @@ export default function PatientAppointmentsPage() {
                         >
                           <Video className="w-4 h-4" /> Enter Video Room
                         </Link>
+                      ) : isUpcoming ? (
+                        <span
+                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
+                          title="The video room opens at your booked slot time"
+                        >
+                          <Clock className="w-4 h-4" />
+                          {`Opens at ${clockLabel(appt)}`}
+                        </span>
+                      ) : isTimedOut ? (
+                        <span
+                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
+                          title="The consultation window for this booking has ended"
+                        >
+                          <Clock className="w-4 h-4" /> Session Timed Out
+                        </span>
                       ) : (
                         <span
                           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
-                          title={
-                            status === 'not_started'
-                              ? 'The video room opens at your booked slot time'
-                              : 'The consultation window for this booking has ended'
-                          }
+                          title="No active video session for this booking"
                         >
                           <Clock className="w-4 h-4" />
-                          {status === 'not_started'
-                            ? `Opens at ${clockLabel(appt)}`
-                            : 'Session window ended'}
+                          {appt.status === 'PENDING' ? 'Awaiting Confirmation' : 'No Video Session'}
                         </span>
                       )}
                     </div>
@@ -460,7 +476,7 @@ export default function PatientAppointmentsPage() {
           <span className="inline-flex items-center gap-1.5 font-semibold text-slate-500">
             <Video className="w-3.5 h-3.5 text-blue-600" />
             Enter Video Room unlocks automatically 5 minutes before your slot and stays open for
-            the consultation duration.
+            15 minutes after your scheduled time.
           </span>
           <span className="sm:ml-auto inline-flex items-center gap-1.5">
             <Activity className="w-3.5 h-3.5 text-emerald-600" />

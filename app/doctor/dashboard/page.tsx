@@ -29,11 +29,9 @@ import { IncomingCallModal } from '@/components/doctor/IncomingCallModal';
 import { PrescriptionPreviewModal } from '@/components/doctor/PrescriptionPreviewModal';
 import { playRingtone, stopRingtone } from '@/utils/ringtone';
 import {
-  getConsultationWindow,
-  getConsultationWindowStatus,
+  getAppointmentSlotInfo,
+  type AppointmentSlotInfo,
 } from '@/lib/timeSlot';
-
-const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
 const bdt = (n: number) =>
   `৳${(n || 0).toLocaleString('en-US', {
@@ -71,6 +69,9 @@ export default function DoctorDashboardPage() {
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isPhotoUploading, setIsPhotoUploading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // ---- Live clock so join/unlock/timed-out states update without reloads ----
+  const [nowTs, setNowTs] = useState<number>(() => Date.now());
 
   // ---- Real-time incoming call state ----
   const [incomingEvent, setIncomingEvent] = useState<any | null>(null);
@@ -115,6 +116,19 @@ export default function DoctorDashboardPage() {
   useEffect(() => {
     loadDashboard();
   }, [loadDashboard]);
+
+  // Keep the window-based buttons live while the portal is open: the Join
+  // button unlocks at slot −5 min and the row flips to "Session Timed Out"
+  // once slot + 15 min passes without completion.
+  useEffect(() => {
+    const id = setInterval(() => setNowTs(Date.now()), 30000);
+    const onFocus = () => setNowTs(Date.now());
+    window.addEventListener('focus', onFocus);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, []);
 
   // Silently keep the queue fresh while the portal is open
   useEffect(() => {
@@ -289,33 +303,13 @@ export default function DoctorDashboardPage() {
   };
 
   // ---- Helpers ----
-  // Booking/window classification shared by the queue tables:
-  //   - COMPLETED / CANCELLED are terminal — they never offer a join action.
-  //   - CONFIRMED inside its active window (slot −5 min → slot + duration)
-  //     is joinable.
-  //   - CONFIRMED in the future is "upcoming" (shows a disabled "Opens at …").
-  //   - anything whose window has passed is "ended".
-  const windowStateOf = (appt: any) => {
-    if (appt?.status === 'COMPLETED' || appt?.status === 'CANCELLED') return 'closed';
-    if (!appt?.scheduledAt && !appt?.timeSlot) return 'open'; // immediate/flex slot
-    const win = getConsultationWindow(
-      appt.scheduledAt,
-      appt.timeSlot,
-      appt.doctor?.slotDuration || 15
-    );
-    return getConsultationWindowStatus(win);
-  };
-
-  const canJoin = (appt: any) =>
-    appt?.status === 'CONFIRMED' && windowStateOf(appt) === 'open';
-
-  const joinIn = (appt: any) => {
-    if (!appt?.scheduledAt) return null;
-    const scheduled = new Date(appt.scheduledAt).getTime();
-    const diff = scheduled - FIVE_MINUTES_MS - Date.now();
-    if (diff <= 0) return null;
-    return Math.ceil(diff / 60000);
-  };
+  // STANDARDISED booking/window classification shared with the patient
+  // appointments page (lib/timeSlot.ts). Drives every queue row:
+  //   COMPLETED / CANCELLED / TIMED_OUT → terminal — never a join action
+  //   CONFIRMED inside [slot −5m, slot +15m] → joinable now
+  //   CONFIRMED before slot −5m → "Upcoming" (disabled "Opens at …")
+  const slotInfoFor = (appt: any): AppointmentSlotInfo =>
+    getAppointmentSlotInfo(appt, new Date(nowTs));
 
   const formatSlot = (appt: any) => {
     if (appt.timeSlot) return appt.timeSlot;
@@ -807,7 +801,8 @@ export default function DoctorDashboardPage() {
                     Today&apos;s Appointments Queue
                   </h2>
                   <p className="text-[11px] text-slate-500">
-                    Video calls can be joined from 5 minutes before the booked slot.
+                    Video calls can be joined from 5 minutes before the booked slot and stay open
+                    until 15 minutes after it.
                   </p>
                 </div>
               </div>
@@ -830,14 +825,14 @@ export default function DoctorDashboardPage() {
                 <tbody className="divide-y divide-slate-800/60 text-slate-300">
                   {queue.length > 0 ? (
                     queue.map((appt) => {
-                      const joinable = canJoin(appt);
-                      const minutesUntilJoin = joinIn(appt);
+                      const slotInfo = slotInfoFor(appt);
+                      const joinable = slotInfo.state === 'ACTIVE';
+                      const minutesUntilJoin = slotInfo.minutesUntilOpens;
                       const displayName = patientNameOf(appt);
-                      const isDone = appt.status === 'COMPLETED';
-                      const isCancelled = appt.status === 'CANCELLED';
-                      const isUpcoming =
-                        appt.status === 'CONFIRMED' &&
-                        windowStateOf(appt) === 'not_started';
+                      const isDone = slotInfo.state === 'COMPLETED';
+                      const isCancelled = slotInfo.state === 'CANCELLED';
+                      const isTimedOut = slotInfo.state === 'TIMED_OUT';
+                      const isUpcoming = slotInfo.state === 'UPCOMING';
                       const payStatus = appt.paymentStatus || 'UNPAID';
                       return (
                         <tr key={appt.id} className="hover:bg-slate-800/40 transition-colors">
@@ -882,6 +877,10 @@ export default function DoctorDashboardPage() {
                               <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/30 font-bold text-[10px]">
                                 Upcoming
                               </span>
+                            ) : isTimedOut ? (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-700/40 text-slate-300 border border-slate-600 font-bold text-[10px]">
+                                Session Timed Out
+                              </span>
                             ) : payStatus === 'PAID' ? (
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-bold text-[10px]">
                                 <CheckCircle2 className="w-3 h-3" /> Paid
@@ -921,7 +920,7 @@ export default function DoctorDashboardPage() {
                               <span
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-[11px] font-bold cursor-not-allowed"
                                 title={
-                                  minutesUntilJoin !== null
+                                  minutesUntilJoin > 0
                                     ? `Join Call opens in ~${minutesUntilJoin} minutes`
                                     : 'Join Call is disabled until the booked slot'
                                 }
@@ -929,13 +928,21 @@ export default function DoctorDashboardPage() {
                                 <Clock className="w-3.5 h-3.5" />
                                 Join Call — Opens at {formatClock(appt)}
                               </span>
+                            ) : isTimedOut ? (
+                              <span
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-[11px] font-bold cursor-not-allowed"
+                                title="The consultation window ended 15 minutes after the booked slot"
+                              >
+                                <Clock className="w-3.5 h-3.5" />
+                                Session Timed Out
+                              </span>
                             ) : (
                               <span
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-[11px] font-bold cursor-not-allowed"
-                                title="The consultation window for this booking has ended"
+                                title="No schedulable window for this booking"
                               >
                                 <Clock className="w-3.5 h-3.5" />
-                                Window ended
+                                No active session
                               </span>
                             )}
                           </td>
@@ -968,7 +975,8 @@ export default function DoctorDashboardPage() {
                   <h2 className="font-bold text-slate-100 text-sm">Upcoming Appointments</h2>
                   <p className="text-[11px] text-slate-500">
                     {upcoming.length} future booked consultation{upcoming.length === 1 ? '' : 's'} shown
-                    chronologically — Join Call unlocks automatically at the booked slot time.
+                    chronologically — Join Call unlocks automatically 5 minutes before the booked slot
+                    time.
                   </p>
                 </div>
               </div>

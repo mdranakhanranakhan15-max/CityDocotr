@@ -13,7 +13,6 @@ import {
   AlertCircle,
   Search,
   User,
-  Video,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -288,12 +287,9 @@ export const AppointmentHistoryModal: React.FC<AppointmentHistoryModalProps> = (
                               Prescription
                             </Link>
                           ) : (
-                            <Link
-                              href={`/consultation/${appt.id}`}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/30 text-[10px] font-bold transition-colors"
-                            >
-                              <Video className="w-3 h-3" /> View
-                            </Link>
+                            <span className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-900/60 text-slate-600 border border-slate-800 text-[10px] font-bold cursor-not-allowed">
+                              —
+                            </span>
                           )}
                         </td>                      </tr>
                     ))}

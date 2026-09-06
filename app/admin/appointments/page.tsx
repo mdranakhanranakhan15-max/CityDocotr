@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import {
   CalendarCheck,
   Filter,
-  Video,
   Trash2,
   Loader2,
   RefreshCw,
@@ -16,7 +15,6 @@ import {
   ShieldCheck,
   CheckCircle2,
 } from 'lucide-react';
-import Link from 'next/link';
 
 export default function ManageAppointmentsPage() {
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -284,15 +282,6 @@ export default function ManageAppointmentsPage() {
                     {/* Actions */}
                     <td className="py-3 px-3 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        <Link
-                          href={`/consultation/${appt.doctorId}`}
-                          className="px-2.5 py-1 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 font-medium inline-flex items-center gap-1"
-                          title="Open Video Consultation Room"
-                        >
-                          <Video className="w-3.5 h-3.5" />
-                          <span>Video Call</span>
-                        </Link>
-
                         <button
                           onClick={() => handleDelete(appt.id)}
                           className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition-colors"

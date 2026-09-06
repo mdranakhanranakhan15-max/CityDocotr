@@ -10,11 +10,6 @@ import {
   Activity,
   Plus,
   RefreshCw,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  ExternalLink,
-  Video,
   ArrowRight,
 } from 'lucide-react';
 import { DoctorFormModal } from '@/components/admin/DoctorFormModal';
@@ -161,7 +156,6 @@ export default function AdminDashboardPage() {
                   <th className="py-2.5 px-3">Doctor</th>
                   <th className="py-2.5 px-3">Status</th>
                   <th className="py-2.5 px-3">Scheduled</th>
-                  <th className="py-2.5 px-3 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
@@ -180,12 +174,18 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="py-3 px-3">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
                             appt.status === 'CONFIRMED'
-                              ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
-                              : appt.status === 'PENDING'
-                              ? 'bg-amber-500/10 text-amber-300 border border-amber-500/20'
-                              : 'bg-slate-800 text-slate-400'
+                              ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
+                              : appt.status === 'COMPLETED'
+                                ? 'bg-blue-500/10 text-blue-300 border-blue-500/20'
+                                : appt.status === 'TIMED_OUT'
+                                  ? 'bg-slate-600/20 text-slate-300 border-slate-500/40'
+                                  : appt.status === 'CANCELLED'
+                                    ? 'bg-rose-500/10 text-rose-300 border-rose-500/20'
+                                    : appt.status === 'PENDING'
+                                      ? 'bg-amber-500/10 text-amber-300 border-amber-500/20'
+                                      : 'bg-slate-800 text-slate-400'
                           }`}
                         >
                           {appt.status}
@@ -197,21 +197,11 @@ export default function AdminDashboardPage() {
                           minute: '2-digit',
                         })}
                       </td>
-                      <td className="py-3 px-3 text-right">
-                        <Link
-                          href={`/consultation/${appt.doctorId}`}
-                          className="p-1.5 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 inline-flex items-center gap-1 text-[11px] font-medium"
-                          title="Open Video Consultation Room"
-                        >
-                          <Video className="w-3.5 h-3.5" />
-                          <span className="hidden sm:inline">Join Call</span>
-                        </Link>
-                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-slate-500">
+                    <td colSpan={4} className="py-8 text-center text-slate-500">
                       No consultation records found in database.
                     </td>
                   </tr>

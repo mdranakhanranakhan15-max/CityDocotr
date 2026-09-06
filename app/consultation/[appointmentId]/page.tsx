@@ -34,6 +34,7 @@ const ZEGO_IS_CONFIGURED = ZEGO_APP_ID > 0 && ZEGO_SERVER_SECRET.length > 0;
 import {
   getConsultationWindow,
   getConsultationWindowStatus,
+  getAppointmentSlotInfo,
   minutesUntilConsultationOpens,
   formatConsultationTime,
 } from '@/lib/timeSlot';
@@ -88,8 +89,9 @@ function ConsultationRoomContent() {
   const patientName = patient?.name || appointment?.patientName || 'Patient';
   const doctorName = doctor?.name || appointment?.doctor?.name || 'Doctor';
 
-  // Consultation slot window — patient may initiate the call from 5 minutes
-  // before the scheduled slot until the slot duration has elapsed.
+  // Consultation slot window — STANDARDISED for every role: the call may be
+  // initiated from 5 minutes before the scheduled slot and stays joinable
+  // until 15 minutes after it (see lib/timeSlot.ts).
   const callWindow = (() => {
     const scheduledAt = appointment?.scheduledAt;
     const timeSlot = appointment?.timeSlot;
@@ -103,6 +105,17 @@ function ConsultationRoomContent() {
   const windowStatus: ConsultationWindowStatus = callWindow
     ? getConsultationWindowStatus(callWindow, new Date(nowTs))
     : 'open'; // no scheduled slot (legacy direct doctor room) → no window restriction
+
+  // Terminal-state guard: an appointment that is COMPLETED / CANCELLED, or a
+  // CONFIRMED booking whose slot +15 min window has elapsed, must never show
+  // a call CTA — even if someone reopens the room URL after the call ended.
+  const terminalState = appointment
+    ? getAppointmentSlotInfo(appointment, new Date(nowTs)).state
+    : null;
+  const isTerminalRoom =
+    terminalState === 'COMPLETED' ||
+    terminalState === 'CANCELLED' ||
+    terminalState === 'TIMED_OUT';
 
   // Load the room: the param is an appointmentId, but older links may pass a
   // doctorId for a direct/instant doctor room - fall back gracefully.
@@ -161,11 +174,11 @@ function ConsultationRoomContent() {
 
   // Doctor arriving from the dashboard "Accept & Join Call" auto-joins.
   useEffect(() => {
-    if (phase === 'ready' && role === 'doctor' && autoConnect) {
+    if (phase === 'ready' && role === 'doctor' && autoConnect && !isTerminalRoom) {
       const t = setTimeout(() => setPhase('call'), 500);
       return () => clearTimeout(t);
     }
-  }, [phase, role, autoConnect]);
+  }, [phase, role, autoConnect, isTerminalRoom]);
 
   // Prefill the live prescription form when a prescription already exists.
   useEffect(() => {
@@ -266,26 +279,37 @@ function ConsultationRoomContent() {
   // End-of-call teardown. Runs from the Zego UI hangup (onLeaveRoom), the
   // patient's auto-exit when the doctor leaves, the doctor's "Complete
   // Consultation", and every "End Call & Exit" button:
-  //   (a) marks the appointment COMPLETED on the server (best-effort &
-  //       idempotent) so it drops out of the patient's joinable list and the
-  //       doctor's active queue and can never be recalled,
+  //   (a) marks the appointment COMPLETED on the server (idempotent, awaited
+  //       with a short timeout so the DB write is persisted before we leave)
+  //       so it drops out of the patient's joinable list and the doctor's
+  //       active queue and can never be recalled,
   //   (b) fully destroys the ZegoUIKit engine so it cannot auto-reconnect or
   //       keep running in the background,
-  //   (c) redirects immediately to the role's landing list.
+  //   (c) redirects to the role's dashboard where the refreshed data shows
+  //       "Session Completed" with no call buttons.
   const exitConsultation = useCallback(async () => {
     if (exitingRef.current) return;
     exitingRef.current = true;
 
-    // (a) Mark the appointment as COMPLETED. Fire-and-forget so teardown and
-    // navigation are never blocked by a slow network; failures are logged only.
+    // (a) Persist COMPLETED before navigating. Failures are logged only —
+    // teardown and navigation must never be blocked forever.
     if (appointment?.id) {
-      fetch(`/api/appointments/${appointment.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'COMPLETED' }),
-      }).catch((e) => {
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 4000);
+        const res = await fetch(`/api/appointments/${appointment.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'COMPLETED' }),
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+        if (!res.ok) {
+          console.error('Appointment completion PATCH failed:', await res.text().catch(() => ''));
+        }
+      } catch (e) {
         console.error('Failed to mark appointment COMPLETED on exit:', e);
-      });
+      }
     }
 
     // (b) Fully unmount + destroy the ZegoUIKit instance (leaves the room,
@@ -301,16 +325,17 @@ function ConsultationRoomContent() {
     setJoined(false);
     setPhase('ended');
 
-    // (c) Redirect the user back to their queue immediately.
+    // (c) Redirect the user back to their dashboard immediately.
     const destination =
       role === 'doctor' ? '/doctor/dashboard' : '/patient/appointments';
     setTimeout(() => {
       try {
         router.replace(destination);
+        router.refresh();
       } catch {
         // ignore navigation errors
       }
-    }, 600);
+    }, 500);
   }, [role, appointment?.id, router]);
 
   // If the patient is left alone in the room (doctor ended the call),
@@ -586,6 +611,52 @@ function ConsultationRoomContent() {
             Back to Home
           </Link>
         </div>
+      </div>
+    );
+  }
+
+  /* ---------------- Terminal: completed / cancelled / timed out ---------------- */
+  if (phase === 'ready' && isTerminalRoom) {
+    const backHref = role === 'doctor' ? '/doctor/dashboard' : '/patient/appointments';
+    const backLabel = role === 'doctor' ? 'Back to Dashboard' : 'Back to My Appointments';
+    return (
+      <div className="h-screen w-screen bg-slate-950 flex flex-col items-center justify-center text-slate-300 p-6 text-center">
+        <div
+          className={`w-20 h-20 rounded-full border-2 flex items-center justify-center mx-auto mb-4 shadow-xl ${
+            terminalState === 'COMPLETED'
+              ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-400 shadow-emerald-500/10'
+              : terminalState === 'CANCELLED'
+                ? 'bg-rose-500/15 border-rose-500/50 text-rose-400 shadow-rose-500/10'
+                : 'bg-slate-800 border-slate-600 text-slate-400 shadow-slate-500/10'
+          }`}
+        >
+          {terminalState === 'COMPLETED' ? (
+            <CheckCircle2 className="w-9 h-9" />
+          ) : (
+            <PhoneOff className="w-9 h-9" />
+          )}
+        </div>
+        <h3 className="font-black text-lg text-slate-100">
+          {terminalState === 'COMPLETED'
+            ? 'Session Completed'
+            : terminalState === 'CANCELLED'
+              ? 'Appointment Cancelled'
+              : 'Session Timed Out'}
+        </h3>
+        <p className="text-xs text-slate-400 mt-1 max-w-sm">
+          {terminalState === 'COMPLETED'
+            ? 'This consultation has ended and is no longer joinable.'
+            : terminalState === 'CANCELLED'
+              ? 'This booking was cancelled, so no video session is available.'
+              : 'The join window for this booking ended 15 minutes after the scheduled slot.'}
+        </p>
+        <Link
+          href={backHref}
+          className="mt-5 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-teal-400 font-semibold text-xs inline-flex items-center gap-1.5"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          {backLabel}
+        </Link>
       </div>
     );
   }

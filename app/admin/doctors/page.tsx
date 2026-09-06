@@ -8,14 +8,12 @@ import {
   Edit2,
   Trash2,
   CheckCircle2,
-  Video,
   Star,
   Loader2,
   Building,
 } from 'lucide-react';
 import { DoctorFormModal } from '@/components/admin/DoctorFormModal';
 import { EditDoctorModal } from '@/components/admin/EditDoctorModal';
-import Link from 'next/link';
 
 // Defensive normalizer: older / partial DB records may not yet contain the
 // newly added schedule, pricing, or compliance columns (availableDays,
@@ -339,14 +337,6 @@ export default function ManageDoctorsPage() {
                       {/* Actions */}
                       <td className="py-3 px-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
-                          <Link
-                            href={`/consultation/${doc.id}`}
-                            className="p-1.5 rounded-lg bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 transition-colors"
-                            title="Open Video Consultation Room"
-                          >
-                            <Video className="w-3.5 h-3.5" />
-                          </Link>
-
                           <button
                             onClick={() => {
                               setEditingDoctor(doc);
