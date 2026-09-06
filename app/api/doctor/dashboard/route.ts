@@ -107,9 +107,10 @@ export async function GET() {
           orderBy: { scheduledAt: 'asc' },
         }),
 
-        // Patient history — completed consultations with digital prescriptions.
+        // Patient history — paid completed consultations with digital
+        // prescriptions. Unpaid / pending records are never shown to a doctor.
         prisma.appointment.findMany({
-          where: { doctorId, status: 'COMPLETED' },
+          where: { doctorId, status: 'COMPLETED', paymentStatus: 'PAID' },
           include: { patient: patientSelect, prescription: true },
           orderBy: { scheduledAt: 'desc' },
           take: 250,

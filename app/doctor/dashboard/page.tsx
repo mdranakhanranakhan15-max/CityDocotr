@@ -28,6 +28,10 @@ import {
 import { IncomingCallModal } from '@/components/doctor/IncomingCallModal';
 import { PrescriptionPreviewModal } from '@/components/doctor/PrescriptionPreviewModal';
 import { playRingtone, stopRingtone } from '@/utils/ringtone';
+import {
+  getConsultationWindow,
+  getConsultationWindowStatus,
+} from '@/lib/timeSlot';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 
@@ -285,11 +289,25 @@ export default function DoctorDashboardPage() {
   };
 
   // ---- Helpers ----
-  const canJoin = (appt: any) => {
-    if (!appt?.scheduledAt || appt.status === 'COMPLETED') return false;
-    const scheduled = new Date(appt.scheduledAt).getTime();
-    return Date.now() >= scheduled - FIVE_MINUTES_MS;
+  // Booking/window classification shared by the queue tables:
+  //   - COMPLETED / CANCELLED are terminal — they never offer a join action.
+  //   - CONFIRMED inside its active window (slot −5 min → slot + duration)
+  //     is joinable.
+  //   - CONFIRMED in the future is "upcoming" (shows a disabled "Opens at …").
+  //   - anything whose window has passed is "ended".
+  const windowStateOf = (appt: any) => {
+    if (appt?.status === 'COMPLETED' || appt?.status === 'CANCELLED') return 'closed';
+    if (!appt?.scheduledAt && !appt?.timeSlot) return 'open'; // immediate/flex slot
+    const win = getConsultationWindow(
+      appt.scheduledAt,
+      appt.timeSlot,
+      appt.doctor?.slotDuration || 15
+    );
+    return getConsultationWindowStatus(win);
   };
+
+  const canJoin = (appt: any) =>
+    appt?.status === 'CONFIRMED' && windowStateOf(appt) === 'open';
 
   const joinIn = (appt: any) => {
     if (!appt?.scheduledAt) return null;
@@ -816,6 +834,10 @@ export default function DoctorDashboardPage() {
                       const minutesUntilJoin = joinIn(appt);
                       const displayName = patientNameOf(appt);
                       const isDone = appt.status === 'COMPLETED';
+                      const isCancelled = appt.status === 'CANCELLED';
+                      const isUpcoming =
+                        appt.status === 'CONFIRMED' &&
+                        windowStateOf(appt) === 'not_started';
                       const payStatus = appt.paymentStatus || 'UNPAID';
                       return (
                         <tr key={appt.id} className="hover:bg-slate-800/40 transition-colors">
@@ -846,11 +868,19 @@ export default function DoctorDashboardPage() {
                             )}
                           </td>
 
-                          {/* Payment status */}
+                          {/* Payment / booking status */}
                           <td className="py-3 px-4">
                             {isDone ? (
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-bold text-[10px]">
                                 <CheckCircle2 className="w-3 h-3" /> Completed
+                              </span>
+                            ) : isCancelled ? (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-300 border border-rose-500/30 font-bold text-[10px]">
+                                Cancelled
+                              </span>
+                            ) : isUpcoming ? (
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-violet-500/10 text-violet-300 border border-violet-500/30 font-bold text-[10px]">
+                                Upcoming
                               </span>
                             ) : payStatus === 'PAID' ? (
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-bold text-[10px]">
@@ -875,6 +905,10 @@ export default function DoctorDashboardPage() {
                               <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-[11px] font-bold">
                                 <Clock className="w-3.5 h-3.5" /> Handled
                               </span>
+                            ) : isCancelled ? (
+                              <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-500/10 text-rose-300 border border-rose-500/30 text-[11px] font-bold">
+                                <Clock className="w-3.5 h-3.5" /> Cancelled
+                              </span>
                             ) : joinable ? (
                               <Link
                                 href={`/consultation/${appt.id}?role=doctor`}
@@ -883,7 +917,7 @@ export default function DoctorDashboardPage() {
                                 <Video className="w-3.5 h-3.5" />
                                 Join Video Call
                               </Link>
-                            ) : (
+                            ) : isUpcoming ? (
                               <span
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-[11px] font-bold cursor-not-allowed"
                                 title={
@@ -894,6 +928,14 @@ export default function DoctorDashboardPage() {
                               >
                                 <Clock className="w-3.5 h-3.5" />
                                 Join Call — Opens at {formatClock(appt)}
+                              </span>
+                            ) : (
+                              <span
+                                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 text-slate-500 border border-slate-700 text-[11px] font-bold cursor-not-allowed"
+                                title="The consultation window for this booking has ended"
+                              >
+                                <Clock className="w-3.5 h-3.5" />
+                                Window ended
                               </span>
                             )}
                           </td>

@@ -61,6 +61,10 @@ const clockLabel = (appt: any): string => {
 
 const BookingBadge: React.FC<{ status: string }> = ({ status }) => {
   const map: Record<string, { label: string; cls: string }> = {
+    UPCOMING: {
+      label: 'Upcoming',
+      cls: 'text-amber-700 border-amber-200 bg-amber-50',
+    },
     CONFIRMED: {
       label: 'Confirmed',
       cls: 'text-emerald-700 border-emerald-200 bg-emerald-50',
@@ -286,12 +290,20 @@ export default function PatientAppointmentsPage() {
         ) : (
           <div className="space-y-4">
             {appointments.map((appt) => {
+              const isCompleted = appt.status === 'COMPLETED';
+              const isCancelled = appt.status === 'CANCELLED';
+              const isConfirmed = appt.status === 'CONFIRMED';
               const status = windowStatusFor(appt);
+              // Only CONFIRMED bookings inside their active slot window show a
+              // live "Enter Video Room" action. Future ones are "Upcoming",
+              // and COMPLETED / CANCELLED never offer a join button.
+              const isUpcoming = isConfirmed && status === 'not_started';
+              const canEnter = isConfirmed && status === 'open';
               const doctor = appt.doctor || {};
               const docName = doctor.name || 'CityDoctor Physician';
               const docInitial = (doctor.name || 'D').trim().charAt(0).toUpperCase();
               const isPaid = appt.paymentStatus === 'PAID';
-              const canEnter = appt.status !== 'CANCELLED' && status === 'open';
+              const bookingBadgeStatus = isUpcoming ? 'UPCOMING' : appt.status;
               return (
                 <div
                   key={appt.id}
@@ -325,7 +337,7 @@ export default function PatientAppointmentsPage() {
                         {doctor.designation || 'Consultant'} • {doctor.hospital || 'CityDoctor Telehealth'}
                       </p>
                     </div>
-                    <BookingBadge status={appt.status} />
+                    <BookingBadge status={bookingBadgeStatus} />
                   </div>
                   {/* Middle: slot / fee / trx */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 divide-slate-100 text-xs">
@@ -402,15 +414,15 @@ export default function PatientAppointmentsPage() {
                       )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                      {appt.status === 'COMPLETED' ? (
+                      {isCompleted ? (
                         <Link
                           href={`/prescription/${appt.id}`}
                           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 text-xs font-bold shadow-sm transition-colors"
                         >
                           <FileText className="w-4 h-4" /> View Prescription
                         </Link>
-                      ) : appt.status === 'CANCELLED' ? (
-                        <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed">
+                      ) : isCancelled ? (
+                        <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold uppercase tracking-wider">
                           <Clock className="w-4 h-4" /> Cancelled
                         </span>
                       ) : canEnter ? (
@@ -431,7 +443,7 @@ export default function PatientAppointmentsPage() {
                         >
                           <Clock className="w-4 h-4" />
                           {status === 'not_started'
-                            ? `Enter Video Room — Opens at ${clockLabel(appt)}`
+                            ? `Opens at ${clockLabel(appt)}`
                             : 'Session window ended'}
                         </span>
                       )}

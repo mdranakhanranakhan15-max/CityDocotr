@@ -263,12 +263,33 @@ function ConsultationRoomContent() {
     setPhase('ready');
   }, []);
 
-  // Destroy the Zego instance, show a brief leaving screen, then route away.
-  // After the doctor completes a consultation the patient lands on the
-  // prescription page (if available), otherwise back home/dashboard.
+  // End-of-call teardown. Runs from the Zego UI hangup (onLeaveRoom), the
+  // patient's auto-exit when the doctor leaves, the doctor's "Complete
+  // Consultation", and every "End Call & Exit" button:
+  //   (a) marks the appointment COMPLETED on the server (best-effort &
+  //       idempotent) so it drops out of the patient's joinable list and the
+  //       doctor's active queue and can never be recalled,
+  //   (b) fully destroys the ZegoUIKit engine so it cannot auto-reconnect or
+  //       keep running in the background,
+  //   (c) redirects immediately to the role's landing list.
   const exitConsultation = useCallback(async () => {
     if (exitingRef.current) return;
     exitingRef.current = true;
+
+    // (a) Mark the appointment as COMPLETED. Fire-and-forget so teardown and
+    // navigation are never blocked by a slow network; failures are logged only.
+    if (appointment?.id) {
+      fetch(`/api/appointments/${appointment.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'COMPLETED' }),
+      }).catch((e) => {
+        console.error('Failed to mark appointment COMPLETED on exit:', e);
+      });
+    }
+
+    // (b) Fully unmount + destroy the ZegoUIKit instance (leaves the room,
+    // releases camera/mic, cancels any reconnection/recall timers).
     try {
       zpRef.current?.destroy?.();
     } catch {
@@ -280,32 +301,17 @@ function ConsultationRoomContent() {
     setJoined(false);
     setPhase('ended');
 
-    let destination: string;
-    if (role === 'doctor') {
-      destination = '/doctor/dashboard';
-    } else if (appointment?.id) {
-      destination = '/';
-      try {
-        const res = await fetch(`/api/prescriptions?appointmentId=${appointment.id}`);
-        const data = await res.json();
-        if (data?.success && data.prescription) {
-          destination = `/prescription/${appointment.id}`;
-        }
-      } catch {
-        // keep home
-      }
-    } else {
-      destination = '/';
-    }
-
+    // (c) Redirect the user back to their queue immediately.
+    const destination =
+      role === 'doctor' ? '/doctor/dashboard' : '/patient/appointments';
     setTimeout(() => {
       try {
         router.replace(destination);
       } catch {
         // ignore navigation errors
       }
-    }, 1200);
-  }, [role, appointment, router]);
+    }, 600);
+  }, [role, appointment?.id, router]);
 
   // If the patient is left alone in the room (doctor ended the call),
   // auto-exit after a short grace period.

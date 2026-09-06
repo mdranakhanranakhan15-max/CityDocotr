@@ -51,15 +51,20 @@ export async function GET() {
     // full history loads no matter how the appointment was created.
     // Phone clauses are only added when a phone exists for the session — an
     // equality-to-NULL filter would otherwise match every NULL-phone row.
-    const where = sessionPatientPhone
+    //
+    // STRICT PAYMENT FILTER: only PAID bookings are ever returned to the
+    // patient list. UNPAID / PENDING_PAYMENT / FAILED attempts are tracked in
+    // the Admin panel — they must never render as joinable "appointments".
+    const where: any = sessionPatientPhone
       ? {
+          paymentStatus: 'PAID',
           OR: [
             { patientId: sessionPatientId },
             { patientPhone: sessionPatientPhone },
             { patient: { phone: sessionPatientPhone } },
           ],
         }
-      : { patientId: sessionPatientId };
+      : { paymentStatus: 'PAID', patientId: sessionPatientId };
 
     const appointments = await prisma.appointment.findMany({
       where,
