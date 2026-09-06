@@ -38,7 +38,7 @@ export const StatsCard: React.FC<StatsCardProps> = ({
 
   return (
     <div
-      className={`p-5 rounded-2xl bg-gradient-to-br ${colorMap[color]} bg-slate-900/90 border shadow-lg relative overflow-hidden`}
+      className={`p-5 rounded-[1.25rem] bg-gradient-to-br ${colorMap[color]} bg-slate-900/80 border shadow-lg relative overflow-hidden hover:-translate-y-0.5 hover:shadow-xl transition-all duration-300`}
     >
       <div className="flex items-center justify-between">
         <div>

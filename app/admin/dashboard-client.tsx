@@ -133,7 +133,7 @@ export default function AdminDashboardPage() {
       {/* Grid: Recent Appointments & Online Physicians Quick Switch */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Recent Consultations Table */}
-        <div className="lg:col-span-2 p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl space-y-4">
+        <div className="lg:col-span-2 p-5 rounded-[1.5rem] bg-slate-900/70 border border-slate-800/80 shadow-xl backdrop-blur-sm ring-1 ring-white/5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <CalendarCheck className="w-5 h-5 text-teal-400" />
@@ -161,7 +161,7 @@ export default function AdminDashboardPage() {
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
                 {recentAppointments.length > 0 ? (
                   recentAppointments.map((appt) => (
-                    <tr key={appt.id} className="hover:bg-slate-850/50 transition-colors">
+                    <tr key={appt.id} className="hover:bg-slate-800/60 transition-colors">
                       <td className="py-3 px-3">
                         <div className="font-semibold text-slate-200">{appt.patientName}</div>
                         <div className="text-[11px] text-slate-500 truncate max-w-[150px]">
@@ -212,7 +212,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Right 1 Col: Doctor Availability Toggle Snapshot */}
-        <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-xl space-y-4">
+        <div className="p-5 rounded-[1.5rem] bg-slate-900/70 border border-slate-800/80 shadow-xl backdrop-blur-sm ring-1 ring-white/5 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-teal-400" />

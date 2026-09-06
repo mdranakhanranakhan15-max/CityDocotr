@@ -38,6 +38,9 @@ import {
   ChevronLeft,
   Calendar,
   CalendarDays,
+  Loader2,
+  Settings,
+  LayoutDashboard,
   Lock,
   Smartphone,
   QrCode,
@@ -360,399 +363,583 @@ export default function CityDoctorLandingPage() {
     imageUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=800',
   };
 
+  // Live pulse data for the Bento hero (real-time active indicators)
+  const liveOnlineDoctors = doctors.filter(
+    (d) => (d.status || '').toUpperCase() === 'ONLINE'
+  );
+  const pulseDoctors =
+    liveOnlineDoctors.length > 0 ? liveOnlineDoctors.slice(0, 4) : doctors.slice(0, 4);
+  const firstBookingDoctor = pulseDoctors[0] || null;
+
+
   return (
     <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-slate-50 text-slate-900 font-sans selection:bg-teal-600 selection:text-white">
       {/* ========================================================================= */}
-      {/* 1. TOP NAVBAR & SUB-HEADER PROMO BAR                                     */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm select-none">
-        {/* Main Navbar Row */}
-        <div className="max-w-[95%] lg:max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 h-24 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center shadow-lg shadow-teal-600/25 group-hover:scale-105 transition-transform">
-              <Activity className="w-7 h-7" />
-            </div>
-            <div>
-              <span className="font-black text-2xl sm:text-3xl tracking-tight text-slate-900">
-                City<span className="text-teal-600">Doctor</span>
-              </span>
-            </div>
-          </Link>
-
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-700">
-            <a href="#choose-specialty" className="text-teal-600 font-bold hover:text-teal-700 transition-colors">
-              Consultation
-            </a>
-            <Link href="/department/all" className="hover:text-teal-600 transition-colors">
-              All Doctors
-            </Link>
-            <a href="#diagnostic" className="hover:text-teal-600 transition-colors">
-              Home Diagnostic
-            </a>
-            <a href="#health-plan" className="hover:text-teal-600 transition-colors">
-              Health Plan
-            </a>
-            <a href="#blogs" className="hover:text-teal-600 transition-colors">
-              Blogs
-            </a>
-          </nav>
-
-          {/* Right Action & Profile Dropdown */}
-          <div className="hidden sm:flex items-center gap-3.5">
-            <Link
-              href="/admin"
-              className="px-4 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm hover:border-teal-300 hover:text-teal-700 text-slate-600 text-xs font-semibold transition-colors"
-            >
-              Admin Panel
-            </Link>
-
-            {currentUser ? (
-              <div className="relative flex items-center gap-3 pl-2 border-l border-slate-200">
-                {/* Profile trigger — toggles the user dropdown */}
-                <button
-                  type="button"
-                  onClick={() => setProfileMenuOpen((v) => !v)}
-                  className="flex items-center gap-2.5 rounded-xl hover:bg-slate-50 py-1.5 pl-1 pr-2.5 transition-colors"
-                  aria-haspopup="menu"
-                  aria-expanded={profileMenuOpen}
-                >
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white font-black text-sm flex items-center justify-center shadow-md shadow-teal-600/25 ring-2 ring-white">
-                    {currentUser.name?.trim()?.charAt(0)?.toUpperCase() || 'P'}
+      {/* 1. FLOATING GLASSMORPHISM NAVBAR (rounded-full glass capsule)             */}
+      {/* ========================================================================= */}
+      <header className="sticky top-0 z-40 w-full px-3 sm:px-4 pt-3 sm:pt-4 select-none">
+        <div className="mx-auto max-w-6xl">
+          <div className="relative rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-md shadow-lg shadow-slate-900/10 ring-1 ring-slate-900/5 border border-white/80 dark:border-slate-700/60">
+            <div className="flex items-center justify-between gap-2 sm:gap-3 px-3.5 sm:px-5 py-2.5">
+              {/* Brand logo */}
+              <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center shadow-md shadow-teal-600/25 ring-2 ring-white/70 group-hover:scale-105 transition-transform">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div className="leading-tight">
+                  <div className="font-black text-lg sm:text-xl tracking-tight text-slate-900 dark:text-white">
+                    City<span className="text-teal-600">Doctor</span>
                   </div>
-                  <div className="text-left hidden md:block">
-                    <p className="text-xs font-bold text-slate-900 leading-none truncate max-w-[130px]">
-                      {currentUser.name}
-                    </p>
-                    <p className="text-[10px] text-teal-600 font-medium mt-0.5">
-                      {currentUser.phone}
-                    </p>
-                  </div>
-                  <ChevronDown
-                    className={`w-3.5 h-3.5 text-slate-400 transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
-
-                {profileMenuOpen && (
-                  <>
-                    {/* Click-away layer */}
-                    <div
-                      className="fixed inset-0 z-10"
-                      onClick={() => setProfileMenuOpen(false)}
-                    />
-                    <div
-                      role="menu"
-                      className="absolute right-0 top-[calc(100%+8px)] w-56 z-20 bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-900/5 p-2 space-y-1 animate-in zoom-in-95 fade-in duration-150 origin-top-right"
-                    >
-                      <p className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                        Patient Account
-                      </p>
-                      <Link
-                        href="/patient/appointments"
-                        onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"
-                      >
-                        <CalendarDays className="w-4 h-4 text-teal-600" />
-                        My Appointments
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          logout();
-                        }}
-                        className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-red-50 hover:text-red-600 transition-colors"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={() => openAuthModal({ redirectTo: '/patient/appointments' })}
-                className="px-4 py-2.5 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-md shadow-teal-600/25 active:scale-95 transition-all flex items-center gap-2"
-              >
-                <User className="w-4 h-4" />
-                <span>Login / Sign Up</span>
-              </button>
-            )}
-          </div>
-
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2.5 rounded-xl text-slate-700 hover:bg-slate-100 lg:hidden"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Sub-Header: Center Search Bar & Right "Refer a Friend" Chip */}
-        <div className="bg-white/60 border-t border-b border-slate-200/70 py-3">
-          <div className="max-w-[1320px] w-full mx-auto px-6 sm:px-10 lg:px-14 flex flex-col md:flex-row items-center justify-between gap-3">
-            {/* Center Search Input */}
-            <form
-              onSubmit={handleSearchSubmit}
-              className="relative w-full max-w-2xl flex items-center gap-2 bg-white/90 backdrop-blur-md border border-gray-200 shadow-md rounded-full px-4 py-2"
-            >
-              <Search className="w-4 h-4 text-blue-600 shrink-0" />
-              <input
-                type="text"
-                placeholder="Search by doctor name, specialty (e.g. Cardiology, Pediatrics) or symptoms..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full min-w-0 bg-transparent text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="shrink-0 whitespace-nowrap text-xs sm:text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-full px-7 py-2.5 font-medium transition-all active:scale-95"
-              >
-                Search
-              </button>
-            </form>
-
-            {/* Right Promotional Chip */}
-            <div className="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-blue-200 text-xs font-semibold text-blue-900 shadow-sm shrink-0">
-              <Gift className="w-4 h-4 text-blue-600 animate-bounce" />
-              <span>Refer a Friend &amp; Earn ৳ 100 Health Credit</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Nav Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden bg-white border-b border-slate-200 p-5 space-y-4 shadow-lg">
-            {currentUser && (
-              <div className="p-3.5 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-700 text-white font-bold flex items-center justify-center">
-                    {currentUser.name?.trim()?.charAt(0)?.toUpperCase() || 'P'}
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">{currentUser.name}</p>
-                    <p className="text-xs text-blue-600">{currentUser.phone}</p>
+                  <div className="hidden xl:block text-[10px] font-medium text-slate-400 dark:text-slate-500">
+                    24/7 Online Telehealth
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    logout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-3 py-1.5 rounded-lg bg-red-50 text-red-600 text-xs font-bold border border-red-200"
+              </Link>
+
+              {/* Desktop navigation links inside a soft segmented pill */}
+              <nav className="hidden lg:flex items-center gap-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-100/70 dark:bg-slate-800/50 rounded-full p-1">
+                <a
+                  href="#choose-specialty"
+                  className="px-3.5 py-1.5 rounded-full text-teal-700 dark:text-teal-300 bg-white dark:bg-slate-900/80 shadow-sm"
                 >
-                  Sign Out
+                  Consultation
+                </a>
+                <Link
+                  href="/department/all"
+                  className="px-3.5 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-900/80 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
+                >
+                  All Doctors
+                </Link>
+                <a
+                  href="#diagnostic"
+                  className="px-3.5 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-900/80 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
+                >
+                  Home Diagnostic
+                </a>
+                <a
+                  href="#health-plan"
+                  className="px-3.5 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-900/80 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
+                >
+                  Health Plan
+                </a>
+                <a
+                  href="#blogs"
+                  className="px-3.5 py-1.5 rounded-full hover:bg-white dark:hover:bg-slate-900/80 hover:text-teal-600 dark:hover:text-teal-300 transition-colors"
+                >
+                  Blogs
+                </a>
+              </nav>
+
+              {/* Right actions */}
+              <div className="flex items-center gap-2 shrink-0">
+                {/* Admin quick-access (compact) */}
+                <Link
+                  href="/admin"
+                  className="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-full text-[11px] font-bold text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-800/60 hover:border-teal-300 hover:text-teal-700 dark:hover:text-teal-300 transition-colors"
+                >
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span className="hidden xl:inline">Admin</span>
+                </Link>
+
+                {currentUser ? (
+                  <div className="relative flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => setProfileMenuOpen((v) => !v)}
+                      className="flex items-center gap-1.5 rounded-full pl-1 pr-2 py-1 hover:bg-slate-100/80 dark:hover:bg-slate-800/70 transition-colors"
+                      aria-haspopup="menu"
+                      aria-expanded={profileMenuOpen}
+                    >
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white font-black text-sm flex items-center justify-center shadow-sm ring-2 ring-white/80 dark:ring-slate-800">
+                        {currentUser.name?.trim()?.charAt(0)?.toUpperCase() || 'P'}
+                      </div>
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 text-slate-400 transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+
+                    {profileMenuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setProfileMenuOpen(false)} />
+                        <div
+                          role="menu"
+                          className="absolute right-0 top-[calc(100%+10px)] w-60 z-20 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-slate-900/10 p-2 space-y-1 animate-in zoom-in-95 fade-in duration-150 origin-top-right"
+                        >
+                          <div className="px-3 py-2.5 rounded-xl bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-slate-800 dark:to-slate-800 border border-teal-100 dark:border-slate-700 mb-1">
+                            <p className="text-xs font-black text-slate-900 dark:text-white truncate">
+                              {currentUser.name}
+                            </p>
+                            <p className="text-[10px] text-teal-700 dark:text-teal-300 font-semibold mt-0.5">
+                              {currentUser.phone}
+                            </p>
+                          </div>
+                          <Link
+                            href="/patient/appointments"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-teal-50 dark:hover:bg-slate-800 hover:text-teal-700 transition-colors"
+                          >
+                            <CalendarDays className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                            My Appointments
+                          </Link>
+                          <Link
+                            href="/patient/settings"
+                            onClick={() => setProfileMenuOpen(false)}
+                            className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-teal-50 dark:hover:bg-slate-800 hover:text-teal-700 transition-colors"
+                          >
+                            <Settings className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                            Account Settings
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setProfileMenuOpen(false);
+                              logout();
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-rose-500/10 hover:text-red-600 transition-colors"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            Sign Out
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => openAuthModal({ redirectTo: '/patient/appointments' })}
+                    className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 text-xs font-bold shadow-sm transition-colors"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>Login / Sign Up</span>
+                  </button>
+                )}
+
+                {/* Consult CTA (desktop) */}
+                <button
+                  onClick={() => handleOpenConsultation()}
+                  className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-white text-xs font-bold shadow-md shadow-teal-600/25 active:scale-95 transition-all"
+                >
+                  <Video className="w-3.5 h-3.5" />
+                  <span>Consult Now</span>
+                </button>
+
+                {/* Mobile hamburger */}
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="lg:hidden p-2 rounded-full text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  aria-label="Toggle navigation menu"
+                >
+                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                 </button>
               </div>
-            )}
-
-            <a
-              href="#choose-specialty"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-bold text-blue-700 py-1"
-            >
-              Consultation
-            </a>
-            <Link
-              href="/department/all"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-semibold text-slate-700 py-1"
-            >
-              All Doctors Directory
-            </Link>
-            <a
-              href="#diagnostic"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-semibold text-slate-700 py-1"
-            >
-              Home Diagnostic
-            </a>
-            <a
-              href="#health-plan"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-semibold text-slate-700 py-1"
-            >
-              Health Plan
-            </a>
-            <a
-              href="#blogs"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-semibold text-slate-700 py-1"
-            >
-              Blogs &amp; Media
-            </a>
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block font-semibold text-slate-700 py-1"
-            >
-              Admin Dashboard
-            </Link>
-
-            {!currentUser && (
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  openAuthModal({ redirectTo: '/patient/appointments' });
-                }}
-                className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl flex items-center justify-center gap-2 border border-slate-300"
-              >
-                <User className="w-4 h-4 text-blue-700" />
-                <span>Login / Sign Up</span>
-              </button>
-            )}
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                handleOpenConsultation();
-              }}
-              className="w-full py-3 bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-700/20"
-            >
-              Consult a Doctor Now
-            </button>
+            </div>
           </div>
-        )}
+
+
+
+          {/* Floating mobile drawer */}
+          {mobileMenuOpen && (
+            <div className="mt-2 lg:hidden rounded-3xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 shadow-2xl shadow-slate-900/10 p-5 space-y-4 overflow-hidden">
+              {currentUser && (
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-teal-50 to-emerald-50 dark:from-slate-800 dark:to-slate-800 border border-teal-100 dark:border-slate-700 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white font-bold flex items-center justify-center">
+                      {currentUser.name?.trim()?.charAt(0)?.toUpperCase() || 'P'}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">{currentUser.name}</p>
+                      <p className="text-xs text-teal-700 dark:text-teal-300">{currentUser.phone}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-red-50 dark:bg-rose-500/10 text-red-600 dark:text-rose-300 text-xs font-bold border border-red-200 dark:border-rose-500/30"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
+
+              <nav className="flex flex-col gap-1 text-sm">
+                <a
+                  href="#choose-specialty"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2.5 rounded-xl font-bold text-teal-700 dark:text-teal-300 bg-slate-100/70 dark:bg-slate-800/60"
+                >
+                  Consultation
+                </a>
+                <Link
+                  href="/department/all"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
+                >
+                  All Doctors Directory
+                </Link>
+                <a
+                  href="#diagnostic"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
+                >
+                  Home Diagnostic
+                </a>
+                <a
+                  href="#health-plan"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
+                >
+                  Health Plan
+                </a>
+                <a
+                  href="#blogs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-3 py-2.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors"
+                >
+                  Blogs &amp; Media
+                </a>
+              </nav>
+
+              <div className="pt-3 border-t border-slate-200/80 dark:border-slate-700/60 space-y-3">
+                {!currentUser && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openAuthModal({ redirectTo: '/patient/appointments' });
+                    }}
+                    className="w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-xs rounded-2xl flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700"
+                  >
+                    <User className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    <span>Login / Sign Up</span>
+                  </button>
+                )}
+
+                <Link
+                  href="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-2xl flex items-center justify-center gap-2 border border-slate-300 dark:border-slate-700"
+                >
+                  <LayoutDashboard className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                  Admin Dashboard
+                </Link>
+
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleOpenConsultation();
+                  }}
+                  className="w-full py-3 bg-gradient-to-r from-teal-600 to-emerald-500 text-white font-bold text-xs rounded-2xl shadow-lg shadow-teal-600/25 flex items-center justify-center gap-2"
+                >
+                  <Video className="w-4 h-4" />
+                  Consult a Doctor Now
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. DYNAMIC HERO CAROUSEL / BANNER WITH ARROWS & PAGINATION (SCREENSHOT 1)  */}
+      {/* 2. BENTO HERO GRID: Bold Search + Live Doctor Pulse + 1-Click Consult      */}
       {/* ========================================================================= */}
-      <section className="py-6 sm:py-10 bg-slate-50 relative select-none">
-        <div className="max-w-[1320px] w-full mx-auto px-6 sm:px-10 lg:px-14">
-          <div className="w-full relative overflow-hidden rounded-3xl border border-blue-100/80 bg-gradient-to-r from-blue-50/90 via-sky-50/60 to-slate-50/40 shadow-sm p-6 lg:p-10">
-          <div className="absolute -right-20 -top-20 w-96 h-96 rounded-full bg-blue-200/30 blur-2xl pointer-events-none" />
-          <div className="absolute left-1/3 -bottom-20 w-80 h-80 rounded-full bg-cyan-200/30 blur-2xl pointer-events-none" />
+      <section className="relative overflow-hidden bg-slate-50 pt-6 sm:pt-10 pb-10 sm:pb-14 select-none">
+        {/* Ambient gradient orbs */}
+        <div className="absolute -top-24 left-1/4 w-[28rem] h-[28rem] rounded-full bg-teal-200/30 blur-3xl pointer-events-none" />
+        <div className="absolute top-40 -right-24 w-96 h-96 rounded-full bg-blue-200/30 blur-3xl pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.06),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.06),transparent_45%)] pointer-events-none" />
 
-          {/* Left / Right Carousel Navigation Arrows */}
-          {banners.length > 1 && (
-            <>
-              <button
-                onClick={handlePrevBanner}
-                className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 flex items-center justify-center shadow-md z-20 transition-all border border-blue-100 active:scale-95"
-                title="Previous slide"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={handleNextBanner}
-                className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 flex items-center justify-center shadow-md z-20 transition-all border border-blue-100 active:scale-95"
-                title="Next slide"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </>
-          )}
+        <div className="mx-auto max-w-6xl px-3 sm:px-4 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:auto-rows-fr">
+            {/* ------------ BOX 1 · Bold headline + specialty search ------------ */}
+            <div className="relative lg:col-span-2 lg:row-span-2 overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/70 backdrop-blur-sm shadow-xl shadow-slate-900/5 p-6 sm:p-8 lg:p-10 flex flex-col">
+              {/* Subtle live campaign image from admin banners */}
+              {banners.length > 0 && currentBanner?.imageUrl && (
+                <div className="pointer-events-none absolute -right-10 -top-10 w-44 h-44 sm:w-60 sm:h-60 rounded-[2.5rem] overflow-hidden opacity-[0.16] rotate-6 blur-[1px]">
+                  <img
+                    src={currentBanner.imageUrl}
+                    alt=""
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
-            {/* Left Content */}
-            <div className="lg:col-span-6 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-2xl bg-white/80 border border-slate-100 text-blue-800 text-xs font-bold shadow-sm">
-                <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
-                <span>#1 Telehealth Platform in Bangladesh</span>
+              <div className="relative flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 dark:bg-teal-500/10 border border-teal-200/80 dark:border-teal-500/30 text-teal-800 dark:text-teal-200 text-[11px] font-bold shadow-sm">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500" />
+                  </span>
+                  Live • Avg. doctor response &lt; 2 minutes
+                </span>
+                {/* Banner campaign selector dots */}
+                {banners.length > 1 && (
+                  <div className="inline-flex items-center gap-1.5 ml-auto bg-white/80 border border-slate-200 rounded-full px-3 py-2">
+                    {banners.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveBannerIdx(i)}
+                        aria-label={`Show banner ${i + 1}`}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          activeBannerIdx === i
+                            ? 'w-5 bg-teal-600'
+                            : 'w-1.5 bg-slate-300 hover:bg-teal-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.2] transition-all duration-300">
-                {currentBanner.title || '1800+ Specialist And Experienced Doctors From Reputed Hospitals'}
+              <h1 className="relative mt-5 text-[2rem] leading-[1.08] sm:text-5xl lg:text-[3.4rem] font-black tracking-tight text-slate-900 dark:text-white">
+                Consult Top Doctors Online,{' '}
+                <span className="bg-gradient-to-r from-teal-600 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">
+                  Anytime, Anywhere.
+                </span>
               </h1>
 
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed transition-all duration-300">
-                {currentBanner.subtitle || 'Get instant online video consultations anytime, anywhere with BMDC certified physicians.'}
+              <p className="relative mt-4 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl leading-relaxed">
+                Connect instantly with BMDC certified specialist physicians over encrypted HD
+                video, get a digital prescription, and pay securely with bKash or Card.
               </p>
 
-              <div className="flex items-center gap-3 pt-2">
-                <div className="px-3.5 py-1.5 rounded-2xl bg-white/80 border border-slate-100 text-xs font-semibold text-slate-700 shadow-sm flex items-center gap-2">
-                  <ShieldCheck className="w-4 h-4 text-blue-700" />
-                  <span>BMDC Certified Physicians</span>
-                </div>
-                <div className="px-3.5 py-1.5 rounded-2xl bg-white/80 border border-slate-100 text-xs font-semibold text-slate-700 shadow-sm flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-blue-700" />
-                  <span>24/7 Available</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Center Dynamic Image Placeholder */}
-            <div className="lg:col-span-3 flex justify-center relative">
-              <div className="relative w-56 h-64 sm:w-64 sm:h-72 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
-                <img
-                  src={currentBanner.imageUrl}
-                  alt={currentBanner.title || 'CityDoctor Specialist Physicians'}
-                  className="w-full h-full object-cover object-top transition-all duration-500"
-                />
-              </div>
-            </div>
-
-            {/* Right Floating Cards & Big Consult Button */}
-            <div className="lg:col-span-3 flex flex-col gap-3.5">
-              <div className="p-3.5 rounded-2xl bg-white/80 border border-slate-100 shadow-sm flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="font-bold text-xs text-slate-900">All Doctors are BMDC Verified</div>
-                  <div className="text-[11px] text-slate-500">100% genuine credentials</div>
-                </div>
+              {/* Trust chips */}
+              <div className="relative mt-5 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  BMDC Certified
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                  <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  24/7 Available
+                </span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-700 dark:text-slate-200 shadow-sm">
+                  <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  4.9 · 15,000+ reviews
+                </span>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-white/80 border border-slate-100 shadow-sm flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
-                  <Star className="w-5 h-5 fill-amber-400" />
-                </div>
-                <div>
-                  <div className="font-bold text-xs text-slate-900">Rated 4.9 on average</div>
-                  <div className="text-[11px] text-slate-500">Based on 15,000+ reviews</div>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-white/80 border border-slate-100 shadow-sm flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="font-bold text-xs text-slate-900">Trusted By 820,000 Patients</div>
-                  <div className="text-[11px] text-slate-500">Across all 64 districts</div>
-                </div>
-              </div>
-
-              {/* Main Call to Action: Smoothly Links to #choose-specialty */}
-              <a
-                href="#choose-specialty"
-                className="w-full py-4 rounded-2xl bg-blue-700 hover:bg-blue-800 text-white font-extrabold text-sm shadow-lg shadow-blue-700/30 flex items-center justify-center gap-2 active:scale-95 transition-all mt-1"
+              {/* Search bar */}
+              <form
+                onSubmit={handleSearchSubmit}
+                className="relative mt-7 flex items-center gap-2 rounded-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-900/5 pl-4 pr-2 py-2 focus-within:ring-2 focus-within:ring-teal-500/40 transition-all"
               >
-                <Video className="w-5 h-5" />
-                <span>Consult a Doctor Now</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Bottom Pagination Dots */}
-          {banners.length > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-8">
-              {banners.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveBannerIdx(i)}
-                  className={`h-2.5 rounded-full transition-all duration-300 ${
-                    activeBannerIdx === i
-                      ? 'w-8 bg-blue-700 shadow-sm'
-                      : 'w-2.5 bg-blue-300 hover:bg-blue-400'
-                  }`}
-                  title={`Slide ${i + 1}`}
+                <Search className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                <input
+                  type="text"
+                  placeholder="Search by doctor, specialty or symptom..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full min-w-0 bg-transparent text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none"
                 />
-              ))}
+                <button
+                  type="submit"
+                  className="shrink-0 whitespace-nowrap text-xs sm:text-sm bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-white rounded-full px-5 sm:px-7 py-2.5 font-bold transition-all active:scale-95"
+                >
+                  Search
+                </button>
+              </form>
+
+              {/* Popular specialty pills */}
+              <div className="relative mt-4 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500">
+                  Popular:
+                </span>
+                {[
+                  { label: 'Fever & Cough', slug: 'general-physician' },
+                  { label: 'Cardiology', slug: 'cardiology' },
+                  { label: 'Dermatology', slug: 'dermatology' },
+                  { label: 'Pediatrics', slug: 'pediatrics' },
+                  { label: 'Mental Wellness', slug: 'psychiatry' },
+                ].map((pill) => (
+                  <button
+                    key={pill.slug + pill.label}
+                    type="button"
+                    onClick={() => router.push(`/department/${pill.slug}`)}
+                    className="px-3.5 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/60 text-slate-700 dark:text-slate-200 hover:border-teal-400 hover:text-teal-700 dark:hover:text-teal-300 hover:-translate-y-0.5 transition-all text-xs font-semibold shadow-sm"
+                  >
+                    {pill.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Active campaign caption */}
+              {banners.length > 0 && (
+                <div className="relative mt-auto pt-6">
+                  <div className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-blue-50 to-teal-50 dark:from-slate-800/80 dark:to-slate-800/80 border border-blue-100 dark:border-slate-700 px-4 py-3">
+                    <div className="w-9 h-9 rounded-xl bg-white dark:bg-slate-900 border border-blue-100 dark:border-slate-600 text-blue-700 dark:text-teal-300 flex items-center justify-center shrink-0 shadow-sm">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <p className="text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-200 leading-snug line-clamp-2">
+                      {currentBanner.title}
+                      <span className="text-slate-400 dark:text-slate-400 font-normal">
+                        {' '}
+                        — {currentBanner.subtitle}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+
+            {/* ------------ BOX 2 · Live doctor pulse widget ------------ */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm shadow-xl shadow-slate-900/5 p-5 sm:p-6 flex flex-col">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 text-white flex items-center justify-center shadow-md shadow-teal-500/25">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-black text-slate-900 dark:text-white leading-none">
+                      Live Physician Pulse
+                    </h2>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400 font-medium mt-1">
+                      Real-time availability
+                    </p>
+                  </div>
+                </div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-[10px] font-black uppercase tracking-wider">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                  </span>
+                  {liveOnlineDoctors.length} Online
+                </span>
+              </div>
+
+              <div className="mt-4 space-y-2.5">
+                {pulseDoctors.length > 0 ? (
+                  pulseDoctors.map((doc: any, idx: number) => {
+                    const isOnline = (doc.status || '').toUpperCase() === 'ONLINE';
+                    return (
+                      <button
+                        key={doc.id || idx}
+                        type="button"
+                        onClick={() => handleOpenConsultation(doc)}
+                        className="w-full flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/60 hover:border-teal-300 dark:hover:border-teal-500/50 hover:shadow-md hover:-translate-y-0.5 transition-all px-3 py-2.5 text-left group"
+                      >
+                        <span className="relative shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={doc.image}
+                            alt={doc.name}
+                            className="w-11 h-11 rounded-full object-cover border-2 border-white dark:border-slate-700 shadow-sm"
+                          />
+                          <span
+                            className={`absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full ring-2 ring-white dark:ring-slate-900 ${
+                              isOnline ? 'bg-emerald-500' : 'bg-rose-500'
+                            }`}
+                          />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-xs font-bold text-slate-900 dark:text-white truncate">
+                            {doc.name}
+                          </span>
+                          <span className="block text-[10px] text-slate-400 truncate mt-0.5">
+                            {doc.specialty}
+                          </span>
+                        </span>
+                        <span
+                          className={`shrink-0 inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
+                            isOnline
+                              ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30'
+                              : 'text-slate-400 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700'
+                          }`}
+                        >
+                          {isOnline ? 'Online' : 'Offline'}
+                        </span>
+                      </button>
+                    );
+                  })
+                ) : (
+                  <div className="py-10 flex flex-col items-center justify-center gap-3 text-center rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                    <Loader2 className="w-7 h-7 animate-spin text-teal-500" />
+                    <p className="text-xs text-slate-400">Syncing live physician feed...</p>
+                  </div>
+                )}
+              </div>
+
+              <p className="mt-auto pt-4 text-[10px] text-slate-400 dark:text-slate-400 flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-teal-500" />
+                1800+ BMDC specialists • avg. wait &lt; 2 min
+              </p>
+            </div>
+
+
+
+            {/* ------------ BOX 3 · 1-click consultation trigger ------------ */}
+            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-teal-600 via-emerald-600 to-cyan-600 text-white shadow-2xl shadow-teal-600/30 p-5 sm:p-6 flex flex-col">
+              <div className="absolute -top-14 -right-14 w-44 h-44 rounded-full bg-white/15 blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-16 -left-10 w-40 h-40 rounded-full bg-cyan-300/20 blur-2xl pointer-events-none" />
+
+              <span className="relative inline-flex items-center gap-1.5 self-start px-2.5 py-1 rounded-full bg-white/15 border border-white/25 text-[10px] font-black uppercase tracking-widest">
+                <Zap className="w-3 h-3" />
+                Instant Booking
+              </span>
+
+              <h3 className="relative mt-4 text-2xl sm:text-[1.7rem] font-black leading-tight">
+                Skip the waiting room.
+              </h3>
+              <p className="relative mt-1.5 text-xs sm:text-sm text-white/85 leading-relaxed">
+                Start a video consult in under 2 minutes — get your digital prescription the
+                moment your call ends.
+              </p>
+
+              <div className="relative mt-4 flex items-center gap-2">
+                {pulseDoctors.slice(0, 3).map((doc: any, idx: number) => (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    key={doc.id || idx}
+                    src={doc.image}
+                    alt=""
+                    className={`w-8 h-8 rounded-full object-cover border-2 border-white/70 shadow-md ${
+                      idx !== 0 ? '-ml-2.5' : ''
+                    }`}
+                  />
+                ))}
+                {pulseDoctors.length > 0 && (
+                  <span className="text-[10px] font-bold text-white/90">
+                    {firstBookingDoctor?.name || 'Top doctors'} online now
+                  </span>
+                )}
+              </div>
+
+              <div className="relative mt-5 inline-flex items-center gap-2 px-3 py-2 rounded-2xl bg-slate-950/20 border border-white/20 w-fit">
+                <span className="text-[10px] uppercase tracking-wider font-bold text-white/75">
+                  Consultation from
+                </span>
+                <span className="font-mono text-base font-black">
+                  ৳{Number(firstBookingDoctor?.consultationFee || firstBookingDoctor?.fee || 500).toLocaleString()}
+                </span>
+              </div>
+
+              <button
+                onClick={() => handleOpenConsultation(firstBookingDoctor || undefined)}
+                className="relative mt-4 w-full py-3.5 rounded-full bg-white text-teal-700 hover:bg-teal-50 font-black text-sm shadow-lg shadow-slate-950/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+              >
+                <Video className="w-4 h-4" />
+                Consult a Doctor Now
+              </button>
+
+              <div className="relative mt-4 flex flex-wrap items-center gap-1.5">
+                {['bKash', 'Visa / Mastercard', 'E-Prescription'].map((t) => (
+                  <span
+                    key={t}
+                    className="px-2 py-0.5 rounded-full bg-white/15 border border-white/20 text-[9px] font-bold"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ========================================================================= */}
       {/* 3. 'CHOOSE A DEPARTMENT OR SYMPTOM' (ROUTES TO /department/[slug])         */}
       {/* ========================================================================= */}
       <section

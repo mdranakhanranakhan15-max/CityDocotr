@@ -123,47 +123,79 @@ export default function ManageAppointmentsPage() {
 
       {/* Stats strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
-          <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Confirmed Bookings
-          </div>
-          <div className="text-2xl font-extrabold text-emerald-400 mt-1">
-            {appointments.filter((a) => a.paymentStatus === 'PAID').length}
-          </div>
-        </div>
-        <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
-          <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1.5">
-            <Banknote className="w-3.5 h-3.5 text-teal-400" /> Total Collected
-          </div>
-          <div className="text-2xl font-extrabold text-teal-400 mt-1">
-            ৳
-            {appointments
-              .filter((a) => a.paymentStatus === 'PAID')
-              .reduce((sum, a) => sum + (a.amountPaid || 0), 0)
-              .toLocaleString()}
+        <div className="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/70 border border-emerald-500/20 group hover:border-emerald-400/40 transition-colors">
+          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none" />
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Confirmed Bookings
+              </div>
+              <div className="text-2xl font-extrabold text-emerald-300 mt-2 font-mono">
+                {appointments.filter((a) => a.paymentStatus === 'PAID').length}
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            </div>
           </div>
         </div>
-        <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
-          <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-teal-400" /> bKash Payments
-          </div>
-          <div className="text-2xl font-extrabold text-teal-400 mt-1">
-            {appointments.filter((a) => a.paymentStatus === 'PAID' && a.paymentMethod === 'BKASH').length}
+        <div className="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-teal-950/70 border border-teal-500/20 group hover:border-teal-400/40 transition-colors">
+          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-teal-500/10 blur-2xl pointer-events-none" />
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+                <Banknote className="w-3.5 h-3.5 text-teal-400" /> Total Collected
+              </div>
+              <div className="text-2xl font-extrabold text-teal-300 mt-2 font-mono">
+                ৳
+                {appointments
+                  .filter((a) => a.paymentStatus === 'PAID')
+                  .reduce((sum, a) => sum + (a.amountPaid || 0), 0)
+                  .toLocaleString()}
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/25 flex items-center justify-center shrink-0">
+              <Banknote className="w-5 h-5 text-teal-400" />
+            </div>
           </div>
         </div>
-        <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
-          <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1.5">
-            <CalendarCheck className="w-3.5 h-3.5 text-purple-400" /> Card Payments
+        <div className="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-sky-950/70 border border-sky-500/20 group hover:border-sky-400/40 transition-colors">
+          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-sky-500/10 blur-2xl pointer-events-none" />
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-sky-400" /> bKash Payments
+              </div>
+              <div className="text-2xl font-extrabold text-sky-300 mt-2 font-mono">
+                {appointments.filter((a) => a.paymentStatus === 'PAID' && a.paymentMethod === 'BKASH').length}
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/25 flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 text-sky-400" />
+            </div>
           </div>
-          <div className="text-2xl font-extrabold text-purple-400 mt-1">
-            {appointments.filter((a) => a.paymentStatus === 'PAID' && a.paymentMethod === 'CARD').length}
+        </div>
+        <div className="relative overflow-hidden p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/70 border border-purple-500/20 group hover:border-purple-400/40 transition-colors">
+          <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-purple-500/10 blur-2xl pointer-events-none" />
+          <div className="flex items-start justify-between gap-2">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-400 font-bold flex items-center gap-1.5">
+                <CalendarCheck className="w-3.5 h-3.5 text-purple-400" /> Card Payments
+              </div>
+              <div className="text-2xl font-extrabold text-purple-300 mt-2 font-mono">
+                {appointments.filter((a) => a.paymentStatus === 'PAID' && a.paymentMethod === 'CARD').length}
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/25 flex items-center justify-center shrink-0">
+              <CalendarCheck className="w-5 h-5 text-purple-400" />
+            </div>
           </div>
         </div>
       </div>
 
 
       {/* Table */}
-      <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl overflow-hidden">
+      <div className="p-5 rounded-[1.5rem] bg-slate-900/70 border border-slate-800/80 shadow-xl backdrop-blur-sm ring-1 ring-white/5 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
@@ -186,7 +218,7 @@ export default function ManageAppointmentsPage() {
                 </tr>
               ) : appointments.length > 0 ? (
                 appointments.map((appt) => (
-                  <tr key={appt.id} className="hover:bg-slate-850/50 transition-colors">
+                  <tr key={appt.id} className="hover:bg-slate-800/60 transition-colors">
                     {/* Patient: real Name, Phone, Location */}
                     <td className="py-3 px-3">
                       <div className="font-bold text-slate-100 flex items-center gap-1.5">

@@ -223,7 +223,7 @@ export default function ManageDoctorsPage() {
       </div>
 
       {/* Data Table */}
-      <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl overflow-hidden">
+      <div className="p-5 rounded-[1.5rem] bg-slate-900/70 border border-slate-800/80 shadow-xl backdrop-blur-sm ring-1 ring-white/5 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
@@ -250,7 +250,7 @@ export default function ManageDoctorsPage() {
                   const doc = normalizeDoctor(rawDoc);
                   const isOnline = doc.isOnline !== false;
                   return (
-                    <tr key={doc.id} className="hover:bg-slate-850/50 transition-colors">
+                    <tr key={doc.id} className="hover:bg-slate-800/60 transition-colors">
                       {/* Avatar & Name */}
                       <td className="py-3 px-3">
                         <div className="flex items-center gap-3">

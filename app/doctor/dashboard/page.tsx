@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { IncomingCallModal } from '@/components/doctor/IncomingCallModal';
 import { PrescriptionPreviewModal } from '@/components/doctor/PrescriptionPreviewModal';
+import { DoctorSidebar } from '@/components/doctor/DoctorSidebar';
 import { playRingtone, stopRingtone } from '@/utils/ringtone';
 import {
   getAppointmentSlotInfo,
@@ -397,9 +398,16 @@ export default function DoctorDashboardPage() {
   const completedToday = queue.filter((a) => a.status === 'COMPLETED');
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 select-none">
+    <div className="min-h-screen bg-slate-950 text-slate-100 select-none flex">
+      {/* Collapsible left sidebar + main content grid */}
+      <DoctorSidebar
+        doctorName={doctor?.name}
+        doctorImage={doctor?.image}
+        specialty={doctor?.specialty}
+      />
+      <div className="flex-1 flex flex-col min-w-0">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/70 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -426,41 +434,16 @@ export default function DoctorDashboardPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            {doctor?.image && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={doctor.image}
-                alt={doctor.name}
-                className="w-9 h-9 rounded-full object-cover border-2 border-teal-500/40"
-              />
-            )}
-            <div className="hidden sm:block text-right">
-              <div className="text-xs font-bold text-slate-100 truncate max-w-[160px]">
-                {doctor?.name}
-              </div>
-              <div className="text-[10px] text-teal-400">{doctor?.specialty}</div>
+            <div className="flex items-center gap-3">
+              <span className="hidden md:inline-flex text-[11px] text-slate-500 font-medium">
+                Secure doctor portal
+              </span>
             </div>
-            <Link
-              href="/doctor/settings"
-              className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-teal-300 border border-slate-700 transition-colors"
-              title="Security Settings"
-            >
-              <Settings className="w-4 h-4" />
-            </Link>
-            <button
-              onClick={handleLogout}
-              className="p-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-slate-700 transition-colors"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
           </div>
-        </div>
       </header>
 
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="w-full max-w-6xl xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Page heading */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -1227,6 +1210,7 @@ export default function DoctorDashboardPage() {
 
 
       </main>
+      </div>
 
       {/* Real-Time Incoming Call Modal */}
       <IncomingCallModal

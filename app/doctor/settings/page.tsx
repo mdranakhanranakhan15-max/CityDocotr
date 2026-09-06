@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
 } from 'lucide-react';
 import { ChangePasswordForm } from '@/components/ChangePasswordForm';
+import { DoctorSidebar } from '@/components/doctor/DoctorSidebar';
 
 export default function DoctorSettingsPage() {
   const [doctor, setDoctor] = useState<any>(null);
@@ -56,8 +57,11 @@ export default function DoctorSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 select-none">
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/90 backdrop-blur-md">
+    <div className="min-h-screen bg-slate-950 text-slate-100 select-none flex">
+      {/* Collapsible left sidebar + main content grid */}
+      <DoctorSidebar doctorName={doctor.name} doctorImage={doctor.image} specialty={doctor.specialty} />
+      <div className="flex-1 flex flex-col min-w-0">
+      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/70 backdrop-blur-md">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
@@ -102,6 +106,7 @@ export default function DoctorSettingsPage() {
 
         <ChangePasswordForm role="DOCTOR" theme="dark" />
       </main>
+      </div>
     </div>
   );
 }

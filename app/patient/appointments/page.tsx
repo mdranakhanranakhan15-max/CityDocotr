@@ -290,192 +290,236 @@ export default function PatientAppointmentsPage() {
               with the slot time, payment receipt and TrxID.
             </p>
             <Link
-              href="/#doctors"
+              href="/department/all"
               className="inline-flex items-center gap-2 mt-3 px-5 py-2.5 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm shadow-teal-600/20"
             >
-              <Stethoscope className="w-4 h-4" /> Book a Consultation
+              <Stethoscope className="w-4 h-4" /> Browse Doctors &amp; Book a Consultation
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
-            {appointments.map((appt) => {
-              const slotInfo = slotInfoFor(appt);
-              const slotState = slotInfo.state;
-              const isCompleted = slotState === 'COMPLETED';
-              const isCancelled = slotState === 'CANCELLED';
-              const isTimedOut = slotState === 'TIMED_OUT';
-              const isUpcoming = slotState === 'UPCOMING';
-              const canEnter = slotState === 'ACTIVE';
-              const doctor = appt.doctor || {};
-              const docName = doctor.name || 'CityDoctor Physician';
-              const docInitial = (doctor.name || 'D').trim().charAt(0).toUpperCase();
-              const isPaid = appt.paymentStatus === 'PAID';
-              const bookingBadgeStatus = isUpcoming
-                ? 'UPCOMING'
-                : isTimedOut
-                  ? 'TIMED_OUT'
-                  : appt.status;
-              return (
-                <div
-                  key={appt.id}
-                  className="rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md hover:border-teal-200 transition-all overflow-hidden"
-                >
-                  {/* Top: doctor + status */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5 border-b border-slate-100">
-                    {doctor.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={doctor.image}
-                        alt={docName}
-                        className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white font-black text-base flex items-center justify-center shrink-0 shadow-sm">
-                        {docInitial}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-bold text-slate-900 text-sm truncate">
-                          {docName}
-                        </h3>
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[9px] font-bold uppercase tracking-wider">
-                          {doctor.specialty || 'General Physician'}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
-                        <Stethoscope className="w-3 h-3 text-teal-600" />
-                        {doctor.designation || 'Consultant'} • {doctor.hospital || 'CityDoctor Telehealth'}
-                      </p>
-                    </div>
-                    <BookingBadge status={bookingBadgeStatus} />
-                  </div>
-                  {/* Middle: slot / fee / trx */}
-                  <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 divide-slate-100 text-xs">
-                    <div className="p-4">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1.5 flex items-center gap-1">
-                        <CalendarDays className="w-3.5 h-3.5 text-teal-600" /> Scheduled Slot
-                      </div>
-                      <div className="font-mono text-[11px] text-slate-700">{slotLabel(appt)}</div>
-                      {!isCompleted && !isCancelled && (
-                        <div
-                          className={`mt-1.5 text-[10px] font-semibold ${
-                            canEnter
-                              ? 'text-emerald-600'
-                              : isUpcoming
-                                ? 'text-amber-600'
-                                : 'text-slate-400'
-                          }`}
-                        >
-                          {canEnter
-                            ? 'Video room is open now'
-                            : isUpcoming
-                              ? `Opens at ${clockLabel(appt)}`
-                              : isTimedOut
-                                ? 'Session window has ended'
-                                : ''}
-                        </div>
+          <div className="relative pl-8 sm:pl-10">
+            <div
+              className="absolute left-[11px] sm:left-[13px] top-2 bottom-2 w-0.5 rounded-full bg-gradient-to-b from-teal-400 via-slate-200 to-slate-200 dark:from-teal-500 dark:via-slate-700 dark:to-slate-700"
+              aria-hidden
+            />
+            <div className="space-y-5">
+              {appointments.map((appt) => {
+                const slotInfo = slotInfoFor(appt);
+                const slotState = slotInfo.state;
+                const isCompleted = slotState === 'COMPLETED';
+                const isCancelled = slotState === 'CANCELLED';
+                const isTimedOut = slotState === 'TIMED_OUT';
+                const isUpcoming = slotState === 'UPCOMING';
+                const canEnter = slotState === 'ACTIVE';
+                const doctor = appt.doctor || {};
+                const docName = doctor.name || 'CityDoctor Physician';
+                const docInitial = (doctor.name || 'D').trim().charAt(0).toUpperCase();
+                const isPaid = appt.paymentStatus === 'PAID';
+                const isLive = canEnter || isUpcoming;
+                const bookingBadgeStatus = isUpcoming
+                  ? 'UPCOMING'
+                  : isTimedOut
+                    ? 'TIMED_OUT'
+                    : appt.status;
+                const nodeTone = canEnter
+                  ? 'bg-emerald-500 text-white ring-emerald-200 shadow-emerald-500/40'
+                  : isUpcoming
+                    ? 'bg-amber-400 text-white ring-amber-100'
+                    : isCompleted
+                      ? 'bg-teal-600 text-white ring-teal-100'
+                      : isCancelled
+                        ? 'bg-rose-500 text-white ring-rose-100'
+                        : 'bg-slate-300 text-slate-100 ring-slate-100';
+                return (
+                  <div key={appt.id} className="relative">
+                    <div
+                      className={`absolute -left-8 sm:-left-10 top-3 w-6 h-6 rounded-full ring-4 shadow-lg flex items-center justify-center ${nodeTone}`}
+                    >
+                      {canEnter ? (
+                        <Video className="w-3 h-3" />
+                      ) : isUpcoming ? (
+                        <Clock className="w-3 h-3" />
+                      ) : isCompleted ? (
+                        <CheckCircle2 className="w-3 h-3" />
+                      ) : (
+                        <Clock className="w-3 h-3" />
                       )}
                     </div>
-                    <div className="p-4">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1.5 flex items-center gap-1">
-                        <Wallet className="w-3.5 h-3.5 text-emerald-600" /> Fee Paid
-                      </div>
-                      <div className="font-mono font-bold text-emerald-600 text-sm">
-                        {bdt(appt.amountPaid ?? doctor.consultationFee)}
-                      </div>
+
+
+                    {isLive ? (
                       <div
-                        className={`mt-1.5 inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider border ${
-                          isPaid
-                            ? 'text-emerald-700 border-emerald-200 bg-emerald-50'
-                            : appt.paymentStatus === 'REFUNDED'
-                              ? 'text-rose-700 border-rose-200 bg-rose-50'
-                              : 'text-amber-700 border-amber-200 bg-amber-50'
+                        className={`rounded-3xl overflow-hidden border bg-white transition-shadow duration-300 ${
+                          canEnter
+                            ? 'border-teal-400/70 shadow-[0_18px_55px_-16px_rgba(16,185,129,0.45)] ring-4 ring-teal-400/10'
+                            : 'border-amber-200/80 shadow-xl shadow-amber-500/10'
                         }`}
                       >
-                        {isPaid && <CheckCircle2 className="w-3 h-3" />}
-                        {appt.paymentStatus || 'UNPAID'}
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1.5 flex items-center gap-1">
-                        <CreditCard className="w-3.5 h-3.5 text-teal-600" /> TrxID
-                      </div>
-                      {appt.transactionId ? (
-                        <div className="font-mono text-[11px] text-slate-700 break-all">
-                          {appt.transactionId}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 sm:p-5">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {doctor.image ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={doctor.image}
+                                alt={docName}
+                                className="w-12 h-12 rounded-2xl object-cover border border-slate-200 shrink-0 shadow-sm"
+                              />
+                            ) : (
+                              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white font-black text-base flex items-center justify-center shrink-0 shadow-sm">
+                                {docInitial}
+                              </div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="font-bold text-slate-900 text-sm truncate">
+                                  {docName}
+                                </h3>
+                                <span className="px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-100 text-[9px] font-bold uppercase tracking-wider">
+                                  {doctor.specialty || 'General Physician'}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                                <Stethoscope className="w-3 h-3 text-teal-600" />
+                                {doctor.designation || 'Consultant'} •{' '}
+                                {doctor.hospital || 'CityDoctor Telehealth'}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {canEnter && (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-wider">
+                                <span className="relative flex h-1.5 w-1.5">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+                                </span>
+                                Open now
+                              </span>
+                            )}
+                            <BookingBadge status={bookingBadgeStatus} />
+                          </div>
                         </div>
-                      ) : (
-                        <div className="text-slate-500 italic">—</div>
-                      )}
-                      <div className="text-[10px] text-slate-500 mt-1.5">
-                        {appt.paymentMethod === 'CARD' ? 'Card' : appt.paymentMethod === 'BKASH' ? 'bKash' : '—'} payment
+
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 px-4 sm:px-5 py-3.5 bg-slate-50/70 border-t border-slate-100 text-xs">
+                          <div>
+                            <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1 mb-1">
+                              <CalendarDays className="w-3.5 h-3.5 text-teal-600" /> Scheduled Slot
+                            </div>
+                            <div className="font-mono text-[11px] text-slate-700">{slotLabel(appt)}</div>
+                          </div>
+                          <div>
+                            <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1 mb-1">
+                              <Wallet className="w-3.5 h-3.5 text-emerald-600" /> Fee Paid
+                            </div>
+                            <div className="font-mono font-bold text-emerald-600 text-sm">
+                              {bdt(appt.amountPaid ?? doctor.consultationFee)}
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1 mb-1">
+                              <CreditCard className="w-3.5 h-3.5 text-teal-600" /> TrxID
+                            </div>
+                            <div className="font-mono text-[11px] text-slate-700 break-all">
+                              {appt.transactionId || '—'}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Prominent action block */}
+                        <div className="border-t border-slate-100 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="text-[11px] text-slate-500">
+                            {canEnter ? (
+                              <span className="text-emerald-700 font-semibold flex items-center gap-1.5">
+                                <Activity className="w-3.5 h-3.5" />
+                                Your video room is open — tap to join your doctor now.
+                              </span>
+                            ) : (
+                              <>
+                                Room unlocks at{' '}
+                                <span className="font-mono font-bold text-slate-700">
+                                  {clockLabel(appt)}
+                                </span>{' '}
+                                (5 min before your slot) and stays open for 15 minutes after.
+                              </>
+                            )}
+                          </div>
+                          {canEnter ? (
+                            <Link
+                              href={`/consultation/${appt.id}`}
+                              className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-white font-black text-sm shadow-lg shadow-teal-600/30 active:scale-[0.98] transition-all"
+                            >
+                              <Video className="w-5 h-5" />
+                              Enter Video Room
+                            </Link>
+                          ) : (
+                            <span
+                              className="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold"
+                              title="The video room opens at your booked slot time"
+                            >
+                              <Clock className="w-4 h-4" />
+                              {`Opens at ${clockLabel(appt)}`}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+
+
+                      /* ===== PAST · COMPACT MUTED CARD ===== */
+                      <div className="rounded-2xl border border-slate-200/80 bg-white/70 backdrop-blur-sm shadow-sm px-3.5 py-3 flex flex-col sm:flex-row sm:items-center gap-3 hover:border-slate-300 transition-colors">
+                        {doctor.image ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={doctor.image}
+                            alt={docName}
+                            className="w-11 h-11 rounded-xl object-cover border border-slate-200 shrink-0 opacity-80"
+                          />
+                        ) : (
+                          <div className="w-11 h-11 rounded-xl bg-slate-100 text-slate-500 font-bold flex items-center justify-center shrink-0 border border-slate-200">
+                            {docInitial}
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h4 className="text-[13px] font-bold text-slate-700 truncate">
+                              {docName}
+                            </h4>
+                            <span className="px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500 border border-slate-200 text-[8px] font-bold uppercase tracking-wider">
+                              {doctor.specialty || 'General Physician'}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-1 flex items-center gap-1.5">
+                            <CalendarDays className="w-3 h-3" />
+                            {slotLabel(appt)}
+                            {isPaid && (
+                              <>
+                                <span className="text-slate-300">•</span>
+                                <span className="font-mono font-semibold text-emerald-600">
+                                  {bdt(appt.amountPaid ?? doctor.consultationFee)}
+                                </span>
+                              </>
+                            )}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <BookingBadge status={bookingBadgeStatus} />
+                          {isCompleted && (
+                            <Link
+                              href={`/prescription/${appt.id}`}
+                              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-teal-50 text-slate-600 hover:text-teal-700 border border-slate-200 text-[10px] font-bold shadow-sm transition-colors"
+                              title="View Prescription"
+                            >
+                              <FileText className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Prescription</span>
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {/* Bottom: action */}
-                  <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="text-[11px] text-slate-500">
-                      {isCancelled ? (
-                        'This booking was cancelled.'
-                      ) : isCompleted ? (
-                        'Consultation completed.'
-                      ) : isTimedOut ? (
-                        'The consultation window for this booking has ended.'
-                      ) : (
-                        <>
-                          Slot: <span className="text-slate-700 font-semibold">{slotLabel(appt)}</span>
-                        </>
-                      )}
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-                      {isCompleted ? (
-                        <Link
-                          href={`/prescription/${appt.id}`}
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 text-xs font-bold shadow-sm transition-colors"
-                        >
-                          <FileText className="w-4 h-4" /> View Prescription
-                        </Link>
-                      ) : isCancelled ? (
-                        <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-bold uppercase tracking-wider">
-                          <Clock className="w-4 h-4" /> Cancelled
-                        </span>
-                      ) : canEnter ? (
-                        <Link
-                          href={`/consultation/${appt.id}`}
-                          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm shadow-teal-600/20 transition-all active:scale-95"
-                        >
-                          <Video className="w-4 h-4" /> Enter Video Room
-                        </Link>
-                      ) : isUpcoming ? (
-                        <span
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
-                          title="The video room opens at your booked slot time"
-                        >
-                          <Clock className="w-4 h-4" />
-                          {`Opens at ${clockLabel(appt)}`}
-                        </span>
-                      ) : isTimedOut ? (
-                        <span
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
-                          title="The consultation window for this booking has ended"
-                        >
-                          <Clock className="w-4 h-4" /> Window Ended
-                        </span>
-                      ) : (
-                        <span
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
-                          title="No active video session for this booking"
-                        >
-                          <Clock className="w-4 h-4" />
-                          {appt.status === 'PENDING' ? 'Awaiting Confirmation' : 'No Video Session'}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
       </main>
