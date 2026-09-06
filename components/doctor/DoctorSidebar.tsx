@@ -79,7 +79,7 @@ export const DoctorSidebar: React.FC<DoctorSidebarProps> = ({
   return (
     <aside
       className={`relative flex flex-col h-screen shrink-0 select-none bg-slate-950/95 border-r border-slate-800 backdrop-blur-xl transition-all duration-300 ease-in-out ${
-        collapsed ? 'w-[74px]' : 'w-60'
+        collapsed ? 'w-[88px]' : 'w-72'
       }`}
     >
       <button

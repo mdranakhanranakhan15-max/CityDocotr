@@ -51,7 +51,7 @@ export default function PatientSettingsPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 select-none">
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <div className="w-9 h-9 rounded-xl bg-teal-600 flex items-center justify-center shadow-md shadow-teal-600/25">
@@ -74,7 +74,7 @@ export default function PatientSettingsPage() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <main className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-8 space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white font-black text-lg flex items-center justify-center shrink-0">
             {(profile.name || 'P').trim().charAt(0).toUpperCase()}

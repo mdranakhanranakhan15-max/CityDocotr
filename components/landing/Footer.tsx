@@ -17,7 +17,7 @@ export const Footer: React.FC = () => {
     <footer id="contact" className="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs select-none">
       {/* Top Banner with Emergency Notice */}
       <div className="border-b border-slate-800/80 bg-slate-900/60 py-4 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
           <div className="flex items-center gap-2 text-slate-300">
             <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             <span>Emergency medical situations? Dial <strong>911</strong> or visit your nearest hospital immediately.</span>
@@ -31,7 +31,7 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Main Footer Links */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-12 sm:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-10">
           {/* Col 1: Brand & Bio */}
           <div className="lg:col-span-2 space-y-4">

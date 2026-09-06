@@ -41,7 +41,7 @@ export const TrustBanner: React.FC = () => {
 
   return (
     <section className="py-8 bg-slate-900/90 border-b border-slate-800/80 select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {stats.map((item, idx) => {
             const Icon = item.icon;

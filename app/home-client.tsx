@@ -373,13 +373,13 @@ export default function CityDoctorLandingPage() {
 
 
   return (
-    <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-slate-50 text-slate-900 font-sans selection:bg-teal-600 selection:text-white">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-[#FAFAFA] text-slate-900 font-sans selection:bg-teal-600 selection:text-white">
       {/* ========================================================================= */}
       {/* ========================================================================= */}
       {/* 1. FLOATING GLASSMORPHISM NAVBAR (rounded-full glass capsule)             */}
       {/* ========================================================================= */}
       <header className="sticky top-0 z-40 w-full px-3 sm:px-4 pt-3 sm:pt-4 select-none">
-        <div className="mx-auto max-w-6xl">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12">
           <div className="relative rounded-full bg-white/70 dark:bg-slate-900/70 backdrop-blur-md shadow-lg shadow-slate-900/10 ring-1 ring-slate-900/5 border border-white/80 dark:border-slate-700/60">
             <div className="flex items-center justify-between gap-2 sm:gap-3 px-3.5 sm:px-5 py-2.5">
               {/* Brand logo */}
@@ -652,10 +652,10 @@ export default function CityDoctorLandingPage() {
         <div className="absolute top-40 -right-24 w-96 h-96 rounded-full bg-blue-200/30 blur-3xl pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.06),transparent_45%),radial-gradient(circle_at_bottom_right,rgba(59,130,246,0.06),transparent_45%)] pointer-events-none" />
 
-        <div className="mx-auto max-w-6xl px-3 sm:px-4 relative">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:auto-rows-fr">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 lg:auto-rows-fr">
             {/* ------------ BOX 1 · Bold headline + specialty search ------------ */}
-            <div className="relative lg:col-span-2 lg:row-span-2 overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/70 backdrop-blur-sm shadow-xl shadow-slate-900/5 p-6 sm:p-8 lg:p-10 flex flex-col">
+            <div className="relative lg:col-span-2 lg:row-span-2 overflow-hidden rounded-[32px] border border-slate-200/80 bg-white/70 backdrop-blur-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 sm:p-10 lg:p-12 flex flex-col">
               {/* Subtle live campaign image from admin banners */}
               {banners.length > 0 && currentBanner?.imageUrl && (
                 <div className="pointer-events-none absolute -right-10 -top-10 w-44 h-44 sm:w-60 sm:h-60 rounded-[2.5rem] overflow-hidden opacity-[0.16] rotate-6 blur-[1px]">
@@ -694,7 +694,7 @@ export default function CityDoctorLandingPage() {
                 )}
               </div>
 
-              <h1 className="relative mt-5 text-[2rem] leading-[1.08] sm:text-5xl lg:text-[3.4rem] font-black tracking-tight text-slate-900 dark:text-white">
+              <h1 className="relative mt-5 text-5xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[1.05] text-slate-900 dark:text-white">
                 Consult Top Doctors Online,{' '}
                 <span className="bg-gradient-to-r from-teal-600 via-emerald-500 to-cyan-500 bg-clip-text text-transparent">
                   Anytime, Anywhere.
@@ -725,7 +725,7 @@ export default function CityDoctorLandingPage() {
               {/* Search bar */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="relative mt-7 flex items-center gap-2 rounded-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-900/5 pl-4 pr-2 py-2 focus-within:ring-2 focus-within:ring-teal-500/40 transition-all"
+                className="relative mt-7 flex items-center gap-3 rounded-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 shadow-[0_8px_30px_rgb(0,0,0,0.04)] pl-5 pr-3 py-2.5 focus-within:ring-2 focus-within:ring-teal-500/40 transition-all"
               >
                 <Search className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                 <input
@@ -787,7 +787,7 @@ export default function CityDoctorLandingPage() {
 
 
             {/* ------------ BOX 2 · Live doctor pulse widget ------------ */}
-            <div className="relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm shadow-xl shadow-slate-900/5 p-5 sm:p-6 flex flex-col">
+            <div className="relative overflow-hidden rounded-[32px] border border-slate-200/80 bg-white/70 dark:bg-slate-900/70 backdrop-blur-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 sm:p-8 flex flex-col">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5">
                   <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 text-white flex items-center justify-center shadow-md shadow-teal-500/25">
@@ -946,7 +946,7 @@ export default function CityDoctorLandingPage() {
         id="choose-specialty"
         className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-200 scroll-mt-16 select-none"
       >
-        <div className="max-w-7xl mx-auto space-y-8">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-8">
           {/* Header with Title & Toggle Switch */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-100">
             <div>
@@ -985,7 +985,7 @@ export default function CityDoctorLandingPage() {
 
           {/* VIEW A: DEPARTMENTS VIEW (Routes to /department/[slug]) */}
           {activeTab === 'departments' && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 animate-in fade-in duration-300">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5 animate-in fade-in duration-300">
               {departments.map((dept, idx) => {
                 const Icon = dept.icon;
                 return (
@@ -1011,7 +1011,7 @@ export default function CityDoctorLandingPage() {
 
           {/* VIEW B: SYMPTOMS VIEW (Routes to /department/[slug]) */}
           {activeTab === 'symptoms' && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 animate-in fade-in duration-300">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-4 sm:gap-5 animate-in fade-in duration-300">
               {symptoms.map((sym, idx) => (
                 <Link
                   key={idx}
@@ -1039,7 +1039,7 @@ export default function CityDoctorLandingPage() {
       {/* 4. QUICK SERVICES GRID (SCREENSHOT 1 BOTTOM)                             */}
       {/* ========================================================================= */}
       <section className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-100 select-none">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/department/all"
             className="p-6 rounded-2xl bg-white border border-slate-200 hover:border-blue-500 hover:shadow-lg transition-all duration-300 cursor-pointer group space-y-3"
@@ -1112,7 +1112,7 @@ export default function CityDoctorLandingPage() {
       {/* 5. TRUST INDICATORS ROW (SCREENSHOT 2)                                   */}
       {/* ========================================================================= */}
       <section className="py-10 bg-[#f8fbff] border-t border-b border-blue-100 select-none">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div className="space-y-1">
               <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center mx-auto mb-2">
@@ -1153,7 +1153,7 @@ export default function CityDoctorLandingPage() {
       {/* 6. "ACCESS CONVENIENT ONLINE HEALTHCARE" SECTION (SCREENSHOT 3)           */}
       {/* ========================================================================= */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           <div className="lg:col-span-6 space-y-6">
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
               Access convenient online Healthcare
@@ -1219,7 +1219,7 @@ export default function CityDoctorLandingPage() {
       {/* 7. HOME DIAGNOSTIC SERVICE (SCREENSHOT 5)                                 */}
       {/* ========================================================================= */}
       <section id="diagnostic" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           <div className="lg:col-span-6 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 font-bold text-xs">
               <TestTube className="w-4 h-4" />
@@ -1320,7 +1320,7 @@ export default function CityDoctorLandingPage() {
       {/* 8. PREMIUM MEMBER & CORPORATE PARTNERS (SCREENSHOTS 6 & 7)                */}
       {/* ========================================================================= */}
       <section id="health-plan" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f0f7ff] border-t border-slate-200">
-        <div className="max-w-7xl mx-auto space-y-16">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 relative flex justify-center">
               <div className="relative w-full max-w-md h-64 sm:h-80 rounded-3xl overflow-hidden shadow-xl border-4 border-white">
@@ -1437,7 +1437,7 @@ export default function CityDoctorLandingPage() {
       {/* 9. HOSPITAL PARTNERS (SCREENSHOT 8)                                       */}
       {/* ========================================================================= */}
       <section className="py-14 sm:py-18 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-200 select-none">
-        <div className="max-w-7xl mx-auto space-y-8 text-center">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-8 text-center">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               Our Hospital Partners
@@ -1476,7 +1476,7 @@ export default function CityDoctorLandingPage() {
       {/* 10. MASS MEDIA & REVIEWS (SCREENSHOTS 9 & 10)                             */}
       {/* ========================================================================= */}
       <section id="media" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#f8fbff] border-t border-slate-200">
-        <div className="max-w-7xl mx-auto space-y-12">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-12">
           {/* Part A: CityDoctor in Mass Media */}
           <div className="space-y-6">
             <div className="text-center space-y-2">
@@ -1603,7 +1603,7 @@ export default function CityDoctorLandingPage() {
       {/* 11. APP DOWNLOAD SECTION (SCREENSHOT 11)                                  */}
       {/* ========================================================================= */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-[#e6f2ff] via-[#edf5ff] to-[#e0edff] border-t border-blue-200">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Side Text & Badges */}
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-800 font-bold text-xs">
@@ -1703,7 +1703,7 @@ export default function CityDoctorLandingPage() {
       {/* 12. HEALTH BLOG SECTION (SCREENSHOT 12)                                  */}
       {/* ========================================================================= */}
       <section id="blogs" className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-white border-t border-slate-200">
-        <div className="max-w-7xl mx-auto space-y-10">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-10">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">
@@ -1926,7 +1926,7 @@ export default function CityDoctorLandingPage() {
       {/* 15. FULL-WIDTH SOLID BLUE FOOTER (BG-BLUE-600) (SCREENSHOT 15)           */}
       {/* ========================================================================= */}
       <footer className="bg-blue-600 text-white text-xs select-none">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-12 sm:py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
             {/* Col 1: Logo, Short Paragraph, Phone, Email & 5 Social Icons */}
             <div className="space-y-4">

@@ -408,7 +408,7 @@ export default function DoctorDashboardPage() {
       <div className="flex-1 flex flex-col min-w-0">
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/70 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center shadow-md shadow-teal-600/25 group-hover:scale-105 transition-transform">
@@ -443,7 +443,7 @@ export default function DoctorDashboardPage() {
       </header>
 
 
-      <main className="w-full max-w-6xl xl:max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="flex-1 w-full p-8 lg:p-12 space-y-6">
         {/* Page heading */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>

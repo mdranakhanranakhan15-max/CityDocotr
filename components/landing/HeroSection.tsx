@@ -55,7 +55,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Column: Headline, Search Bar, Quick Tags */}
           <div className="lg:col-span-7 space-y-6 text-left">
@@ -67,7 +67,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.15]">
+            <h1 className="text-5xl md:text-6xl xl:text-7xl font-extrabold text-slate-100 tracking-tight leading-[1.05]">
               Consult Top Doctors Online,{' '}
               <span className="bg-gradient-to-r from-teal-300 via-cyan-200 to-blue-300 bg-clip-text text-transparent">
                 Anytime, Anywhere.

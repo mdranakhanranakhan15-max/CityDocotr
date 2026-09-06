@@ -137,7 +137,7 @@ function CategoryPage({ params }: CategoryPageProps) {
     <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-[#f8fbff] text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       {/* 1. TOP NAVBAR */}
       <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-sm select-none">
-        <div className="max-w-[95%] lg:max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 h-24 flex items-center justify-between">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-24 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3.5 group">
             <div className="w-12 h-12 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-700/20 group-hover:scale-105 transition-transform">
               <Activity className="w-7 h-7" />
@@ -220,7 +220,7 @@ function CategoryPage({ params }: CategoryPageProps) {
 
       {/* 2. BREADCRUMBS & DYNAMIC HEADER */}
       <section className="bg-white border-b border-slate-200 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 select-none">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-4">
           <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
             <Link href="/" className="hover:text-blue-700 transition-colors">Home</Link>
             <span>/</span>
@@ -250,7 +250,7 @@ function CategoryPage({ params }: CategoryPageProps) {
 
       {/* 3. SEARCH BAR, FILTER BUTTON & SORT DROPDOWN */}
       <section className="py-4 px-4 sm:px-6 lg:px-8 bg-[#f0f7ff] border-b border-blue-100 select-none">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 flex flex-col md:flex-row items-center justify-between gap-3">
           {/* Search Input */}
           <div className="relative w-full md:max-w-xl">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-600" />
@@ -308,7 +308,7 @@ function CategoryPage({ params }: CategoryPageProps) {
         </div>
 
         {showFilterModal && (
-          <div className="max-w-7xl mx-auto mt-3 p-4 bg-white rounded-2xl border border-blue-200 shadow-sm animate-in fade-in space-y-3">
+          <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 mt-3 p-4 bg-white rounded-2xl border border-blue-200 shadow-sm animate-in fade-in space-y-3">
             <div className="flex items-center justify-between text-xs font-bold text-slate-800 border-b border-slate-100 pb-2">
               <span>Filter by Consultation Fee</span>
               <span className="text-blue-700 font-mono">Up to ৳{maxFeeFilter}</span>
@@ -339,7 +339,7 @@ function CategoryPage({ params }: CategoryPageProps) {
       </section>
 
       {/* 4. DOCTOR LISTING 3-COLUMN GRID & INLINE DOCTOR CARDS */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 select-none">
+      <main className="flex-1 w-full px-4 md:px-8 xl:px-12 py-8 sm:py-12 select-none">
         {isLoading ? (
           <div className="p-20 text-center bg-white rounded-3xl border border-slate-200 space-y-3 shadow-sm">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto" />
@@ -379,7 +379,7 @@ function CategoryPage({ params }: CategoryPageProps) {
       </main>
       {/* 7. FOOTER */}
       <footer className="bg-blue-600 text-white text-xs select-none mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-white text-blue-700 flex items-center justify-center font-bold">
               <Activity className="w-4 h-4" />

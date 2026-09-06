@@ -269,7 +269,7 @@ function CheckoutContent() {
     <div className="min-h-screen flex flex-col bg-[#f8fbff] text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
       {/* Header */}
       <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-sm">
-        <div className="max-w-[95%] lg:max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 h-24 flex items-center justify-between">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-24 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3.5 group">
             <div className="w-12 h-12 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-700/20 group-hover:scale-105 transition-transform">
               <Activity className="w-7 h-7" />
@@ -291,7 +291,7 @@ function CheckoutContent() {
 
       {/* Page header */}
       <section className="bg-white border-b border-slate-200 py-6 px-6 sm:px-8 lg:px-10">
-        <div className="max-w-[95%] lg:max-w-[1600px] mx-auto">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12">
           <div className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-2">
             <Link href="/" className="hover:text-blue-700 transition-colors">Home</Link>
             <span>/</span>
@@ -312,7 +312,7 @@ function CheckoutContent() {
       </section>
 
       {/* Main grid */}
-      <main className="flex-1 max-w-[95%] lg:max-w-[1600px] mx-auto w-full px-6 sm:px-8 lg:px-10 py-8 select-none">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-8 select-none">
         <div className="grid lg:grid-cols-3 gap-6">
           {/* LEFT COLUMN */}
           <div className="lg:col-span-2 space-y-6">
@@ -703,7 +703,7 @@ function CheckoutContent() {
 
       {/* Footer */}
       <footer className="bg-blue-600 text-white text-xs select-none mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-lg bg-white text-blue-700 flex items-center justify-center font-bold">
               <Activity className="w-4 h-4" />

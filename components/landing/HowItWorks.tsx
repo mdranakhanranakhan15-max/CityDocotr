@@ -49,7 +49,7 @@ export const HowItWorks: React.FC = () => {
 
   return (
     <section id="how-it-works" className="py-16 sm:py-24 bg-slate-950 border-t border-slate-800/80 select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-12">
         {/* Section Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 text-xs font-bold text-teal-400 uppercase tracking-widest">

@@ -199,7 +199,7 @@ export default function PatientAppointmentsPage() {
     <div className="min-h-screen bg-slate-50 text-slate-900 select-none">
       {/* Top header */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-500 flex items-center justify-center shadow-md shadow-teal-600/25 group-hover:scale-105 transition-transform">
@@ -244,7 +244,7 @@ export default function PatientAppointmentsPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 py-8 space-y-6">
         {/* Page heading + summary chips */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div>

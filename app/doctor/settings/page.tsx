@@ -62,7 +62,7 @@ export default function DoctorSettingsPage() {
       <DoctorSidebar doctorName={doctor.name} doctorImage={doctor.image} specialty={doctor.specialty} />
       <div className="flex-1 flex flex-col min-w-0">
       <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-900/70 backdrop-blur-md">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center shadow-md shadow-teal-600/25">
@@ -85,7 +85,7 @@ export default function DoctorSettingsPage() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <main className="flex-1 w-full p-8 lg:p-12 space-y-6">
         <div className="flex items-center gap-4">
           {doctor.image && (
             // eslint-disable-next-line @next/next/no-img-element

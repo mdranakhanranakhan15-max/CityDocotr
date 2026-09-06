@@ -23,7 +23,7 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl transition-all select-none">
-      <div className="max-w-[95%] lg:max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 h-24 flex items-center justify-between">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 h-24 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3.5 group">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-500 via-teal-600 to-cyan-500 flex items-center justify-center shadow-xl shadow-teal-500/25 ring-2 ring-teal-400/30 group-hover:scale-105 transition-all duration-300">

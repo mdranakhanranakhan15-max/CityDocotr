@@ -114,7 +114,7 @@ export const SpecialtiesGrid: React.FC<SpecialtiesGridProps> = ({
 
   return (
     <section id="specialties" className="py-14 sm:py-20 bg-slate-950 select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-10">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
@@ -140,7 +140,7 @@ export const SpecialtiesGrid: React.FC<SpecialtiesGridProps> = ({
         </div>
 
         {/* 8-Card Specialties Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 sm:gap-6">
           {SPECIALTY_ITEMS.map((item) => {
             const Icon = item.icon;
             return (

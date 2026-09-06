@@ -12,13 +12,13 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-slate-950 text-slate-100">
-      {/* Sidebar */}
+    <div className="flex h-screen w-full overflow-hidden bg-slate-950 text-slate-100">
+      {/* Spacious Sidebar */}
       <AdminSidebar />
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* Main Content Area — full remaining width, edge-to-edge */}
+      <div className="flex-1 min-w-0 flex flex-col h-full overflow-hidden">
+        <main className="flex-1 w-full overflow-y-auto p-8 lg:p-12 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
           {children}
         </main>
       </div>

@@ -49,7 +49,7 @@ export const AvailableDoctors: React.FC<AvailableDoctorsProps> = ({
 
   return (
     <section id="doctors" className="py-14 sm:py-20 bg-slate-900/60 border-t border-slate-800/80 select-none">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="max-w-[1600px] w-full mx-auto px-4 md:px-8 xl:px-12 space-y-8">
         {/* Section Header & Filters */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="space-y-2">
