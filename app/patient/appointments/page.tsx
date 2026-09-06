@@ -73,7 +73,7 @@ const BookingBadge: React.FC<{ status: string }> = ({ status }) => {
     COMPLETED: { label: 'Session Completed', cls: 'text-blue-700 border-blue-200 bg-blue-50' },
     CANCELLED: { label: 'Cancelled', cls: 'text-rose-700 border-rose-200 bg-rose-50' },
     TIMED_OUT: {
-      label: 'Session Timed Out',
+      label: 'Window Ended',
       cls: 'text-slate-500 border-slate-200 bg-slate-50',
     },
   };
@@ -141,7 +141,7 @@ export default function PatientAppointmentsPage() {
   //   COMPLETED / CANCELLED → terminal badges, never a call action
   //   slot −5m → slot +15m & CONFIRMED → "Enter Video Room"
   //   before slot −5m → "Upcoming" (disabled "Opens at …")
-  //   after slot +15m without COMPLETED → "Session Timed Out"
+  //   after slot +15m without COMPLETED → "Window Ended"
   const slotInfoFor = (appt: any): AppointmentSlotInfo =>
     getAppointmentSlotInfo(appt, new Date(nowTs));
 
@@ -452,7 +452,7 @@ export default function PatientAppointmentsPage() {
                           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-50 text-slate-400 border border-slate-200 text-xs font-bold cursor-not-allowed"
                           title="The consultation window for this booking has ended"
                         >
-                          <Clock className="w-4 h-4" /> Session Timed Out
+                          <Clock className="w-4 h-4" /> Window Ended
                         </span>
                       ) : (
                         <span
