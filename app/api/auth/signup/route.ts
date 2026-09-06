@@ -27,6 +27,15 @@ export async function POST(req: Request) {
       );
     }
 
+    // Patients register with only a mobile number. Dynamically assign a unique
+    // system email derived from the phone digits so every patient row satisfies
+    // the unique email constraint on the Patient model.
+    const phoneDigits = trimmedPhone.replace(/\D/g, '');
+    const systemEmail = `${phoneDigits}@patient.citydoctor.com`;
+    const normalizedEmail = body.email
+      ? String(body.email).trim().toLowerCase()
+      : systemEmail;
+
     // Check if phone already registered
     const existingPatient = await prisma.patient.findFirst({
       where: { phone: trimmedPhone },
@@ -34,7 +43,7 @@ export async function POST(req: Request) {
 
     if (existingPatient && existingPatient.password) {
       return NextResponse.json(
-        { success: false, error: 'An account with this phone number already exists. Please log in.' },
+        { success: false, error: 'Mobile number already registered.' },
         { status: 409 }
       );
     }
@@ -48,6 +57,7 @@ export async function POST(req: Request) {
         where: { id: existingPatient.id },
         data: {
           name: trimmedName,
+          email: existingPatient.email || normalizedEmail,
           location: trimmedLocation || existingPatient.location,
           password: hashedPassword,
         },
@@ -55,6 +65,7 @@ export async function POST(req: Request) {
           id: true,
           name: true,
           phone: true,
+          email: true,
           location: true,
           createdAt: true,
         },
@@ -64,6 +75,7 @@ export async function POST(req: Request) {
         data: {
           name: trimmedName,
           phone: trimmedPhone,
+          email: normalizedEmail,
           location: trimmedLocation,
           password: hashedPassword,
         },
@@ -71,6 +83,7 @@ export async function POST(req: Request) {
           id: true,
           name: true,
           phone: true,
+          email: true,
           location: true,
           createdAt: true,
         },
@@ -97,6 +110,16 @@ export async function POST(req: Request) {
     return response;
   } catch (error: any) {
     console.error('Error during patient signup:', error);
+    // Unique constraint violation (duplicate phone / system email).
+    if (error?.code === 'P2002' && Array.isArray(error?.meta?.target)) {
+      const target = error.meta.target.join(',');
+      if (target.includes('phone') || target.includes('email')) {
+        return NextResponse.json(
+          { success: false, error: 'Mobile number already registered.' },
+          { status: 409 }
+        );
+      }
+    }
     return NextResponse.json(
       { success: false, error: error?.message || 'Failed to register account' },
       { status: 500 }

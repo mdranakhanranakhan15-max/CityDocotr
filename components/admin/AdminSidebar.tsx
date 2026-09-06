@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   ImageIcon,
   Stethoscope,
+  KeyRound,
 } from 'lucide-react';
 
 export const AdminSidebar: React.FC = () => {
@@ -47,6 +48,12 @@ export const AdminSidebar: React.FC = () => {
       href: '/admin/banners',
       icon: ImageIcon,
       active: pathname === '/admin/banners',
+    },
+    {
+      name: 'Security Settings',
+      href: '/admin/settings',
+      icon: KeyRound,
+      active: pathname === '/admin/settings',
     },
   ];
 

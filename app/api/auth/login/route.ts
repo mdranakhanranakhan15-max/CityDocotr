@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { verifyPassword, createPatientSessionToken } from '@/lib/auth';
+import { passwordMatches, createPatientSessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -53,13 +53,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // Support BOTH hashed and legacy plain-text stored passwords:
-    //  - verifyPassword() verifies scrypt "salt:hash" values from lib/auth.ts
-    //    (returns false for anything that isn't in that format), then
-    //  - a direct equality check covers rows whose password was stored
-    //    un-hashed (e.g. legacy/seed data) so they can still log in.
-    const isMatch =
-      verifyPassword(password, patient.password) || password === patient.password;
+    // Support scrypt, bcrypt AND legacy plain-text stored passwords so that
+    // accounts created before the unified password scheme can still log in.
+    const isMatch = passwordMatches(password, patient.password || '');
     if (!isMatch) {
       return NextResponse.json(
         { success: false, error: 'Invalid password. Please check and try again.' },

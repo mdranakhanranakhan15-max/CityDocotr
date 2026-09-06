@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   X,
   Bell,
+  Settings,
 } from 'lucide-react';
 import { IncomingCallModal } from '@/components/doctor/IncomingCallModal';
 import { PrescriptionPreviewModal } from '@/components/doctor/PrescriptionPreviewModal';
@@ -440,6 +441,13 @@ export default function DoctorDashboardPage() {
               </div>
               <div className="text-[10px] text-teal-400">{doctor?.specialty}</div>
             </div>
+            <Link
+              href="/doctor/settings"
+              className="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-teal-300 border border-slate-700 transition-colors"
+              title="Security Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </Link>
             <button
               onClick={handleLogout}
               className="p-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-slate-700 transition-colors"

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import { verifyPassword, createSessionToken } from '@/lib/auth';
+import { passwordMatches, createSessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!verifyPassword(password, doctor.password)) {
+    if (!passwordMatches(password, doctor.password || '')) {
       return NextResponse.json(
         { success: false, error: 'Invalid email or password.' },
         { status: 401 }

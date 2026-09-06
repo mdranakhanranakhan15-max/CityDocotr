@@ -7,6 +7,7 @@ interface DoctorFormData {
   id?: string;
   name: string;
   email?: string;
+  phone?: string;
   password?: string;
   designation: string;
   degrees: string;
@@ -62,6 +63,7 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
   const [formData, setFormData] = useState<DoctorFormData>({
     name: '',
     email: '',
+    phone: '',
     password: '',
     designation: 'Consultant Specialist',
     degrees: 'MBBS, FCPS',
@@ -99,6 +101,7 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
       setFormData({
         name: '',
         email: '',
+        phone: '',
         password: '',
         designation: 'Consultant Specialist',
         degrees: 'MBBS, FCPS',
@@ -152,11 +155,22 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
       return;
     }
 
+    if (!isEditing && formData.email && !formData.password) {
+      setError('An initial password is required when setting a login email.');
+      return;
+    }
+    if (formData.password && formData.password.length < 4) {
+      setError('Password must be at least 4 characters long.');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      const url = isEditing ? `/api/doctors/${initialData.id}` : '/api/doctors';
+      // Creates go through the Admin Panel route (/api/admin/doctors) which
+      // hashes the initial password with bcrypt. Edits keep using /api/doctors.
+      const url = isEditing ? `/api/doctors/${initialData.id}` : '/api/admin/doctors';
       const method = isEditing ? 'PATCH' : 'POST';
 
       const res = await fetch(url, {
@@ -249,6 +263,23 @@ export const DoctorFormModal: React.FC<DoctorFormModalProps> = ({
               />
               <p className="text-[10px] text-slate-500">
                 Doctor uses this email at /doctor/login.
+              </p>
+            </div>
+
+            {/* Mobile Number */}
+            <div className="space-y-1.5">
+              <label className="font-semibold text-slate-300">
+                Mobile Number <span className="text-teal-400">(Phone)</span>
+              </label>
+              <input
+                type="tel"
+                placeholder="e.g. +8801712345678"
+                value={formData.phone || ''}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-teal-500 focus:outline-none"
+              />
+              <p className="text-[10px] text-slate-500">
+                Alternate contact for the doctor account.
               </p>
             </div>
 

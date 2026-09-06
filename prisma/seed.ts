@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { hashPassword } from '../lib/auth';
+import { hashPassword, hashPasswordBcrypt } from '../lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -13,12 +13,13 @@ async function main() {
   await prisma.patient.deleteMany();
   await prisma.admin.deleteMany();
 
-  // Create Super Admin
+  // Create Super Admin (default credentials: admin@doctime.com / Admin@123)
   const admin = await prisma.admin.create({
     data: {
       name: 'Dr. Alexander King',
       email: 'admin@doctime.com',
       role: 'SUPERADMIN',
+      password: hashPasswordBcrypt('Admin@123'),
     },
   });
   console.log('Created Admin:', admin.email);

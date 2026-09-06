@@ -1,4 +1,5 @@
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
+import bcrypt from 'bcryptjs';
 
 const SESSION_SECRET = process.env.DOCTOR_SESSION_SECRET || 'citydoctor-session-secret';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 12; // 12 hours
@@ -20,6 +21,47 @@ export function verifyPassword(password: string, stored: string): boolean {
   const candidate = scryptSync(password, salt, 64);
   const expected = Buffer.from(hash, 'hex');
   return candidate.length === expected.length && timingSafeEqual(candidate, expected);
+}
+
+const BCRYPT_ROUNDS = 10;
+
+/**
+ * Hash a plaintext password using bcrypt. New credentials (admin-created
+ * doctor accounts, self-service password changes) are stored with bcrypt so
+ * they match the platform requirement while remaining readable by
+ * passwordMatches() below.
+ */
+export function hashPasswordBcrypt(password: string): string {
+  return bcrypt.hashSync(password, BCRYPT_ROUNDS);
+}
+
+/**
+ * Verify a password against ANY stored credential format used by the app:
+ *  1. scrypt  "salt:hash"  (legacy hashPassword()),
+ *  2. bcrypt  "$2a$/$2b$/$2y$..."  (new accounts & password changes),
+ *  3. plain text (legacy/seed rows that predate hashing).
+ */
+export function passwordMatches(password: string, stored: string): boolean {
+  if (!password || !stored) return false;
+
+  if (stored.includes(':')) {
+    try {
+      if (verifyPassword(password, stored)) return true;
+    } catch {
+      /* fall through to next scheme */
+    }
+  }
+
+  if (/^\$2[aby]\$\d{2}\$/.test(stored)) {
+    try {
+      if (bcrypt.compareSync(password, stored)) return true;
+    } catch {
+      /* fall through */
+    }
+  }
+
+  // Legacy un-hashed rows (kept for backward compatibility).
+  return password === stored;
 }
 
 /**

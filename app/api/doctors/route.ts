@@ -1,14 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { hashPassword } from '@/lib/auth';
-
-/** "Cardiology" -> "cardiology"; "Gynae & Obs" -> "gynae-obs". */
-function toDepartmentSlug(value?: string | null): string {
-  return (value || '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+import {
+  createDoctorRecord,
+  DoctorValidationError,
+} from '@/lib/doctor-accounts';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -153,85 +148,11 @@ export async function GET(req: Request) {
 }
 
 // POST /api/doctors - Create a new doctor profile (Admin)
+// Shared with the Admin Panel route /api/admin/doctors (lib/doctor-accounts.ts).
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const {
-      name,
-      designation,
-      degrees,
-      specialty,
-      specialties,
-      workplace,
-      hospital,
-      education,
-      experienceYears,
-      fee,
-      consultationFee,
-      isOnline,
-      status,
-      image,
-      bio,
-      languages,
-      badge,
-      rating,
-      totalVisits,
-      email,
-      password,
-    } = body;
-
-    if (!name) {
-      return NextResponse.json(
-        { success: false, error: 'Name is a required field.' },
-        { status: 400 }
-      );
-    }
-
-    // Doctor portal login credentials (created by Admin)
-    let hashedPassword: string | undefined;
-    if (email && password) {
-      hashedPassword = hashPassword(password);
-    } else if (email && !password) {
-      return NextResponse.json(
-        { success: false, error: 'A password is required when setting a login email.' },
-        { status: 400 }
-      );
-    }
-
-    const doctorFee = Number(fee || consultationFee) || 350;
-    const onlineState = isOnline !== undefined ? Boolean(isOnline) : true;
-
-    const newDoctor = await prisma.doctor.create({
-      data: {
-        name,
-        designation: designation || 'Consultant Specialist',
-        degrees: degrees || 'MBBS, FCPS',
-        specialty: specialty || 'General Physician',
-        specialties: specialties || specialty || 'General Physician',
-        workplace: workplace || hospital || 'Dhaka Medical College Hospital',
-        hospital: hospital || workplace || 'Dhaka Medical College Hospital',
-        education: education || 'Dhaka Medical College',
-        experienceYears: Number(experienceYears) || 5,
-        fee: doctorFee,
-        consultationFee: doctorFee,
-        rating: Number(rating) || 5.0,
-        totalVisits: Number(totalVisits) || 0,
-        email: email ? email.toLowerCase().trim() : null,
-        password: hashedPassword || null,
-        departmentSlug:
-          body.departmentSlug || toDepartmentSlug(specialty || specialties || 'General Physician'),
-        isOnline: onlineState,
-        status: 'ACTIVE', // approved & listed; live presence is tracked via isOnline
-        isApproved: true,
-        image:
-          image ||
-          'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400',
-        bio: bio || `Specialist physician in ${specialty || 'General Medicine'}. Dedicated to compassionate patient care.`,
-        languages: languages || 'English, Bengali',
-        badge: badge || 'Verified Physician',
-        isVerified: true,
-      },
-    });
+    const newDoctor = await createDoctorRecord(body);
 
     return NextResponse.json(
       { success: true, message: 'Doctor profile created successfully', doctor: newDoctor },
@@ -241,7 +162,7 @@ export async function POST(req: Request) {
     console.error('Error creating doctor:', error);
     return NextResponse.json(
       { success: false, error: error?.message || 'Failed to create doctor profile' },
-      { status: 500 }
+      { status: error instanceof DoctorValidationError ? error.status : 500 }
     );
   }
 }

@@ -12,6 +12,7 @@ model Admin {
   name      String
   email     String   @unique
   role      String   @default("SUPERADMIN")
+  password  String? // Hashed login credential (bcrypt)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -34,7 +35,8 @@ model Doctor {
   fee             Int           @default(350)
   consultationFee Float         @default(350.0)
   email           String?       @unique // Login credential created by Admin
-  password        String? // Hashed login credential created by Admin
+  phone           String? // Mobile number used as an alternate login identifier
+  password        String? // Hashed login credential created by Admin (bcrypt)
   isOnline        Boolean       @default(true)
   status          String        @default("ACTIVE") // ACTIVE (approved/listed); ONLINE/OFFLINE = live presence
   image           String

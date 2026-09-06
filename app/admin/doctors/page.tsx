@@ -35,6 +35,7 @@ const normalizeDoctor = (doc: any): any => {
     id: d.id || '',
     name: d.name || 'Unknown Doctor',
     email: d.email ?? null,
+    phone: d.phone ?? null,
     designation: d.designation || 'Consultant',
     degrees: d.degrees || 'MBBS',
     specialty: d.specialty || 'General Physician',

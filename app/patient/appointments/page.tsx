@@ -16,6 +16,7 @@ import {
   AlertCircle,
   FileText,
   Wallet,
+  Settings,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -225,6 +226,13 @@ export default function PatientAppointmentsPage() {
                 <div className="text-[10px] text-blue-600">{currentUser.phone}</div>
               </div>
             </div>
+            <Link
+              href="/patient/settings"
+              className="p-2.5 rounded-xl bg-white hover:bg-blue-50 text-slate-500 hover:text-blue-600 border border-slate-300 transition-colors"
+              title="Account Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </Link>
             <button
               onClick={handleLogout}
               className="p-2.5 rounded-xl bg-white hover:bg-red-50 text-slate-500 hover:text-red-600 border border-slate-300 transition-colors"
