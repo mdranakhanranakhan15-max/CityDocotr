@@ -11,6 +11,7 @@ function toDepartmentSlug(value?: string | null): string {
 }
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET /api/doctors - List doctors with optional category (department slug),
 // specialty, search, status, isOnline, isApproved, and sorting.
