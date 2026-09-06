@@ -113,7 +113,7 @@ export default function AdminPatientsPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center">
             <UserCheck className="w-5 h-5" />
           </div>
           <div>
@@ -125,7 +125,7 @@ export default function AdminPatientsPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center">
+          <div className="w-11 h-11 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center">
             <CalendarCheck className="w-5 h-5" />
           </div>
           <div>
@@ -205,7 +205,7 @@ export default function AdminPatientsPage() {
                       {/* Name & Avatar */}
                       <td className="py-4 px-4 sm:px-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-600 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm shadow-teal-500/20">
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-sm shadow-teal-600/25">
                             {initials}
                           </div>
                           <div>

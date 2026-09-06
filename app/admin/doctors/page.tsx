@@ -171,7 +171,7 @@ export default function ManageDoctorsPage() {
             setEditingDoctor(null);
             setModalOpen(true);
           }}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-teal-500/20 active:scale-95 transition-transform"
+          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-teal-600/25 active:scale-95 transition-transform"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Doctor</span>
@@ -263,7 +263,7 @@ export default function ManageDoctorsPage() {
                                 className="w-10 h-10 rounded-xl object-cover border border-slate-700 shrink-0"
                               />
                             ) : (
-                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 text-slate-950 font-black flex items-center justify-center text-sm border border-slate-700 shrink-0">
+                              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-500 text-slate-950 font-black flex items-center justify-center text-sm border border-slate-700 shrink-0">
                                 {(doc.name || 'D').charAt(0).toUpperCase()}
                               </div>
                             )}

@@ -115,7 +115,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
           className={`w-10 h-10 rounded-xl flex items-center justify-center ${
             dark
               ? 'bg-teal-500/20 text-teal-400 border border-teal-500/30'
-              : 'bg-blue-50 text-blue-700 border border-blue-200'
+              : 'bg-teal-50 text-teal-700 border border-teal-200'
           }`}
         >
           <KeyRound className="w-5 h-5" />
@@ -211,7 +211,7 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
           type="button"
           onClick={() => setShowPasswords((v) => !v)}
           className={`inline-flex items-center gap-1.5 text-[11px] font-semibold transition-colors ${
-            dark ? 'text-slate-400 hover:text-teal-300' : 'text-slate-500 hover:text-blue-700'
+            dark ? 'text-slate-400 hover:text-teal-300' : 'text-slate-500 hover:text-teal-600'
           }`}
         >
           {showPasswords ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -224,8 +224,8 @@ export const ChangePasswordForm: React.FC<ChangePasswordFormProps> = ({
             disabled={isLoading}
             className={
               dark
-                ? 'inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold text-xs shadow-md shadow-teal-500/20 disabled:opacity-50 active:scale-95 transition-all'
-                : 'inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm disabled:opacity-50 active:scale-95 transition-all'
+                ? 'inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-teal-600/25 disabled:opacity-50 active:scale-95 transition-all'
+                : 'inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-600 text-white font-bold text-xs shadow-sm disabled:opacity-50 active:scale-95 transition-all'
             }
           >
             {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}

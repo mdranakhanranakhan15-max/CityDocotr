@@ -145,9 +145,9 @@ export default function ManageAppointmentsPage() {
         </div>
         <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
           <div className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-blue-400" /> bKash Payments
+            <Clock className="w-3.5 h-3.5 text-teal-400" /> bKash Payments
           </div>
-          <div className="text-2xl font-extrabold text-blue-400 mt-1">
+          <div className="text-2xl font-extrabold text-teal-400 mt-1">
             {appointments.filter((a) => a.paymentStatus === 'PAID' && a.paymentMethod === 'BKASH').length}
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function ManageAppointmentsPage() {
                             : appt.status === 'PENDING'
                             ? 'text-amber-300 border-amber-500/40'
                             : appt.status === 'COMPLETED'
-                            ? 'text-blue-300 border-blue-500/40'
+                            ? 'text-teal-300 border-teal-500/40'
                             : 'text-rose-300 border-rose-500/40'
                         }`}
                       >

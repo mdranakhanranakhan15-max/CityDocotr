@@ -46,7 +46,7 @@ export default function DoctorSettingsPage() {
           </p>
           <Link
             href="/doctor/login"
-            className="inline-block px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 text-slate-950 font-bold text-xs shadow-md"
+            className="inline-block px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 text-slate-950 font-bold text-xs shadow-md"
           >
             Go to Doctor Login
           </Link>
@@ -61,7 +61,7 @@ export default function DoctorSettingsPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2.5 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center shadow-md shadow-teal-500/20">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center shadow-md shadow-teal-600/25">
                 <Activity className="w-5 h-5 text-white" />
               </div>
               <span className="font-black text-base tracking-tight bg-gradient-to-r from-teal-300 to-cyan-200 bg-clip-text text-transparent hidden sm:inline">

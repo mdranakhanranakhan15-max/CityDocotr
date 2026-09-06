@@ -361,40 +361,40 @@ export default function CityDoctorLandingPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-white text-slate-900 font-sans selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden bg-slate-50 text-slate-900 font-sans selection:bg-teal-600 selection:text-white">
       {/* ========================================================================= */}
       {/* 1. TOP NAVBAR & SUB-HEADER PROMO BAR                                     */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 w-full bg-white border-b border-slate-200 shadow-sm select-none">
+      <header className="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm select-none">
         {/* Main Navbar Row */}
         <div className="max-w-[95%] lg:max-w-[1600px] mx-auto px-6 sm:px-8 lg:px-10 h-24 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-12 h-12 rounded-2xl bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-700/20 group-hover:scale-105 transition-transform">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center shadow-lg shadow-teal-600/25 group-hover:scale-105 transition-transform">
               <Activity className="w-7 h-7" />
             </div>
             <div>
-              <span className="font-black text-2xl sm:text-3xl tracking-tight text-blue-800">
-                City<span className="text-blue-600">Doctor</span>
+              <span className="font-black text-2xl sm:text-3xl tracking-tight text-slate-900">
+                City<span className="text-teal-600">Doctor</span>
               </span>
             </div>
           </Link>
 
           {/* Navigation Links */}
           <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-700">
-            <a href="#choose-specialty" className="text-blue-700 font-bold hover:text-blue-800 transition-colors">
+            <a href="#choose-specialty" className="text-teal-600 font-bold hover:text-teal-700 transition-colors">
               Consultation
             </a>
-            <Link href="/department/all" className="hover:text-blue-700 transition-colors">
+            <Link href="/department/all" className="hover:text-teal-600 transition-colors">
               All Doctors
             </Link>
-            <a href="#diagnostic" className="hover:text-blue-700 transition-colors">
+            <a href="#diagnostic" className="hover:text-teal-600 transition-colors">
               Home Diagnostic
             </a>
-            <a href="#health-plan" className="hover:text-blue-700 transition-colors">
+            <a href="#health-plan" className="hover:text-teal-600 transition-colors">
               Health Plan
             </a>
-            <a href="#blogs" className="hover:text-blue-700 transition-colors">
+            <a href="#blogs" className="hover:text-teal-600 transition-colors">
               Blogs
             </a>
           </nav>
@@ -403,7 +403,7 @@ export default function CityDoctorLandingPage() {
           <div className="hidden sm:flex items-center gap-3.5">
             <Link
               href="/admin"
-              className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+              className="px-4 py-2.5 rounded-full bg-white border border-slate-200 shadow-sm hover:border-teal-300 hover:text-teal-700 text-slate-600 text-xs font-semibold transition-colors"
             >
               Admin Panel
             </Link>
@@ -418,14 +418,14 @@ export default function CityDoctorLandingPage() {
                   aria-haspopup="menu"
                   aria-expanded={profileMenuOpen}
                 >
-                  <div className="w-9 h-9 rounded-xl bg-blue-700 text-white font-black text-sm flex items-center justify-center shadow-md shadow-blue-700/20">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 text-white font-black text-sm flex items-center justify-center shadow-md shadow-teal-600/25 ring-2 ring-white">
                     {currentUser.name?.trim()?.charAt(0)?.toUpperCase() || 'P'}
                   </div>
                   <div className="text-left hidden md:block">
                     <p className="text-xs font-bold text-slate-900 leading-none truncate max-w-[130px]">
                       {currentUser.name}
                     </p>
-                    <p className="text-[10px] text-blue-600 font-medium mt-0.5">
+                    <p className="text-[10px] text-teal-600 font-medium mt-0.5">
                       {currentUser.phone}
                     </p>
                   </div>
@@ -451,9 +451,9 @@ export default function CityDoctorLandingPage() {
                       <Link
                         href="/patient/appointments"
                         onClick={() => setProfileMenuOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"
                       >
-                        <CalendarDays className="w-4 h-4 text-blue-600" />
+                        <CalendarDays className="w-4 h-4 text-teal-600" />
                         My Appointments
                       </Link>
                       <button
@@ -474,7 +474,7 @@ export default function CityDoctorLandingPage() {
             ) : (
               <button
                 onClick={() => openAuthModal({ redirectTo: '/patient/appointments' })}
-                className="px-4 py-2.5 rounded-xl bg-blue-700 hover:bg-blue-800 text-white font-bold text-xs shadow-md shadow-blue-700/20 active:scale-95 transition-all flex items-center gap-2"
+                className="px-4 py-2.5 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-md shadow-teal-600/25 active:scale-95 transition-all flex items-center gap-2"
               >
                 <User className="w-4 h-4" />
                 <span>Login / Sign Up</span>
@@ -492,7 +492,7 @@ export default function CityDoctorLandingPage() {
         </div>
 
         {/* Sub-Header: Center Search Bar & Right "Refer a Friend" Chip */}
-        <div className="bg-[#f0f7ff] border-t border-b border-blue-100 py-3">
+        <div className="bg-white/60 border-t border-b border-slate-200/70 py-3">
           <div className="max-w-[1320px] w-full mx-auto px-6 sm:px-10 lg:px-14 flex flex-col md:flex-row items-center justify-between gap-3">
             {/* Center Search Input */}
             <form

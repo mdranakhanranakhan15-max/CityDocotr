@@ -43,7 +43,7 @@ export const IncomingCallModal: React.FC<IncomingCallModalProps> = ({
           <div className="relative w-28 h-28 mx-auto mb-4">
             <div className="absolute inset-0 rounded-full border-2 border-teal-400/40 animate-ping" />
             <div className="absolute inset-2 rounded-full border-2 border-teal-400/30 animate-pulse" />
-            <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center shadow-xl shadow-teal-500/30 overflow-hidden">
+            <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-teal-600 to-emerald-500 flex items-center justify-center shadow-xl shadow-teal-500/30 overflow-hidden">
               {doctorImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={doctorImage} alt={doctorName} className="w-full h-full object-cover" />
@@ -95,7 +95,7 @@ export const IncomingCallModal: React.FC<IncomingCallModalProps> = ({
             <button
               onClick={onAccept}
               disabled={isAccepting}
-              className="py-3 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-teal-500/25 transition-all disabled:opacity-60 active:scale-95"
+              className="py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-teal-500/25 transition-all disabled:opacity-60 active:scale-95"
             >
               {isAccepting ? (
                 <>

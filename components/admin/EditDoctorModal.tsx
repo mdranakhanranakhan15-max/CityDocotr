@@ -947,7 +947,7 @@ export const EditDoctorModal: React.FC<EditDoctorModalProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold flex items-center gap-1.5 shadow-md shadow-teal-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold flex items-center gap-1.5 shadow-md shadow-teal-600/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

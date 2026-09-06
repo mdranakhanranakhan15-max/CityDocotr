@@ -403,7 +403,7 @@ export default function DoctorDashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-emerald-500 flex items-center justify-center shadow-md shadow-teal-600/25 group-hover:scale-105 transition-transform">
                 <Activity className="w-5 h-5 text-white" />
               </div>
               <span className="font-black text-base tracking-tight bg-gradient-to-r from-teal-300 to-cyan-200 bg-clip-text text-transparent hidden sm:inline">
@@ -710,15 +710,15 @@ export default function DoctorDashboardPage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-slate-500 font-bold">
-                  <Users className="w-3.5 h-3.5 text-blue-400" />
+                  <Users className="w-3.5 h-3.5 text-teal-400" />
                   Patients Treated
                 </div>
-                <div className="text-3xl font-extrabold text-blue-400 mt-2">
+                <div className="text-3xl font-extrabold text-teal-400 mt-2">
                   {stats.totalPatientsTreated ?? 0}
                 </div>
               </div>
-              <div className="w-11 h-11 rounded-2xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center">
-                <Users className="w-5 h-5 text-blue-400" />
+              <div className="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/25 flex items-center justify-center">
+                <Users className="w-5 h-5 text-teal-400" />
               </div>
             </div>
             <p className="text-[10px] text-slate-500 mt-2">
@@ -919,7 +919,7 @@ export default function DoctorDashboardPage() {
                             ) : joinable ? (
                               <Link
                                 href={`/consultation/${appt.id}?role=doctor`}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold text-[11px] shadow-lg shadow-teal-500/20 transition-all active:scale-95"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold text-[11px] shadow-lg shadow-teal-600/25 transition-all active:scale-95"
                               >
                                 <Video className="w-3.5 h-3.5" />
                                 Join Video Call
@@ -1098,7 +1098,7 @@ export default function DoctorDashboardPage() {
           <div className="rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl overflow-hidden">
             <div className="p-4 sm:p-5 border-b border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 border border-blue-500/30 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-400 border border-teal-500/30 flex items-center justify-center">
                   <History className="w-4 h-4" />
                 </div>
                 <div>
@@ -1152,7 +1152,7 @@ export default function DoctorDashboardPage() {
                           {/* Patient */}
                           <td className="py-3 px-4">
                             <div className="font-bold text-slate-100 flex items-center gap-1.5">
-                              <span className="w-6 h-6 rounded-full bg-blue-500/15 text-blue-300 flex items-center justify-center text-[10px] font-black shrink-0">
+                              <span className="w-6 h-6 rounded-full bg-teal-500/15 text-teal-300 flex items-center justify-center text-[10px] font-black shrink-0">
                                 {displayName.trim().charAt(0).toUpperCase()}
                               </span>
                               <span>{displayName}</span>

@@ -233,7 +233,7 @@ export default function AdminBannersPage() {
             <button
               type="submit"
               disabled={isSubmitting || !imageUrl}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold text-xs shadow-md shadow-teal-500/20 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold text-xs shadow-md shadow-teal-600/25 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

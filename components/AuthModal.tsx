@@ -166,7 +166,7 @@ export const AuthModal: React.FC = () => {
       {/* Modal Card */}
       <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl z-10 overflow-hidden border border-slate-100 animate-in zoom-in-95 duration-200">
         {/* Header Ribbon */}
-        <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-cyan-600 p-6 text-white text-center relative">
+        <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-500 p-6 text-white text-center relative">
           <button
             type="button"
             onClick={closeAuthModal}
@@ -183,7 +183,7 @@ export const AuthModal: React.FC = () => {
           <h3 className="text-xl font-black tracking-tight">
             {isLoginView ? 'Welcome Back!' : 'Create Patient Account'}
           </h3>
-          <p className="text-xs text-blue-100 mt-1 font-medium">
+          <p className="text-xs text-teal-100 mt-1 font-medium">
             {isLoginView
               ? 'Log in to book appointments & manage your consultations'
               : 'Join 100,000+ patients getting 24/7 doctor consultations'}
@@ -221,7 +221,7 @@ export const AuthModal: React.FC = () => {
                     placeholder="01XXXXXXXXX or you@email.com"
                     value={loginIdentifier}
                     onChange={(e) => setLoginIdentifier(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                   />
                 </div>
               </div>
@@ -238,7 +238,7 @@ export const AuthModal: React.FC = () => {
                     placeholder="Enter your password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                   />
                   <button
                     type="button"
@@ -254,7 +254,7 @@ export const AuthModal: React.FC = () => {
                   <Link
                     href="/forgot-password"
                     onClick={closeAuthModal}
-                    className="text-xs font-bold text-blue-700 hover:text-blue-800 hover:underline"
+                    className="text-xs font-bold text-teal-700 hover:text-teal-700 hover:underline"
                   >
                     Forgot Password?
                   </Link>
@@ -264,7 +264,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-700/20 active:scale-98 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-700 hover:to-emerald-600 text-white font-bold text-sm shadow-lg shadow-teal-600/25 active:scale-98 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
               >
                 {isSubmitting ? (
                   <>
@@ -285,7 +285,7 @@ export const AuthModal: React.FC = () => {
                       setError(null);
                       setAuthView(false);
                     }}
-                    className="text-blue-700 font-bold hover:text-blue-800 hover:underline inline-flex items-center gap-0.5"
+                    className="text-teal-700 font-bold hover:text-teal-700 hover:underline inline-flex items-center gap-0.5"
                   >
                     Sign Up
                   </button>
@@ -345,7 +345,7 @@ export const AuthModal: React.FC = () => {
                   onClick={() => setSignupMethod('phone')}
                   className={`py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                     signupMethod === 'phone'
-                      ? 'bg-white text-blue-700 shadow-sm ring-1 ring-blue-600'
+                      ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-600'
                       : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
@@ -356,7 +356,7 @@ export const AuthModal: React.FC = () => {
                   onClick={() => setSignupMethod('email')}
                   className={`py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                     signupMethod === 'email'
-                      ? 'bg-white text-blue-700 shadow-sm ring-1 ring-blue-600'
+                      ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-600'
                       : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
@@ -376,7 +376,7 @@ export const AuthModal: React.FC = () => {
                     placeholder="e.g. Mohammad Rahman"
                     value={signupName}
                     onChange={(e) => setSignupName(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                   />
                 </div>
               </div>
@@ -398,7 +398,7 @@ export const AuthModal: React.FC = () => {
                       placeholder="01XXXXXXXXX"
                       value={signupPhone}
                       onChange={(e) => setSignupPhone(e.target.value)}
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                     />
                   ) : (
                     <input
@@ -407,7 +407,7 @@ export const AuthModal: React.FC = () => {
                       placeholder="you@email.com"
                       value={signupEmail}
                       onChange={(e) => setSignupEmail(e.target.value)}
-                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                      className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                     />
                   )}
                 </div>
@@ -424,7 +424,7 @@ export const AuthModal: React.FC = () => {
                     placeholder="e.g. Dhanmondi, Dhaka"
                     value={signupLocation}
                     onChange={(e) => setSignupLocation(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                    className="w-full pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                   />
                 </div>
               </div>
@@ -441,7 +441,7 @@ export const AuthModal: React.FC = () => {
                     placeholder="Create a password (min 4 chars)"
                     value={signupPassword}
                     onChange={(e) => setSignupPassword(e.target.value)}
-                    className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
+                    className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 transition-all font-medium text-slate-900 bg-slate-50/50 focus:bg-white"
                   />
                   <button
                     type="button"
@@ -456,7 +456,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-700/20 active:scale-98 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-700 hover:to-emerald-600 text-white font-bold text-sm shadow-lg shadow-teal-600/25 active:scale-98 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
               >
                 {isSubmitting ? (
                   <>
@@ -477,7 +477,7 @@ export const AuthModal: React.FC = () => {
                       setError(null);
                       setAuthView(true);
                     }}
-                    className="text-blue-700 font-bold hover:text-blue-800 hover:underline inline-flex items-center gap-0.5"
+                    className="text-teal-700 font-bold hover:text-teal-700 hover:underline inline-flex items-center gap-0.5"
                   >
                     Login
                   </button>

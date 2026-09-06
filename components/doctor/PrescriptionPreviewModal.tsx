@@ -186,7 +186,7 @@ export const PrescriptionPreviewModal: React.FC<PrescriptionPreviewModalProps> =
           <Link
             href={`/prescription/${appt.id}`}
             target="_blank"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold transition-all"
           >
             <ExternalLink className="w-3.5 h-3.5" />
             Open Printable Page

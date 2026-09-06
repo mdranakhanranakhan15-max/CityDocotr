@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
 
           <button
             onClick={() => setIsDoctorModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-teal-500/20 active:scale-95 transition-transform"
+            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 hover:from-teal-500 hover:to-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-2 shadow-lg shadow-teal-600/25 active:scale-95 transition-transform"
           >
             <Plus className="w-4 h-4" />
             <span>Add New Physician</span>
@@ -178,7 +178,7 @@ export default function AdminDashboardPage() {
                             appt.status === 'CONFIRMED'
                               ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20'
                               : appt.status === 'COMPLETED'
-                                ? 'bg-blue-500/10 text-blue-300 border-blue-500/20'
+                                ? 'bg-teal-500/10 text-teal-300 border-teal-500/20'
                                 : appt.status === 'TIMED_OUT'
                                   ? 'bg-slate-600/20 text-slate-300 border-slate-500/40'
                                   : appt.status === 'CANCELLED'
