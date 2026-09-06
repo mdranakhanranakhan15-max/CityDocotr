@@ -51,7 +51,7 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
                 ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50'
                 : isBusy
                 ? 'bg-amber-500'
-                : 'bg-slate-500'
+                : 'bg-rose-500'
             }`}
             title={`Status: ${doctor.status}`}
           >

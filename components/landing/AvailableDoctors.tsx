@@ -145,7 +145,7 @@ export const AvailableDoctors: React.FC<AvailableDoctorsProps> = ({
                               ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50'
                               : isBusy
                               ? 'bg-amber-500'
-                              : 'bg-slate-600'
+                              : 'bg-rose-500'
                           }`}
                           title={`Status: ${doc.status}`}
                         >

@@ -25,6 +25,7 @@ export interface DoctorCardDoctor {
   workplace?: string | null;
   hospital?: string | null;
   isOnline?: boolean | null;
+  status?: string | null;
 }
 
 export interface DoctorCardProps {
@@ -44,6 +45,10 @@ export default function DoctorCard({ doctor, onBookClick }: DoctorCardProps) {
   const fee = doctor.fee || doctor.consultationFee || 350;
   const workplace = doctor.workplace || doctor.hospital || 'CityDoctor Partner Hospital';
 
+  // Presence flag: online when the doctor is currently accepting calls.
+  const isOnline =
+    doctor.isOnline === true || (doctor.status || '').toUpperCase() === 'ONLINE';
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 overflow-hidden flex flex-col">
       {/* Body Section */}
@@ -58,8 +63,10 @@ export default function DoctorCard({ doctor, onBookClick }: DoctorCardProps) {
               className="w-full h-full object-cover"
             />
             <span
-              className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-blue-600 ring-2 ring-white"
-              title={doctor.isOnline === false ? 'Offline' : 'Online'}
+              className={`absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full ring-2 ring-white ${
+                isOnline ? 'bg-emerald-500' : 'bg-rose-500'
+              }`}
+              title={isOnline ? 'Online' : 'Offline'}
             />
           </div>
           <p className="mt-2 text-sm font-bold text-slate-900 leading-tight whitespace-nowrap">
