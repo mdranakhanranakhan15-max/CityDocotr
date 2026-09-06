@@ -21,7 +21,9 @@ import Link from 'next/link';
 export default function ManageAppointmentsPage() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [paymentStatus, setPaymentStatus] = useState('PAID');
+  // Admin tracks EVERY booking & payment attempt — PAID, UNPAID, FAILED,
+  // PENDING_PAYMENT and REFUNDED all appear (badged). Default filter is ALL.
+  const [paymentStatus, setPaymentStatus] = useState('ALL');
 
   const fetchAppointments = async () => {
     setIsLoading(true);
@@ -87,10 +89,10 @@ export default function ManageAppointmentsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
-            Confirmed Paid Bookings
+            All Bookings &amp; Payment Attempts
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Live payments synced from checkout — every PAID appointment appears here instantly.
+            Every booking synced from checkout — PAID, UNPAID, FAILED &amp; PENDING_PAYMENT attempts appear here with badges so admins can track payments.
           </p>
         </div>
 
@@ -102,9 +104,11 @@ export default function ManageAppointmentsPage() {
               onChange={(e) => setPaymentStatus(e.target.value)}
               className="bg-transparent outline-none text-slate-200"
             >
-              <option value="PAID">Paid Bookings</option>
               <option value="ALL">All Payments</option>
+              <option value="PAID">Paid Bookings</option>
               <option value="UNPAID">Unpaid</option>
+              <option value="PENDING_PAYMENT">Pending Payment</option>
+              <option value="FAILED">Failed</option>
               <option value="REFUNDED">Refunded</option>
             </select>
           </div>
@@ -237,7 +241,13 @@ export default function ManageAppointmentsPage() {
                             ? 'text-emerald-300 border-emerald-500/40 bg-emerald-500/10'
                             : appt.paymentStatus === 'UNPAID'
                             ? 'text-amber-300 border-amber-500/40 bg-amber-500/10'
-                            : 'text-rose-300 border-rose-500/40 bg-rose-500/10'
+                            : appt.paymentStatus === 'PENDING_PAYMENT'
+                            ? 'text-sky-300 border-sky-500/40 bg-sky-500/10'
+                            : appt.paymentStatus === 'FAILED'
+                            ? 'text-rose-300 border-rose-500/40 bg-rose-500/10'
+                            : appt.paymentStatus === 'REFUNDED'
+                            ? 'text-purple-300 border-purple-500/40 bg-purple-500/10'
+                            : 'text-slate-300 border-slate-500/40 bg-slate-500/10'
                         }`}
                       >
                         {appt.paymentStatus === 'PAID' && <CheckCircle2 className="w-3 h-3" />}
@@ -297,7 +307,7 @@ export default function ManageAppointmentsPage() {
               ) : (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-slate-500">
-                    No paid bookings found matching this filter.
+                    No appointments found matching this filter.
                   </td>
                 </tr>
               )}

@@ -124,6 +124,18 @@ function CallbackContent() {
     };
   }, [paymentID, status, appointmentIdParam]);
 
+  // PAYMENT REDIRECT — both successful and cancelled/failed bKash outcomes
+  // return the patient to their appointment list (/patient/appointments) where
+  // the booking is shown with its PAID / UNPAID payment badge. The status card
+  // stays visible for a few seconds, then redirects automatically.
+  useEffect(() => {
+    if (state !== 'success' && state !== 'cancelled' && state !== 'failed') return;
+    const t = setTimeout(() => router.push('/patient/appointments'), 4000);
+    return () => clearTimeout(t);
+  }, [state, router]);
+
+  const goToMyAppointments = () => router.push('/patient/appointments');
+
   const doctor = appointment?.doctor || null;
   const patient = appointment?.patient || null;
   const amount = appointment?.amountPaid || 349;
@@ -272,6 +284,16 @@ function CallbackContent() {
 
             {/* Action Buttons */}
             <div className="space-y-2.5">
+              <button
+                type="button"
+                onClick={goToMyAppointments}
+                className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>View My Appointments</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
               {winStatus === 'open' || !appointment ? (
                 <Link
                   href={`/consultation/${appointment?.id || ''}`}
@@ -366,6 +388,15 @@ function CallbackContent() {
             )}
 
             <div className="space-y-2 pt-2">
+              <button
+                type="button"
+                onClick={goToMyAppointments}
+                className="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors"
+              >
+                <Calendar className="w-4 h-4" />
+                <span>Go to My Appointments</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => router.back()}

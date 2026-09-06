@@ -5,7 +5,9 @@ import { verifySessionToken } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-// GET /api/doctor/appointments - PAID appointments for the logged-in doctor
+// GET /api/doctor/appointments - ONLY PAID (confirmed) appointments for the
+// logged-in doctor. Unpaid / failed / pending-payment attempts never reach a
+// doctor's queue — they are tracked in the Admin panel instead.
 export async function GET() {
   try {
     const token = cookies().get('doctor_session')?.value;
@@ -22,6 +24,7 @@ export async function GET() {
       where: {
         doctorId,
         paymentStatus: 'PAID',
+        status: { not: 'CANCELLED' },
       },
       include: {
         patient: {

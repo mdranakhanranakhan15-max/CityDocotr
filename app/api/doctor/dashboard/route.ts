@@ -12,8 +12,8 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 // Single isolated source of truth for the Doctor Portal:
 //  - profile (self)
 //  - stats (today's appointments, patients treated, full-fee earnings)
-//  - today's appointment queue (scheduled today, not cancelled)
-//  - upcoming scheduled appointments (from tomorrow onwards, chronological)
+//  - today's PAID appointment queue (scheduled today, not cancelled)
+//  - upcoming PAID scheduled appointments (from tomorrow onwards, chronological)
 //  - completed appointment history (incl. digital prescriptions)
 //
 // STRICT DATA ISOLATION: every query is scoped with `where: { doctorId }`
@@ -80,24 +80,27 @@ export async function GET() {
 
     const [todayAppointments, upcomingAppointments, history, totalCompleted, totalPaidCompleted, notifications] =
       await Promise.all([
-        // Today's queue — every non-cancelled consultation scheduled in the
-        // current Asia/Dhaka calendar day.
+        // Today's queue — ONLY paid (CONFIRMED) consultations scheduled in the
+        // current Asia/Dhaka calendar day. Unpaid / failed / pending-payment
+        // attempts are tracked in the Admin panel, never in the doctor queue.
         prisma.appointment.findMany({
           where: {
             doctorId,
             scheduledAt: { gte: startOfToday, lt: endOfToday },
+            paymentStatus: 'PAID',
             status: { not: 'CANCELLED' },
           },
           include: { patient: patientSelect, prescription: true },
           orderBy: { scheduledAt: 'asc' },
         }),
 
-        // Upcoming appointments — every non-completed / non-cancelled booking
-        // from tomorrow onwards, shown chronologically on its own tab.
+        // Upcoming appointments — every PAID, non-completed / non-cancelled
+        // booking from tomorrow onwards, shown chronologically on its own tab.
         prisma.appointment.findMany({
           where: {
             doctorId,
             scheduledAt: { gte: endOfToday },
+            paymentStatus: 'PAID',
             status: { notIn: ['CANCELLED', 'COMPLETED'] },
           },
           include: { patient: patientSelect, prescription: true },

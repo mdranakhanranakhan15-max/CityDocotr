@@ -5,6 +5,11 @@ import { sendAppointmentConfirmationSms } from '@/lib/sms';
 
 export const dynamic = 'force-dynamic';
 
+// TESTING OVERRIDE — lets the "Book Now / Immediate Call" and custom time
+// picker book ANY time slot during live testing, even off-schedule. Flip to
+// `false` to restore strict server-side schedule validation in production.
+const ALLOW_ANY_SLOT_FOR_TESTING = true;
+
 // GET /api/appointments - List appointments with doctor and patient details
 export async function GET(req: Request) {
   try {
@@ -153,7 +158,12 @@ export async function POST(req: Request) {
     const finalScheduledAt = scheduledAt ? new Date(scheduledAt) : parsedSlot || new Date();
 
     // Enforce the doctor's saved weekly schedule + slot settings on the server.
-    if (parsedSlot && !isValidDoctorScheduleSlot(doctor, parsedSlot)) {
+    // Skipped while the flexible-slot testing override is on.
+    if (
+      parsedSlot &&
+      !isValidDoctorScheduleSlot(doctor, parsedSlot) &&
+      !ALLOW_ANY_SLOT_FOR_TESTING
+    ) {
       const days = parseAvailableDays(doctor.availableDays);
       return NextResponse.json(
         {

@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { X, Sun, Sunrise, Moon, CalendarDays } from 'lucide-react';
+import { X, Sun, Sunrise, Moon, CalendarDays, Zap, Clock } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -43,6 +43,38 @@ function formatTimeLabel(totalMinutes: number): string {
   const meridian = h24 >= 12 ? 'PM' : 'AM';
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
   return `${h12}:${String(mm).padStart(2, '0')} ${meridian}`;
+}
+
+// Convert a 24-hour "HH:mm" value from an <input type="time"> into the same
+// 12-hour label used by the generated grid, e.g. "14:05" -> "2:05 PM".
+function format24hTimeLabel(value: string): string {
+  const parts = String(value).split(':');
+  const hh = parseInt(parts[0], 10);
+  const mm = parseInt(parts[1], 10);
+  if (Number.isNaN(hh) || Number.isNaN(mm) || mm > 59) return '';
+  const h24 = hh % 24;
+  const meridian = h24 >= 12 ? 'PM' : 'AM';
+  const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
+  return `${h12}:${String(mm).padStart(2, '0')} ${meridian}`;
+}
+
+// "Mon, 6 Sep • 10:37 AM" style labels resolved in Asia/Dhaka wall-clock time
+// for the CURRENT moment — used by the "Book Now / Immediate Call" shortcut.
+function getDhakaNowLabel(): { timeLabel: string; dateLabel: string } {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Dhaka',
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).formatToParts(new Date());
+  const read = (type: string) => parts.find((p) => p.type === type)?.value || '';
+  return {
+    timeLabel: `${read('hour')}:${read('minute')} ${read('dayPeriod')}`,
+    dateLabel: `${read('weekday')}, ${read('day')} ${read('month')}`,
+  };
 }
 
 // Generate every slot whose start time + slotDuration fits inside the shift.
@@ -106,6 +138,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const { currentUser, openAuthModal } = useAuth();
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedDateIdx, setSelectedDateIdx] = useState(0);
+  // Flexible-slot testing: free-form 24h value from the custom time picker.
+  const [customTime, setCustomTime] = useState('');
 
   // Calendar row: next 7 days; days NOT in doctor's availableDays flagged.
   const next7Days = useMemo(() => {
@@ -150,6 +184,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     if (!isOpen) return;
     setSelectedDateIdx(0);
     setSelectedSlot(null);
+    setCustomTime('');
   }, [isOpen, doctor?.id]);
 
   const firstEnabledIdx = next7Days.findIndex((d) => d.enabled);
@@ -185,28 +220,47 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleConfirm = () => {
-    if (!selectedSlot || !activeDay?.enabled) return;
+  const goToCheckout = (time: string, date: string) => {
+    const params = new URLSearchParams();
+    if (doctor?.id) params.set('doctorId', doctor.id);
+    params.set('time', time);
+    params.set('date', date);
+    onClose();
+    router.push(`/checkout?${params.toString()}`);
+  };
 
-    const navigateToCheckout = () => {
-      const params = new URLSearchParams();
-      if (doctor?.id) params.set('doctorId', doctor.id);
-      params.set('time', selectedSlot);
-      params.set('date', activeDay.formatted);
-      onClose();
-      router.push(`/checkout?${params.toString()}`);
-    };
-
+  const requireAuth = (action: () => void) => {
     if (!currentUser) {
       // Intercept booking and open auth modal
       openAuthModal({
         isLoginView: true,
-        onAuthSuccess: () => navigateToCheckout(),
+        onAuthSuccess: () => action(),
       });
       return;
     }
+    action();
+  };
 
-    navigateToCheckout();
+  const handleConfirm = () => {
+    if (!selectedSlot || !activeDay?.enabled) return;
+    const time = selectedSlot;
+    const date = activeDay.formatted;
+    requireAuth(() => goToCheckout(time, date));
+  };
+
+  // Flexible testing #1 — start a consultation at the CURRENT time (Asia/Dhaka
+  // wall clock) with one click, no need to match the doctor's shift grid.
+  const handleImmediateBook = () => {
+    const { timeLabel, dateLabel } = getDhakaNowLabel();
+    requireAuth(() => goToCheckout(timeLabel, dateLabel));
+  };
+
+  // Flexible testing #2 — apply an arbitrary custom time from the time picker
+  // onto the currently selected date. Works for ANY time today / next 7 days.
+  const handleUseCustomTime = () => {
+    const time = format24hTimeLabel(customTime);
+    if (!time) return;
+    setSelectedSlot(time);
   };
 
   return (
@@ -255,6 +309,69 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           ))}
         </div>
 
+        {/* FLEXIBLE SLOT TESTING PANEL — book "now" or any custom time */}
+
+        <div className="mb-4 rounded-xl border-2 border-dashed border-emerald-300 bg-emerald-50/70 p-4 space-y-3">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div className="flex items-start gap-2.5 min-w-0">
+              <Zap className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-bold text-emerald-800">
+                  Book Now — Immediate Call
+                </p>
+                <p className="text-[11px] text-emerald-700/80 leading-snug">
+                  Start at the current time instantly. Best for live testing the
+                  doctor&apos;s incoming-call queue &amp; consultation room.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleImmediateBook}
+              className="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-colors shadow-sm shadow-emerald-600/30 active:scale-95"
+            >
+              ⚡ Book Immediately
+            </button>
+          </div>
+
+          <div className="flex items-end gap-2 flex-wrap">
+            <div className="flex-1 min-w-[170px]">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1 flex items-center gap-1">
+                <Clock className="w-3 h-3" /> Or pick any custom time
+              </p>
+              <input
+                type="time"
+                value={customTime}
+                onChange={(e) => setCustomTime(e.target.value)}
+                className="w-full rounded-lg border border-emerald-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={handleUseCustomTime}
+              disabled={!customTime}
+              className="px-4 py-2 rounded-lg border border-emerald-600 text-emerald-700 bg-white hover:bg-emerald-600 hover:text-white text-sm font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              Use this time
+            </button>
+          </div>
+
+          {customTime && (
+            <p className="text-[11px] text-slate-600">
+              Selected:{' '}
+              <span className="font-bold text-slate-800">
+                {format24hTimeLabel(customTime) || customTime}
+              </span>{' '}
+              on{' '}
+              <span className="font-bold text-slate-800">
+                {activeDay?.formatted}
+              </span>{' '}
+              — press <span className="font-semibold">Confirm</span> below to
+              continue to checkout.
+            </p>
+          )}
+        </div>
+
         {/* Date Scroll (today + next 7 days; non-working days disabled) */}
         <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
           {next7Days.map((day, idx) => {
@@ -269,6 +386,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   if (!day.enabled) return;
                   setSelectedDateIdx(idx);
                   setSelectedSlot(null);
+                  setCustomTime('');
                 }}
                 title={
                   day.enabled
@@ -350,7 +468,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 <button
                   key={slot.label}
                   type="button"
-                  onClick={() => setSelectedSlot(slot.label)}
+                  onClick={() => {
+                    setCustomTime('');
+                    setSelectedSlot(slot.label);
+                  }}
                   className={`rounded-md py-2 text-sm font-semibold border transition-colors ${
                     isSelected
                       ? 'bg-blue-600 border-blue-600 text-white'

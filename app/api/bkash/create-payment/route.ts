@@ -5,6 +5,12 @@ import { parseTimeSlotToDate, isValidDoctorScheduleSlot, parseAvailableDays } fr
 
 export const dynamic = 'force-dynamic';
 
+// TESTING OVERRIDE — let the "Book Now / Immediate Call" and custom time
+// picker book ANY time slot during live testing, even when the requested
+// time does not exactly match the doctor's weekly shift grid. Flip this to
+// `false` to restore strict server-side schedule validation in production.
+const ALLOW_ANY_SLOT_FOR_TESTING = true;
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -76,7 +82,12 @@ export async function POST(req: Request) {
     const parsedSlot = parseTimeSlotToDate(timeSlot);
 
     // Enforce the doctor's saved weekly schedule + slot settings on the server.
-    if (parsedSlot && !isValidDoctorScheduleSlot(doctor, parsedSlot)) {
+    // Skipped while the flexible-slot testing override is on.
+    if (
+      parsedSlot &&
+      !isValidDoctorScheduleSlot(doctor, parsedSlot) &&
+      !ALLOW_ANY_SLOT_FOR_TESTING
+    ) {
       const days = parseAvailableDays(doctor.availableDays);
       return NextResponse.json(
         {
@@ -113,9 +124,16 @@ export async function POST(req: Request) {
       },
     });
 
+    // Resolve the public origin dynamically so the bKash callback works from
+    // localhost, a tunnel, or the production domain — never a hardcoded URL.
     const baseUrl =
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      (req.headers.get('origin') || 'http://localhost:3000');
+      process.env.NEXT_PUBLIC_APP_URL ||
+      req.headers.get('origin') ||
+      'https://citydocotr-zeta.vercel.app';
+    // bKash appends ?paymentID=…&status=success|failure|cancel to this single
+    // callback URL. The /payment/callback page verifies the transaction and
+    // then hands the patient back to ${baseUrl}/patient/appointments (success
+    // AND cancel/fail), where the booking is shown with its payment badge.
     const callbackURL = `${baseUrl}/payment/callback`;
 
     // Initiate bKash Payment with merchant credentials
