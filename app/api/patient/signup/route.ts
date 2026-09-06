@@ -7,8 +7,11 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-// POST /api/auth/signup - Patient registration (legacy route).
-// Supports signup with a mobile number OR an email (see lib/patient-accounts.ts).
+// POST /api/patient/signup - Patient registration.
+// Accepts either `mobileNumber` (with optional `phone` alias) or `email`:
+//  - Mobile signups automatically get email `<digits>@patient.citydoctor.com`
+//    so the Patient `email @unique` Prisma constraint is always satisfied.
+//  - Duplicate mobile numbers / emails return friendly 409 errors.
 export async function POST(req: Request) {
   try {
     const body = await req.json();

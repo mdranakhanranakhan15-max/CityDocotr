@@ -30,7 +30,8 @@ interface AuthContextType {
   login: (identifier: string, password: string) => Promise<{ success: boolean; error?: string; user?: PatientUser }>;
   signup: (data: {
     name: string;
-    phone: string;
+    mobileNumber?: string;
+    email?: string;
     location: string;
     password: string;
   }) => Promise<{ success: boolean; error?: string; user?: PatientUser }>;
@@ -171,12 +172,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (data: {
     name: string;
-    phone: string;
+    mobileNumber?: string;
+    email?: string;
     location: string;
     password: string;
   }) => {
     try {
-      const res = await fetch('/api/auth/signup', {
+      const res = await fetch('/api/patient/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
