@@ -544,6 +544,9 @@ export default function CityDoctorLandingPage() {
   const [planItems, setPlanItems] = useState<(typeof PLANS)[number][]>(PLANS);
   // CMS-controlled homepage headline figures (Admin -> Settings -> Site Stats).
   const [heroStats, setHeroStats] = useState(HERO_STATS);
+  // Becomes true once /api/settings resolves (success OR failure) so the hero
+  // stats band can show a loader instead of the hardcoded fallback text.
+  const [heroStatsReady, setHeroStatsReady] = useState(false);
   // "Doctors Online" badge text, controlled from the Admin -> Settings CMS.
   const [onlineBadgeText, setOnlineBadgeText] = useState('');
   // Live verified-doctor counts per specialty slug (from /api/specialties).
@@ -605,9 +608,9 @@ export default function CityDoctorLandingPage() {
     async function fetchSiteStatsAndCounts() {
       try {
         const [cfgRes, specRes, revRes] = await Promise.all([
-          fetch('/api/settings'),
-          fetch('/api/specialties'),
-          fetch('/api/reviews'),
+          fetch('/api/settings', { cache: 'no-store' }),
+          fetch('/api/specialties', { cache: 'no-store' }),
+          fetch('/api/reviews', { cache: 'no-store' }),
         ]);
         const cfg = await cfgRes.json();
         const spec = await specRes.json();
@@ -622,7 +625,7 @@ export default function CityDoctorLandingPage() {
           setHeroStats([
             { value: cfg.stats.patientsServed || '500K+', label: 'Patients Served' },
             { value: cfg.stats.bmdcDoctors || '2,500+', label: 'BMDC Doctors' },
-            { value: cfg.stats.satisfaction || '98.4%', label: 'Satisfaction' },
+            { value: cfg.stats.satisfactionRate || '98.4%', label: 'Satisfaction' },
           ]);
           if (cfg.stats.onlineDoctors) {
             setOnlineBadgeText(String(cfg.stats.onlineDoctors));

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -10,15 +11,17 @@ export const revalidate = 0;
 const DEFAULT_STATS = {
   patientsServed: '500K+',
   bmdcDoctors: '2,500+',
-  satisfaction: '98.4%',
+  satisfactionRate: '98.4%',
   onlineDoctors: '4+ Doctors Online',
 };
 
 // Maps the public config field name to the SiteSetting key + CMS label.
+// The satisfaction storage key intentionally stays "stats.satisfaction" so
+// rows written by earlier versions keep working after the field rename.
 const KEYS: Record<string, { key: string; label: string }> = {
   patientsServed: { key: 'stats.patientsServed', label: 'Patients Served' },
   bmdcDoctors: { key: 'stats.bmdcDoctors', label: 'BMDC Doctors' },
-  satisfaction: { key: 'stats.satisfaction', label: 'Satisfaction' },
+  satisfactionRate: { key: 'stats.satisfaction', label: 'Satisfaction' },
   onlineDoctors: { key: 'stats.onlineDoctors', label: 'Doctors Online Badge' },
 };
 
@@ -32,16 +35,21 @@ async function readStats() {
   return {
     patientsServed: store[KEYS.patientsServed.key] ?? DEFAULT_STATS.patientsServed,
     bmdcDoctors: store[KEYS.bmdcDoctors.key] ?? DEFAULT_STATS.bmdcDoctors,
-    satisfaction: store[KEYS.satisfaction.key] ?? DEFAULT_STATS.satisfaction,
+    satisfactionRate: store[KEYS.satisfactionRate.key] ?? DEFAULT_STATS.satisfactionRate,
     onlineDoctors: store[KEYS.onlineDoctors.key] ?? DEFAULT_STATS.onlineDoctors,
   };
 }
 
 // GET /api/settings — return the CMS-controlled homepage stats & metrics.
+// The no-store header (plus dynamic/revalidate = 0 above) guarantees the API
+// itself is never cached, so the homepage always receives live DB values.
 export async function GET() {
   try {
     const stats = await readStats();
-    return NextResponse.json({ success: true, stats, defaults: DEFAULT_STATS });
+    return NextResponse.json(
+      { success: true, stats, defaults: DEFAULT_STATS },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (error: any) {
     console.error('Error fetching settings:', error);
     return NextResponse.json(
@@ -52,8 +60,8 @@ export async function GET() {
 }
 
 // PUT /api/settings — persist the homepage stats & metrics from the Admin CMS.
-// Accepts { patientsServed?, bmdcDoctors?, satisfaction?, onlineDoctors? } and
-// upserts each provided value so the homepage reflects the change instantly.
+// Accepts { patientsServed?, bmdcDoctors?, satisfactionRate?, onlineDoctors? }
+// and upserts each provided value so the homepage reflects the change instantly.
 export async function PUT(req: Request) {
   try {
     const body = await req.json();
@@ -74,12 +82,23 @@ export async function PUT(req: Request) {
       });
     }
 
+    // Force Next.js / Vercel to clear the cached homepage immediately so the
+    // new CMS values are served right away instead of stale build HTML.
+    try {
+      revalidatePath('/');
+    } catch {
+      // No-op outside a hosted/incremental-cache environment (e.g. dev).
+    }
+
     const stats = await readStats();
-    return NextResponse.json({
-      success: true,
-      message: 'Site stats updated successfully',
-      stats,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Site stats updated successfully',
+        stats,
+      },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (error: any) {
     console.error('Error saving settings:', error);
     return NextResponse.json(

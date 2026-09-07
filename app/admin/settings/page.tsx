@@ -7,7 +7,7 @@ import { ChangePasswordForm } from '@/components/ChangePasswordForm';
 interface SiteConfig {
   patientsServed: string;
   bmdcDoctors: string;
-  satisfaction: string;
+  satisfactionRate: string;
   onlineDoctors: string;
 }
 
@@ -15,7 +15,7 @@ export default function AdminSettingsPage() {
   const [config, setConfig] = useState<SiteConfig>({
     patientsServed: '500K+',
     bmdcDoctors: '2,500+',
-    satisfaction: '98.4%',
+    satisfactionRate: '98.4%',
     onlineDoctors: '4+ Doctors Online',
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
@@ -32,7 +32,7 @@ export default function AdminSettingsPage() {
           setConfig({
             patientsServed: data.stats.patientsServed,
             bmdcDoctors: data.stats.bmdcDoctors,
-            satisfaction: data.stats.satisfaction,
+            satisfactionRate: data.stats.satisfactionRate,
             onlineDoctors: data.stats.onlineDoctors,
           });
         }
@@ -116,7 +116,7 @@ export default function AdminSettingsPage() {
           {[
             { key: 'patientsServed', label: 'Patients Served', hint: 'e.g. 500K+' },
             { key: 'bmdcDoctors', label: 'BMDC Doctors', hint: 'e.g. 2,500+' },
-            { key: 'satisfaction', label: 'Satisfaction %', hint: 'e.g. 98.4%' },
+            { key: 'satisfactionRate', label: 'Satisfaction %', hint: 'e.g. 98.4%' },
             { key: 'onlineDoctors', label: 'Online Doctors Badge', hint: 'e.g. 4+ Doctors Online' },
           ].map((field) => (
             <label key={field.key} className="flex flex-col gap-1 min-w-0">
