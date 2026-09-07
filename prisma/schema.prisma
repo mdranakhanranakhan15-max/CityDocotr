@@ -179,3 +179,54 @@ model HeroBanner {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// ================= E-COMMERCE / HEALTH CATALOGUE CMS =================
+// The three catalogue collections below power the public Medicine Shop, the
+// Lab Test Packages grid and the Health Membership plans — all managed live
+// from the Admin panel (app/admin/{medicines,lab-tests,health-plans}).
+
+// Medicine catalogue managed by the Admin (CityDoctor Express Pharmacy).
+model Medicine {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  category        String   @default("General") // e.g. Fever & Pain, Vitamins & Supplements
+  brand           String   @default("") // Manufacturer e.g. Square Pharma
+  composition     String   @default("") // Active ingredients e.g. Paracetamol 500mg
+  form            String   @default("Medicine") // Tablet / Capsule / Syrup
+  imageUrl        String   @default("") // Public /upload/* URL or CDN link
+  regularPrice    Float    @default(0)
+  discountedPrice Float    @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Diagnostic checkup packages sold with home sample collection.
+model LabTestPackage {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  category        String   @default("Health Checkup") // e.g. Full Body Screening
+  testsCount      Int      @default(1)
+  regularPrice    Float    @default(0)
+  discountedPrice Float    @default(0)
+  features        String[] // List of inclusion bullets rendered on the public grid
+  popular         Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// Recurring health membership / subscription plans (CityDoctor Plus).
+model HealthPlan {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  tagline       String   @default("")
+  familyMembers Int      @default(1) // Number of covered family members
+  monthlyPrice  Float    @default(0)
+  yearlyPrice   Float    @default(0)
+  features      String[] // Feature bullets shown on the membership card
+  popular       Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

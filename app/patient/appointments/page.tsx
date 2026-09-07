@@ -310,7 +310,10 @@ export default function PatientAppointmentsPage() {
                 const isCancelled = slotState === 'CANCELLED';
                 const isTimedOut = slotState === 'TIMED_OUT';
                 const isUpcoming = slotState === 'UPCOMING';
-                const canEnter = slotState === 'ACTIVE';
+                // BUSINESS RULE: the video room may only be entered for an
+                // ACTIVE slot window AND a fully PAID appointment. Unpaid or
+                // pending bookings never expose a video-call trigger.
+                const canEnter = slotState === 'ACTIVE' && appt.paymentStatus === 'PAID';
                 const doctor = appt.doctor || {};
                 const docName = doctor.name || 'CityDoctor Physician';
                 const docInitial = (doctor.name || 'D').trim().charAt(0).toUpperCase();

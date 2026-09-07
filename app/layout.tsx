@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/AuthContext';
 import { AuthModal } from '@/components/AuthModal';
+import { CartProvider } from '@/context/CartContext';
+import { CartDrawer } from '@/components/CartDrawer';
 
 export const metadata: Metadata = {
   title: 'CityDoctor | Instant Online Doctor Consultation & Telehealth',
@@ -15,10 +17,28 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="min-h-screen bg-[#FAFAFA] text-slate-900 antialiased selection:bg-teal-600 selection:text-white">
+      <head>
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="min-h-screen bg-[#FAF8FF] text-slate-900 antialiased">
         <AuthProvider>
-          <AuthModal />
-          {children}
+          <CartProvider>
+            <AuthModal />
+            {children}
+            <CartDrawer />
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

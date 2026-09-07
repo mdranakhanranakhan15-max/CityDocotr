@@ -15,6 +15,9 @@ import {
   KeyRound,
   PanelLeftClose,
   PanelLeftOpen,
+  Pill,
+  FlaskConical,
+  HeartPulse,
 } from 'lucide-react';
 
 export const AdminSidebar: React.FC = () => {
@@ -41,6 +44,40 @@ export const AdminSidebar: React.FC = () => {
     { name: 'Hero Banners', href: '/admin/banners', icon: ImageIcon, active: pathname === '/admin/banners' },
     { name: 'Security Settings', href: '/admin/settings', icon: KeyRound, active: pathname === '/admin/settings' },
   ];
+
+  // E-commerce / health catalogue CMS (dynamic Medicine Shop, Lab Tests & Plans).
+  const catalogueItems = [
+    { name: 'Medicine CMS', href: '/admin/medicines', icon: Pill, active: pathname === '/admin/medicines' },
+    { name: 'Lab Test Packages', href: '/admin/lab-tests', icon: FlaskConical, active: pathname === '/admin/lab-tests' },
+    { name: 'Health Plans', href: '/admin/health-plans', icon: HeartPulse, active: pathname === '/admin/health-plans' },
+  ];
+
+  const renderNavLink = (item: { name: string; href: string; icon: any; active: boolean }) => {
+    const Icon = item.icon;
+    const isActive = item.active;
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        title={item.name}
+        className={`relative flex items-center gap-3 rounded-xl text-xs font-semibold transition-all ${
+          collapsed ? 'justify-center px-0 py-3' : 'px-3.5 py-2.5'
+        } ${
+          isActive
+            ? 'bg-gradient-to-r from-teal-500/20 to-cyan-500/10 text-teal-300 border border-teal-500/30 shadow-sm'
+            : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
+        }`}
+      >
+        {isActive && !collapsed && (
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-teal-400" />
+        )}
+        <Icon
+          className={`w-4 h-4 shrink-0 ${isActive ? 'text-teal-400' : 'text-slate-500'}`}
+        />
+        {!collapsed && <span className="truncate">{item.name}</span>}
+      </Link>
+    );
+  };
 
   return (
     <aside
@@ -89,32 +126,19 @@ export const AdminSidebar: React.FC = () => {
             Management
           </div>
         )}
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = item.active;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={item.name}
-              className={`relative flex items-center gap-3 rounded-xl text-xs font-semibold transition-all ${
-                collapsed ? 'justify-center px-0 py-3' : 'px-3.5 py-2.5'
-              } ${
-                isActive
-                  ? 'bg-gradient-to-r from-teal-500/20 to-cyan-500/10 text-teal-300 border border-teal-500/30 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
-              }`}
-            >
-              {isActive && !collapsed && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full bg-teal-400" />
-              )}
-              <Icon
-                className={`w-4 h-4 shrink-0 ${isActive ? 'text-teal-400' : 'text-slate-500'}`}
-              />
-              {!collapsed && <span className="truncate">{item.name}</span>}
-            </Link>
-          );
-        })}
+        {navItems.map((item) => renderNavLink(item))}
+
+        {/* Marketplace CMS — Medicine Shop, Lab Tests & Health Plans */}
+        {collapsed ? (
+          <div className="pt-3 flex justify-center">
+            <Pill className="w-4 h-4 text-slate-500" />
+          </div>
+        ) : (
+          <div className="pt-3 px-3 py-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+            Marketplace CMS
+          </div>
+        )}
+        {catalogueItems.map((item) => renderNavLink(item))}
 
         {collapsed ? (
           <div className="pt-4 flex justify-center">

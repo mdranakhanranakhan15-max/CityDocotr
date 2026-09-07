@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx prisma/seed.ts",
+    "db:marketplace": "tsx scripts/seed-marketplace.ts",
     "db:import": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' scripts/import-local-data.ts"
   },
   "prisma": {
