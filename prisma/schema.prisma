@@ -181,14 +181,31 @@ model HeroBanner {
 }
 
 // ================= SITE STATS & METRICS CMS =================
-// Homepage headline figures ("Patients Served", "BMDC Doctors", "Satisfaction %")
-// are managed live from Admin Panel -> Settings (Site Stats & Metrics) instead of
-// being hardcoded. Stored as a flat key/value map — see app/api/site-config/route.ts.
+// Homepage headline figures ("Patients Served", "BMDC Doctors", "Satisfaction %",
+// "Doctors Online" badge) are managed live from Admin Panel -> Settings (Site Stats &
+// Metrics) instead of being hardcoded. Stored as a flat key/value map — see
+// app/api/settings/route.ts.
 model SiteSetting {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  key       String   @unique // e.g. "hero.patientsServed", "hero.bmdcDoctors", "hero.satisfaction"
+  key       String   @unique // e.g. "stats.patientsServed", "stats.bmdcDoctors"
   value     String // Display value e.g. "500K+", "2,500+", "98.4%"
   label     String? // Human-readable label shown in the Admin Settings CMS
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ================= PATIENT REVIEWS / TESTIMONIALS CMS =================
+// Patient testimonials shown on the public homepage. Managed live from the Admin
+// Panel (app/admin/reviews). Rendered on the homepage with quote, name, the city
+// location, a 1-5 rating and a service/department tag.
+model PatientReview {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String // Patient name shown next to the avatar circle
+  location  String // City / area, e.g. "Uttara, Dhaka"
+  text      String // The review / testimonial quote
+  rating    Int      @default(5) // Star rating 1-5
+  service   String // Service / department tag, e.g. "Pediatrics Consultation"
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

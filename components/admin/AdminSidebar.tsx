@@ -19,6 +19,7 @@ import {
   FlaskConical,
   HeartPulse,
   LogOut,
+  MessageSquareQuote,
 } from 'lucide-react';
 
 export const AdminSidebar: React.FC = () => {
@@ -62,6 +63,7 @@ export const AdminSidebar: React.FC = () => {
     { name: 'Patients', href: '/admin/patients', icon: Users, active: pathname === '/admin/patients' },
     { name: 'Appointments', href: '/admin/appointments', icon: CalendarCheck, active: pathname === '/admin/appointments' },
     { name: 'Hero Banners', href: '/admin/banners', icon: ImageIcon, active: pathname === '/admin/banners' },
+    { name: 'Patient Reviews', href: '/admin/reviews', icon: MessageSquareQuote, active: pathname === '/admin/reviews' },
     { name: 'Security Settings', href: '/admin/settings', icon: KeyRound, active: pathname === '/admin/settings' },
   ];
 

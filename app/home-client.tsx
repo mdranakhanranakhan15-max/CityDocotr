@@ -408,24 +408,27 @@ const TRUST_FEATURES: { icon: any; title: string; desc: string }[] = [
   },
 ];
 
-const TESTIMONIALS: { quote: string; name: string; place: string }[] = [
+const TESTIMONIALS: { quote: string; name: string; place: string; rating: number }[] = [
   {
     quote:
-      '“DocTime is a lifesaver for our family. When my 4-year-old had sudden midnight fever, Dr. Rafiqul was online within 6 minutes. The e-prescription was clear and medicine arrived in the morning.”',
+      '“CityDoctor is a lifesaver for our family. When my 4-year-old had sudden midnight fever, Dr. Rafiqul was online within 6 minutes. The e-prescription was clear and medicine arrived in the morning.”',
     name: 'Shahrin Sultana',
     place: 'Uttara, Dhaka • Pediatrics Consultation',
+    rating: 5,
   },
   {
     quote:
-      '“Living outside Dhaka, getting an appointment with a BSMMU doctor used to take weeks. With DocTime, we consulted Prof. Mahmudul Alam for my mother’s cardiac checkup right from our living room.”',
+      '“Living outside Dhaka, getting an appointment with a BSMMU doctor used to take weeks. With CityDoctor, we consulted Prof. Mahmudul Alam for my mother’s cardiac checkup right from our living room.”',
     name: 'Tanmoy Bhowmick',
     place: 'Sylhet Sadar • Cardiology Review',
+    rating: 5,
   },
   {
     quote:
       '“The home sample collection service for diabetes checkup was so seamless. Phlebotomist came at 7:30 AM in PPE, and I received digital reports by 6 PM. Highly recommended!”',
     name: 'Mahmudur Rahman',
     place: 'Gulshan, Dhaka • Executive Full Body Checkup',
+    rating: 5,
   },
 ];
 
@@ -541,8 +544,12 @@ export default function CityDoctorLandingPage() {
   const [planItems, setPlanItems] = useState<(typeof PLANS)[number][]>(PLANS);
   // CMS-controlled homepage headline figures (Admin -> Settings -> Site Stats).
   const [heroStats, setHeroStats] = useState(HERO_STATS);
+  // "Doctors Online" badge text, controlled from the Admin -> Settings CMS.
+  const [onlineBadgeText, setOnlineBadgeText] = useState('');
   // Live verified-doctor counts per specialty slug (from /api/specialties).
   const [specialtyCounts, setSpecialtyCounts] = useState<Record<string, number>>({});
+  // Patient reviews / testimonials fetched live from /api/reviews (MongoDB).
+  const [testimonials, setTestimonials] = useState(TESTIMONIALS);
 
   // Fetch the live doctor feed once
   useEffect(() => {
@@ -592,29 +599,49 @@ export default function CityDoctorLandingPage() {
     fetchMarketplace();
   }, []);
 
-  // Fetch CMS-controlled homepage stats + live specialty doctor counts.
+  // Fetch CMS-controlled homepage stats, live specialty doctor counts and the
+  // patient reviews/testimonials (all managed from the Admin Panel).
   useEffect(() => {
     async function fetchSiteStatsAndCounts() {
       try {
-        const [cfgRes, specRes] = await Promise.all([
-          fetch('/api/site-config'),
+        const [cfgRes, specRes, revRes] = await Promise.all([
+          fetch('/api/settings'),
           fetch('/api/specialties'),
+          fetch('/api/reviews'),
         ]);
         const cfg = await cfgRes.json();
         const spec = await specRes.json();
+        let rev = {} as any;
+        try {
+          rev = await revRes.json();
+        } catch {
+          /* reviews feed optional */
+        }
 
-        if (cfg.success && cfg.config) {
+        if (cfg.success && cfg.stats) {
           setHeroStats([
-            { value: cfg.config.patientsServed || '500K+', label: 'Patients Served' },
-            { value: cfg.config.bmdcDoctors || '2,500+', label: 'BMDC Doctors' },
-            { value: cfg.config.satisfaction || '98.4%', label: 'Satisfaction' },
+            { value: cfg.stats.patientsServed || '500K+', label: 'Patients Served' },
+            { value: cfg.stats.bmdcDoctors || '2,500+', label: 'BMDC Doctors' },
+            { value: cfg.stats.satisfaction || '98.4%', label: 'Satisfaction' },
           ]);
+          if (cfg.stats.onlineDoctors) {
+            setOnlineBadgeText(String(cfg.stats.onlineDoctors));
+          }
         }
         if (spec.success && spec.counts) {
           setSpecialtyCounts(spec.counts);
         }
+        if (rev.success && Array.isArray(rev.reviews) && rev.reviews.length > 0) {
+          const mapped = rev.reviews.map((t: any) => ({
+            quote: t.quote || t.text || '',
+            name: t.name || 'Patient',
+            place: t.place || t.location || '',
+            rating: Math.max(1, Math.min(5, Math.round(Number(t.rating) || 5))),
+          }));
+          setTestimonials(mapped);
+        }
       } catch (e) {
-        console.error('Error fetching site stats & specialty counts:', e);
+        console.error('Error fetching site stats, counts & reviews:', e);
       }
     }
     fetchSiteStatsAndCounts();
@@ -902,7 +929,7 @@ export default function CityDoctorLandingPage() {
                 <div className="flex items-center justify-center gap-3">
                   <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm text-[12px] font-bold text-slate-700">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    {liveCount}+ Doctors Online
+                    {onlineBadgeText || `${liveCount}+ Doctors Online`}
                   </span>
                   <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm text-[12px] font-bold text-slate-700">
                     <Clock className="w-3.5 h-3.5 text-blue-600" />
@@ -1681,14 +1708,19 @@ export default function CityDoctorLandingPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 
-              {TESTIMONIALS.map((t) => (
+              {testimonials.map((t) => (
                 <figure
                   key={t.name}
                   className="bg-slate-50/70 border border-slate-100 rounded-3xl p-7 flex flex-col gap-5 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
                 >
                   <div className="flex items-center gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${
+                          i < (t.rating || 5) ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-300'
+                        }`}
+                      />
                     ))}
                   </div>
                   <blockquote className="text-[14px] leading-relaxed text-slate-600 flex-1">

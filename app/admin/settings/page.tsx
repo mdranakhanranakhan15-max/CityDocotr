@@ -8,6 +8,7 @@ interface SiteConfig {
   patientsServed: string;
   bmdcDoctors: string;
   satisfaction: string;
+  onlineDoctors: string;
 }
 
 export default function AdminSettingsPage() {
@@ -15,6 +16,7 @@ export default function AdminSettingsPage() {
     patientsServed: '500K+',
     bmdcDoctors: '2,500+',
     satisfaction: '98.4%',
+    onlineDoctors: '4+ Doctors Online',
   });
   const [isLoadingStats, setIsLoadingStats] = useState(true);
   const [isSavingStats, setIsSavingStats] = useState(false);
@@ -24,17 +26,18 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     async function loadConfig() {
       try {
-        const res = await fetch('/api/site-config');
+        const res = await fetch('/api/settings');
         const data = await res.json();
-        if (data.success && data.config) {
+        if (data.success && data.stats) {
           setConfig({
-            patientsServed: data.config.patientsServed,
-            bmdcDoctors: data.config.bmdcDoctors,
-            satisfaction: data.config.satisfaction,
+            patientsServed: data.stats.patientsServed,
+            bmdcDoctors: data.stats.bmdcDoctors,
+            satisfaction: data.stats.satisfaction,
+            onlineDoctors: data.stats.onlineDoctors,
           });
         }
       } catch (e) {
-        console.error('Error loading site config:', e);
+        console.error('Error loading settings:', e);
       } finally {
         setIsLoadingStats(false);
       }
@@ -46,7 +49,7 @@ export default function AdminSettingsPage() {
     setIsSavingStats(true);
     setStatsMessage(null);
     try {
-      const res = await fetch('/api/site-config', {
+      const res = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
@@ -109,11 +112,12 @@ export default function AdminSettingsPage() {
           </div>
         )}
 
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {[
             { key: 'patientsServed', label: 'Patients Served', hint: 'e.g. 500K+' },
             { key: 'bmdcDoctors', label: 'BMDC Doctors', hint: 'e.g. 2,500+' },
             { key: 'satisfaction', label: 'Satisfaction %', hint: 'e.g. 98.4%' },
+            { key: 'onlineDoctors', label: 'Online Doctors Badge', hint: 'e.g. 4+ Doctors Online' },
           ].map((field) => (
             <label key={field.key} className="flex flex-col gap-1 min-w-0">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">{field.label}</span>
