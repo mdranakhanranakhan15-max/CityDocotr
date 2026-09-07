@@ -178,19 +178,18 @@ const FALLBACK_DOCTORS: DoctorCardDoctor[] = [
 const DEPARTMENTS: {
   name: string;
   slug: string;
-  count: string;
   icon: any;
 }[] = [
-  { name: 'General Physician', slug: 'general-physician', count: '420+', icon: Stethoscope },
-  { name: 'Gynaecology & Obs', slug: 'gynae-obs', count: '310+', icon: HeartPulse },
-  { name: 'Pediatrics (Child Care)', slug: 'pediatrics', count: '260+', icon: Baby },
-  { name: 'Dermatology (Skin & Hair)', slug: 'dermatology', count: '195+', icon: Sparkles },
-  { name: 'Cardiology (Heart)', slug: 'cardiology', count: '140+', icon: Heart },
-  { name: 'Psychiatry & Mental Health', slug: 'psychiatry', count: '125+', icon: Smile },
-  { name: 'Internal Medicine', slug: 'internal-medicine', count: '90+', icon: Activity },
-  { name: 'Orthopedics (Bone & Joint)', slug: 'orthopedics', count: '180+', icon: Bone },
-  { name: 'Neurology (Brain & Nerve)', slug: 'neurology', count: '95+', icon: Brain },
-  { name: 'Endocrinology & Diabetes', slug: 'endocrinology', count: '70+', icon: Activity },
+  { name: 'General Physician', slug: 'general-physician', icon: Stethoscope },
+  { name: 'Gynaecology & Obs', slug: 'gynae-obs', icon: HeartPulse },
+  { name: 'Pediatrics (Child Care)', slug: 'pediatrics', icon: Baby },
+  { name: 'Dermatology (Skin & Hair)', slug: 'dermatology', icon: Sparkles },
+  { name: 'Cardiology (Heart)', slug: 'cardiology', icon: Heart },
+  { name: 'Psychiatry & Mental Health', slug: 'psychiatry', icon: Smile },
+  { name: 'Internal Medicine', slug: 'internal-medicine', icon: Activity },
+  { name: 'Orthopedics (Bone & Joint)', slug: 'orthopedics', icon: Bone },
+  { name: 'Neurology (Brain & Nerve)', slug: 'neurology', icon: Brain },
+  { name: 'Endocrinology & Diabetes', slug: 'endocrinology', icon: Activity },
 ];
 
 const POPULAR_SYMPTOMS: { label: string; slug: string }[] = [
@@ -540,6 +539,10 @@ export default function CityDoctorLandingPage() {
   const [medicineItems, setMedicineItems] = useState<(typeof MEDICINES)[number][]>(MEDICINES);
   const [labPackItems, setLabPackItems] = useState<(typeof LAB_PACKS)[number][]>(LAB_PACKS);
   const [planItems, setPlanItems] = useState<(typeof PLANS)[number][]>(PLANS);
+  // CMS-controlled homepage headline figures (Admin -> Settings -> Site Stats).
+  const [heroStats, setHeroStats] = useState(HERO_STATS);
+  // Live verified-doctor counts per specialty slug (from /api/specialties).
+  const [specialtyCounts, setSpecialtyCounts] = useState<Record<string, number>>({});
 
   // Fetch the live doctor feed once
   useEffect(() => {
@@ -587,6 +590,34 @@ export default function CityDoctorLandingPage() {
       }
     }
     fetchMarketplace();
+  }, []);
+
+  // Fetch CMS-controlled homepage stats + live specialty doctor counts.
+  useEffect(() => {
+    async function fetchSiteStatsAndCounts() {
+      try {
+        const [cfgRes, specRes] = await Promise.all([
+          fetch('/api/site-config'),
+          fetch('/api/specialties'),
+        ]);
+        const cfg = await cfgRes.json();
+        const spec = await specRes.json();
+
+        if (cfg.success && cfg.config) {
+          setHeroStats([
+            { value: cfg.config.patientsServed || '500K+', label: 'Patients Served' },
+            { value: cfg.config.bmdcDoctors || '2,500+', label: 'BMDC Doctors' },
+            { value: cfg.config.satisfaction || '98.4%', label: 'Satisfaction' },
+          ]);
+        }
+        if (spec.success && spec.counts) {
+          setSpecialtyCounts(spec.counts);
+        }
+      } catch (e) {
+        console.error('Error fetching site stats & specialty counts:', e);
+      }
+    }
+    fetchSiteStatsAndCounts();
   }, []);
 
   const isDocOnline = (d: DoctorCardDoctor | any) =>
@@ -888,7 +919,7 @@ export default function CityDoctorLandingPage() {
         <section className="bg-white border-y border-slate-100">
           <div className="max-w-[1440px] mx-auto px-4 lg:px-6 py-7">
             <div className="grid grid-cols-3 gap-4 text-center">
-              {HERO_STATS.map((s, i) => (
+              {heroStats.map((s, i) => (
                 <div
                   key={s.label}
                   className={`flex flex-col items-center gap-1 ${
@@ -1125,7 +1156,9 @@ export default function CityDoctorLandingPage() {
                     </span>
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      {dept.count} Doctors
+                      {specialtyCounts[dept.slug] !== undefined && specialtyCounts[dept.slug] > 0
+                        ? `${specialtyCounts[dept.slug]} Specialists Available`
+                        : 'Doctors Available'}
                     </span>
                   </button>
                 );

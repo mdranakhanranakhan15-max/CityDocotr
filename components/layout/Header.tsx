@@ -167,7 +167,7 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           <button
             type="button"
-            onClick={() => openAuthModal({ redirectTo: '/patient/appointments' })}
+            onClick={() => openAuthModal({ redirectTo: '/' })}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-500/10 border border-teal-500/30 text-teal-300 hover:text-teal-200 text-xs font-bold transition-colors"
           >
             <User className="w-4 h-4" />

@@ -274,7 +274,7 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
             ) : (
               <button
                 type="button"
-                onClick={() => openAuthModal({ redirectTo: '/patient/appointments' })}
+                onClick={() => openAuthModal({ redirectTo: '/' })}
                 className="hidden sm:inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-[13px] font-bold transition-colors 2xl:px-4"
               >
                 <User className="w-4 h-4" />
@@ -341,7 +341,7 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    openAuthModal({ redirectTo: '/patient/appointments' });
+                    openAuthModal({ redirectTo: '/' });
                   }}
                   className="w-full py-3 rounded-xl bg-blue-50 text-blue-700 text-[13px] font-bold flex items-center justify-center gap-2"
                 >

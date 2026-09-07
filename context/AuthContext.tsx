@@ -140,12 +140,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      // Plain "Login / Sign Up" buttons land the user in their patient dashboard.
+      // Plain "Login / Sign Up" buttons land general users on the homepage.
       // Full navigation makes sure the freshly-set httpOnly session cookie
       // (citydoctor_patient_token) is honored by the destination page.
-      if (redirectTo) {
-        window.location.assign(redirectTo);
-      }
+      // Redirect successfully logged-in users directly to the homepage ("/")
+      // unless a contextual destination was explicitly requested.
+      window.location.assign(redirectTo || '/');
     },
     [authSuccessCallback, authRedirectTo]
   );

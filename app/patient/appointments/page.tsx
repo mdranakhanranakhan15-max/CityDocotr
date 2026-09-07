@@ -173,7 +173,7 @@ export default function PatientAppointmentsPage() {
             <button
               type="button"
               onClick={() =>
-                openAuthModal({ isLoginView: true, redirectTo: '/patient/appointments' })
+                openAuthModal({ isLoginView: true, redirectTo: '/' })
               }
               className="flex-1 py-3 rounded-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-sm shadow-teal-600/20"
             >

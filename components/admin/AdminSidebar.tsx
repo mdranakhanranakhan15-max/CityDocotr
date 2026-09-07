@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Users,
@@ -18,11 +18,31 @@ import {
   Pill,
   FlaskConical,
   HeartPulse,
+  LogOut,
 } from 'lucide-react';
 
 export const AdminSidebar: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = React.useState(false);
+
+  // Destroy the admin session/cookies, clear local state and leave the panel.
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' });
+    } catch {
+      // Session is destroyed client-side regardless of network result.
+    } finally {
+      try {
+        window.localStorage.removeItem('citydoctor_admin_user');
+        window.localStorage.removeItem('citydoctor_patient_user');
+      } catch {
+        // Ignore localStorage access errors.
+      }
+      router.push('/doctor/login');
+      router.refresh();
+    }
+  };
 
   React.useEffect(() => {
     const saved = window.localStorage.getItem('cd-admin-sidebar');
@@ -178,6 +198,14 @@ export const AdminSidebar: React.FC = () => {
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              title="Logout / Sign Out"
+              className="flex items-center justify-center w-full py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           </>
         ) : (
           <>
@@ -195,6 +223,14 @@ export const AdminSidebar: React.FC = () => {
               <ArrowLeft className="w-4 h-4 text-teal-400" />
               <span>Back to Patient Portal</span>
             </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-3 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 hover:text-red-200 text-xs font-semibold border border-red-500/30 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout / Sign Out</span>
+            </button>
           </>
         )}
       </div>

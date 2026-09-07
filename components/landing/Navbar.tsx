@@ -162,7 +162,7 @@ export const Navbar: React.FC = () => {
           ) : (
             <button
               type="button"
-              onClick={() => openAuthModal({ redirectTo: '/patient/appointments' })}
+              onClick={() => openAuthModal({ redirectTo: '/' })}
               className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-850 text-slate-200 hover:text-white text-xs font-bold border border-slate-700 hover:border-teal-500/40 transition-all flex items-center gap-2"
             >
               <User className="w-4 h-4 text-teal-400" />
@@ -273,7 +273,7 @@ export const Navbar: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  openAuthModal({ redirectTo: '/patient/appointments' });
+                  openAuthModal({ redirectTo: '/' });
                 }}
                 className="w-full py-3 rounded-xl bg-slate-900 border border-slate-700 text-center text-xs font-bold text-slate-100 flex items-center justify-center gap-2"
               >

@@ -25,7 +25,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'General Physician',
     icon: Activity,
     description: 'Fever, flu, infections, blood pressure & general wellness',
-    doctorsCount: '45+ Doctors',
     gradient: 'from-teal-500/20 to-cyan-500/10 text-teal-300 border-teal-500/30',
     iconBg: 'bg-teal-500/20 text-teal-400',
   },
@@ -35,7 +34,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Gynecologist',
     icon: Sparkles,
     description: "Women's health, pregnancy care, periods & fertility triage",
-    doctorsCount: '32+ Doctors',
     gradient: 'from-pink-500/20 to-rose-500/10 text-pink-300 border-pink-500/30',
     iconBg: 'bg-pink-500/20 text-pink-400',
   },
@@ -45,7 +43,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Pediatrician',
     icon: Baby,
     description: 'Newborn care, infant nutrition, childhood fever & growth',
-    doctorsCount: '28+ Doctors',
     gradient: 'from-blue-500/20 to-indigo-500/10 text-blue-300 border-blue-500/30',
     iconBg: 'bg-blue-500/20 text-blue-400',
   },
@@ -55,7 +52,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Dermatologist',
     icon: Sparkles,
     description: 'Acne, eczema, fungal infections, rash & hair fall issues',
-    doctorsCount: '24+ Doctors',
     gradient: 'from-amber-500/20 to-yellow-500/10 text-amber-300 border-amber-500/30',
     iconBg: 'bg-amber-500/20 text-amber-400',
   },
@@ -65,7 +61,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Cardiologist',
     icon: Heart,
     description: 'Chest discomfort, hypertension, palpitation & ECG review',
-    doctorsCount: '19+ Doctors',
     gradient: 'from-rose-500/20 to-red-500/10 text-rose-300 border-rose-500/30',
     iconBg: 'bg-rose-500/20 text-rose-400',
   },
@@ -75,7 +70,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Neurologist',
     icon: Brain,
     description: 'Migraines, vertigo, nerve pain, seizures & memory issues',
-    doctorsCount: '16+ Doctors',
     gradient: 'from-purple-500/20 to-violet-500/10 text-purple-300 border-purple-500/30',
     iconBg: 'bg-purple-500/20 text-purple-400',
   },
@@ -85,7 +79,6 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Psychiatrist',
     icon: Smile,
     description: 'Anxiety, depression, sleep disorders, stress & mental health',
-    doctorsCount: '21+ Doctors',
     gradient: 'from-emerald-500/20 to-teal-500/10 text-emerald-300 border-emerald-500/30',
     iconBg: 'bg-emerald-500/20 text-emerald-400',
   },
@@ -95,15 +88,46 @@ export const SPECIALTY_ITEMS = [
     dbName: 'Orthopedic Surgeon',
     icon: ShieldCheck,
     description: 'Joint pain, arthritis, back pain, posture & sports injuries',
-    doctorsCount: '18+ Doctors',
     gradient: 'from-cyan-500/20 to-sky-500/10 text-cyan-300 border-cyan-500/30',
     iconBg: 'bg-cyan-500/20 text-cyan-400',
   },
 ];
 
+// Maps this grid's ids to the department slugs returned by /api/specialties.
+const COUNT_SLUG: Record<string, string> = {
+  'general-physician': 'general-physician',
+  gynecology: 'gynae-obs',
+  pediatrics: 'pediatrics',
+  dermatology: 'dermatology',
+  cardiology: 'cardiology',
+  neurology: 'neurology',
+  psychiatry: 'psychiatry',
+  orthopedics: 'orthopedics',
+};
+
 export const SpecialtiesGrid: React.FC<SpecialtiesGridProps> = ({
   onSelectSpecialty,
 }) => {
+  const [doctorCounts, setDoctorCounts] = React.useState<Record<string, number>>({});
+
+  // Fetch real verified-doctor counts per specialty from the database.
+  React.useEffect(() => {
+    let isMounted = true;
+    fetch('/api/specialties')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted && data.success && data.counts) {
+          setDoctorCounts(data.counts);
+        }
+      })
+      .catch(() => {
+        // Keep "Doctors Available" fallback badges when the API is offline.
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleClick = (dbName: string) => {
     onSelectSpecialty(dbName);
     const docSection = document.getElementById('doctors');
@@ -157,7 +181,9 @@ export const SpecialtiesGrid: React.FC<SpecialtiesGridProps> = ({
                       <Icon className="w-6 h-6" />
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-950/60 text-slate-300 border border-slate-700/50">
-                      {item.doctorsCount}
+                      {doctorCounts[COUNT_SLUG[item.id]] !== undefined && doctorCounts[COUNT_SLUG[item.id]] > 0
+                        ? `${doctorCounts[COUNT_SLUG[item.id]]} Specialists Available`
+                        : 'Doctors Available'}
                     </span>
                   </div>
 

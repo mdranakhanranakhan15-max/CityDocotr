@@ -180,6 +180,19 @@ model HeroBanner {
   updatedAt DateTime @updatedAt
 }
 
+// ================= SITE STATS & METRICS CMS =================
+// Homepage headline figures ("Patients Served", "BMDC Doctors", "Satisfaction %")
+// are managed live from Admin Panel -> Settings (Site Stats & Metrics) instead of
+// being hardcoded. Stored as a flat key/value map — see app/api/site-config/route.ts.
+model SiteSetting {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  key       String   @unique // e.g. "hero.patientsServed", "hero.bmdcDoctors", "hero.satisfaction"
+  value     String // Display value e.g. "500K+", "2,500+", "98.4%"
+  label     String? // Human-readable label shown in the Admin Settings CMS
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 // ================= E-COMMERCE / HEALTH CATALOGUE CMS =================
 // The three catalogue collections below power the public Medicine Shop, the
 // Lab Test Packages grid and the Health Membership plans — all managed live
