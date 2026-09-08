@@ -42,6 +42,7 @@ import DoctorCard, { DoctorCardDoctor } from '@/components/DoctorCard';
 import BookingModal from '@/components/BookingModal';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { translateDept } from '@/lib/translations';
 
 const FALLBACK_DOCTORS: DoctorCardDoctor[] = [
   {
@@ -213,9 +214,9 @@ const DEPT_ICON_MAP: Record<string, any> = {
 };
 
 const TRUST_BADGES = [
-  { icon: ShieldCheck, label: '100% BMDC Certified Doctors' },
-  { icon: FileText, label: 'Instant Digital e-Prescription' },
-  { icon: Lock, label: '100% Private & Encrypted' },
+  { icon: ShieldCheck, labelKey: 'trust.bmdc' },
+  { icon: FileText, labelKey: 'trust.eprescription' },
+  { icon: Lock, labelKey: 'trust.private' },
 ];
 
 const HERO_STATS: { value: string; label: string; labelKey?: string }[] = [
@@ -228,45 +229,45 @@ const SERVICE_CARDS: {
   icon: any;
   color: string;
   iconWrap: string;
-  title: string;
-  desc: string;
-  cta: string;
+  titleKey: string;
+  descKey: string;
+  ctaKey: string;
   href: string;
 }[] = [
   {
     icon: Video,
     color: 'text-blue-600',
     iconWrap: 'bg-blue-50',
-    title: 'Video Consult',
-    desc: 'Connect with specialists in minutes via HD video with digital e-prescriptions.',
-    cta: 'Book Now',
+    titleKey: 'services.video.title',
+    descKey: 'services.video.desc',
+    ctaKey: 'cta.bookNow',
     href: '#doctors',
   },
   {
     icon: FlaskConical,
     color: 'text-teal-600',
     iconWrap: 'bg-teal-50',
-    title: 'Home Lab Test',
-    desc: 'Trained professionals collect samples from your home. Digital reports in 24 hrs.',
-    cta: 'Learn More',
+    titleKey: 'services.lab.title',
+    descKey: 'services.lab.desc',
+    ctaKey: 'cta.learnMore',
     href: '#diagnostic',
   },
   {
     icon: Pill,
     color: 'text-violet-600',
     iconWrap: 'bg-violet-50',
-    title: 'Medicine Delivery',
-    desc: 'Order authentic medicines with fast doorstep delivery and flat 10% discount.',
-    cta: 'Shop Now',
+    titleKey: 'services.med.title',
+    descKey: 'services.med.desc',
+    ctaKey: 'cta.shopNow',
     href: '#medicine',
   },
   {
     icon: Users,
     color: 'text-amber-600',
     iconWrap: 'bg-amber-50',
-    title: 'Subscription',
-    desc: 'Full healthcare packages for your entire family with unlimited consults.',
-    cta: 'See Plans',
+    titleKey: 'services.sub.title',
+    descKey: 'services.sub.desc',
+    ctaKey: 'cta.seePlans',
     href: '#health-plans',
   },
 ];
@@ -306,15 +307,18 @@ const LAB_PACKS: {
   name: string;
   meta: string;
   tag: string;
+  nameKey?: string;
+  metaKey?: string;
+  tagKey?: string;
   price: number;
   oldPrice: number;
   popular?: boolean;
   features?: string[];
   id?: string;
 }[] = [
-  { name: 'Comprehensive Health Checkup', meta: '68 Tests Included', tag: 'Full Body Screening', price: 1999, oldPrice: 3999, popular: true },
-  { name: 'Disease Specific Panel', meta: '24 Tests Included', tag: 'Diabetes & Thyroid', price: 999, oldPrice: 1499 },
-  { name: 'Heart Health Checkup', meta: '18 Tests Included', tag: 'Cardiac Risk Profile', price: 1499, oldPrice: 1999 },
+  { nameKey: 'lab.comprehensive.name', metaKey: 'lab.comprehensive.meta', tagKey: 'lab.comprehensive.tag', name: 'Comprehensive Health Checkup', meta: '68 Tests Included', tag: 'Full Body Screening', price: 1999, oldPrice: 3999, popular: true },
+  { nameKey: 'lab.panel.name', metaKey: 'lab.panel.meta', tagKey: 'lab.panel.tag', name: 'Disease Specific Panel', meta: '24 Tests Included', tag: 'Diabetes & Thyroid', price: 999, oldPrice: 1499 },
+  { nameKey: 'lab.heart.name', metaKey: 'lab.heart.meta', tagKey: 'lab.heart.tag', name: 'Heart Health Checkup', meta: '18 Tests Included', tag: 'Cardiac Risk Profile', price: 1499, oldPrice: 1999 },
 ];
 
 const PLANS: {
@@ -535,7 +539,11 @@ export default function CityDoctorLandingPage() {
     openCart,
     getQty,
   } = useCart();
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
+  // Bangla display name for dynamic DB departments/symptoms: explicit nameBn
+  // from the CMS first, then the curated lookup, then the raw title.
+  const bnName = (item: any): string =>
+    item?.nameBn || item?.titleBn || translateDept(item?.title || item?.name || item?.label) || item?.title || item?.name || item?.label || '';
   const [doctors, setDoctors] = useState<DoctorCardDoctor[]>([]);
   const [doctorsLoaded, setDoctorsLoaded] = useState(false);
   // Doctor Time-Slot Selection Modal (payment only after a slot is chosen).
@@ -840,7 +848,7 @@ export default function CityDoctorLandingPage() {
                         onClick={() => handleSymptomClick(s.slug)}
                         className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-50 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 text-[12.5px] font-semibold text-slate-600 transition-all"
                       >
-                        {s.label}
+                        {lang === 'bn' ? (translateDept(s.label) || s.label) : s.label}
                       </button>
                     ))}
                   </div>
@@ -1009,13 +1017,13 @@ export default function CityDoctorLandingPage() {
                 const Icon = b.icon;
                 return (
                   <div
-                    key={b.label}
+                    key={b.labelKey}
                     className="flex items-center gap-2.5 px-6 py-2 text-[13px] font-extrabold text-slate-800"
                   >
                     <span className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
                       <Icon className="w-4.5 h-4.5" />
                     </span>
-                    {b.label}
+                    {t(b.labelKey)}
                   </div>
                 );
               })}
@@ -1031,7 +1039,7 @@ export default function CityDoctorLandingPage() {
                 const Icon = card.icon;
                 return (
                   <a
-                    key={card.title}
+                    key={card.titleKey}
                     href={card.href}
                     className="group bg-white rounded-3xl border border-slate-200/80 p-6 flex flex-col gap-4 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:border-blue-200 transition-all duration-300"
                   >
@@ -1044,11 +1052,11 @@ export default function CityDoctorLandingPage() {
                       <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <h3 className="text-[16.5px] font-extrabold text-slate-900">{card.title}</h3>
-                      <p className="text-[13px] leading-relaxed text-slate-500">{card.desc}</p>
+                      <h3 className="text-[16.5px] font-extrabold text-slate-900">{t(card.titleKey)}</h3>
+                      <p className="text-[13px] leading-relaxed text-slate-500">{t(card.descKey)}</p>
                     </div>
                     <span className={`text-[13px] font-extrabold ${card.color} mt-auto`}>
-                      {card.cta} →
+                      {t(card.ctaKey)} →
                     </span>
                   </a>
                 );
@@ -1068,11 +1076,10 @@ export default function CityDoctorLandingPage() {
                   Verified Specialists
                 </span>
                 <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                  Consult Certified BMDC Doctors
+                  {t('search.title')}
                 </h2>
                 <p className="text-[14px] text-slate-500">
-                  Showing {visibleRoster.length} doctors available for video consultation today —
-                  avg. response under 4 minutes.
+                  {t('search.showing').replace('{n}', String(visibleRoster.length))}
                 </p>
               </div>
 
@@ -1092,7 +1099,7 @@ export default function CityDoctorLandingPage() {
                       onlineOnly ? 'bg-emerald-300 animate-pulse' : 'bg-slate-300'
                     }`}
                   />
-                  Online Now Only
+                  {t('search.onlineOnly')}
                 </button>
 
                 <div className="flex items-center gap-1 bg-slate-100 rounded-full p-1">
@@ -1107,22 +1114,22 @@ export default function CityDoctorLandingPage() {
                           : 'text-slate-500 hover:text-slate-700'
                       }`}
                     >
-                      {g}
+                      {t(`gender.${g}`)}
                     </button>
                   ))}
                 </div>
 
                 <label className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-slate-500">
-                  Sort:
+                  {t('sort.label')}
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
                     className="bg-slate-100 border border-slate-200 rounded-full text-[12.5px] font-bold text-slate-700 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-200"
                   >
-                    <option value="recommended">Recommended</option>
-                    <option value="rating">Top Rated</option>
-                    <option value="consulted">Most Consulted</option>
-                    <option value="fee">Lowest Fee</option>
+                    <option value="recommended">{t('sort.recommended')}</option>
+                    <option value="rating">{t('sort.rating')}</option>
+                    <option value="consulted">{t('sort.consulted')}</option>
+                    <option value="fee">{t('sort.fee')}</option>
                   </select>
                 </label>
               </div>
@@ -1145,11 +1152,10 @@ export default function CityDoctorLandingPage() {
                   <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                 </div>
                 <h3 className="font-extrabold text-slate-800 text-base">
-                  No doctors match the current filters
+                  {t('search.noDoctors')}
                 </h3>
                 <p className="text-[13px] text-slate-500 max-w-sm mx-auto">
-                  Try switching off “Online Now Only” or resetting the gender filter to see the
-                  full verified directory.
+                  {t('search.tryReset')}
                 </p>
                 <button
                   type="button"
@@ -1159,7 +1165,7 @@ export default function CityDoctorLandingPage() {
                   }}
                   className="mt-2 px-5 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-[13px] transition-colors"
                 >
-                  Reset Filters
+                  {t('search.resetFilters')}
                 </button>
               </div>
             )}
@@ -1237,10 +1243,10 @@ export default function CityDoctorLandingPage() {
                       <Icon className="w-5.5 h-5.5" />
                     </span>
                     <span className="text-[13.5px] font-extrabold text-slate-800 leading-snug group-hover:text-blue-700 transition-colors">
-                      {dept.title || dept.name}
+                      {lang === 'bn' ? bnName(dept) : (dept.title || dept.name)}
                     </span>
                     {dept.subtitle && (
-                      <span className="text-[11.5px] text-slate-500 leading-snug">{dept.subtitle}</span>
+                      <span className="text-[11.5px] text-slate-500 leading-snug">{lang === 'bn' ? (dept.subtitleBn || translateDept(dept.subtitle) || dept.subtitle) : dept.subtitle}</span>
                     )}
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -1279,7 +1285,7 @@ export default function CityDoctorLandingPage() {
                     )}
                   </div>
                   <span className="w-full px-3 py-3.5 text-[13px] font-extrabold text-slate-700 group-hover:text-blue-700 bg-blue-50/60 group-hover:bg-blue-100/80 transition-colors border-t border-blue-100/70">
-                    {symptom.title}
+                    {lang === 'bn' ? bnName(symptom) : symptom.title}
                   </span>
                 </button>
               ))}
@@ -1465,21 +1471,20 @@ export default function CityDoctorLandingPage() {
               <div className="flex flex-col gap-3">
                 <span className="inline-flex items-center gap-2 text-[11.5px] font-extrabold uppercase tracking-widest text-blue-600">
                   <Microscope className="w-4 h-4" />
-                  Home Diagnostic Services
+                  {t('lab.eyebrow')}
                 </span>
                 <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                  Accredited Lab Tests with Home Sample Collection
+                  {t('lab.heading')}
                 </h2>
                 <p className="text-[14px] text-slate-500 max-w-2xl">
-                  Certified medical phlebotomist collects blood and urine samples from your
-                  doorstep. 100% sterile equipment with digital reports in 24 hours.
+                  {t('lab.subtitle')}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[11.5px] font-extrabold">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Free Sample Collection
+                    <CheckCircle2 className="w-3.5 h-3.5" /> {t('lab.freeCollection')}
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[11.5px] font-extrabold">
-                    <BadgeCheck className="w-3.5 h-3.5" /> Accredited Lab Results
+                    <BadgeCheck className="w-3.5 h-3.5" /> {t('lab.accredited')}
                   </span>
                 </div>
               </div>
@@ -1495,16 +1500,16 @@ export default function CityDoctorLandingPage() {
                 >
                   {pack.popular && (
                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-600 text-white text-[10.5px] font-extrabold uppercase tracking-wide shadow-md shadow-blue-600/30">
-                      <Star className="w-3 h-3 fill-white" /> Most Popular
+                      <Star className="w-3 h-3 fill-white" /> {t('lab.mostPopular')}
                     </span>
                   )}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex flex-col gap-1">
                       <h3 className="text-[17px] font-extrabold text-slate-900 leading-snug">
-                        {pack.name}
+                        {pack.nameKey ? t(pack.nameKey, pack.name) : pack.name}
                       </h3>
                       <span className="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-[10.5px] font-bold text-slate-600">
-                        <FlaskConical className="w-3 h-3" /> {pack.meta}
+                        <FlaskConical className="w-3 h-3" /> {pack.metaKey ? t(pack.metaKey, pack.meta) : pack.meta}
                       </span>
                     </div>
                     <span className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
@@ -1512,15 +1517,15 @@ export default function CityDoctorLandingPage() {
                     </span>
                   </div>
                   <p className="text-[11px] font-extrabold uppercase tracking-widest text-blue-600">
-                    {pack.tag}
+                    {pack.tagKey ? t(pack.tagKey, pack.tag) : pack.tag}
                   </p>
                   <div className="flex flex-col gap-1.5 text-[12.5px] text-slate-500">
                     {(pack.features && pack.features.length
                       ? pack.features
                       : [
-                          'Free sample collection from your home',
-                          'NABL-accredited partner laboratories',
-                          'Digital report delivered within 24 hours',
+                          t('lab.feature1'),
+                          t('lab.feature2'),
+                          t('lab.feature3'),
                         ]
                     ).map((f: string) => (
                       <span key={f} className="flex items-start gap-2">
@@ -1545,7 +1550,7 @@ export default function CityDoctorLandingPage() {
                       onClick={() => handleOpenConsultation()}
                       className="px-4 py-2.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-extrabold transition-colors shadow-md shadow-blue-600/20"
                     >
-                      Book Home Collection
+                      {t('lab.bookCollection')}
                     </button>
                   </div>
                 </div>

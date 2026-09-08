@@ -82,7 +82,7 @@ const en: Record<string, string> = {
 
   // ---- Lab tests ----
   'lab.title': 'Home Diagnostic Tests',
-  'lab.subtitle': 'Sample collection from home and digital reports within 24 hours.',
+  'lab.oldSubtitle': 'Sample collection from home and digital reports within 24 hours.',
 
   // ---- Health plans ----
   'plans.title': 'Affordable Health Plans for Every Family',
@@ -112,6 +112,62 @@ const en: Record<string, string> = {
   'booking.age': 'Age',
   'booking.confirm': 'Confirm Booking',
   'booking.success': 'Appointment booked successfully!',
+
+  // ---- Trust badges row ----
+  'trust.bmdc': '100% BMDC Certified Doctors',
+  'trust.eprescription': 'Instant Digital e-Prescription',
+  'trust.private': '100% Private & Encrypted',
+
+  // ---- Quick service cards ----
+  'services.video.title': 'Video Consult',
+  'services.video.desc': 'Connect with specialists in minutes via HD video with digital e-prescriptions.',
+  'services.lab.title': 'Home Lab Test',
+  'services.lab.desc': 'Trained professionals collect samples from your home. Digital reports in 24 hrs.',
+  'services.med.title': 'Medicine Delivery',
+  'services.med.desc': 'Order authentic medicines with fast doorstep delivery and flat 10% discount.',
+  'services.sub.title': 'Subscription',
+  'services.sub.desc': 'Full healthcare packages for your entire family with unlimited consults.',
+  'cta.bookNow': 'Book Now',
+  'cta.learnMore': 'Learn More',
+  'cta.shopNow': 'Shop Now',
+  'cta.seePlans': 'See Plans',
+
+  // ---- Doctor search / list section ----
+  'search.title': 'Consult Certified BMDC Doctors',
+  'search.showing': 'Showing {n} doctors available for video consultation today — avg. response under 4 minutes.',
+  'search.onlineOnly': 'Online Now Only',
+  'gender.all': 'All',
+  'gender.female': 'Female',
+  'gender.male': 'Male',
+  'sort.label': 'Sort:',
+  'sort.recommended': 'Recommended',
+  'sort.rating': 'Top Rated',
+  'sort.consulted': 'Most Consulted',
+  'sort.fee': 'Lowest Fee',
+  'search.noDoctors': 'No doctors match the current filters',
+  'search.tryReset': 'Try switching off “Online Now Only” or resetting the gender filter to see the full verified directory.',
+  'search.resetFilters': 'Reset Filters',
+
+  // ---- Lab tests section ----
+  'lab.eyebrow': 'Home Diagnostic Services',
+  'lab.heading': 'Accredited Lab Tests with Home Sample Collection',
+  'lab.subtitle': 'Certified medical phlebotomist collects blood and urine samples from your doorstep. 100% sterile equipment with digital reports in 24 hours.',
+  'lab.freeCollection': 'Free Sample Collection',
+  'lab.accredited': 'Accredited Lab Results',
+  'lab.mostPopular': 'Most Popular',
+  'lab.bookCollection': 'Book Home Collection',
+  'lab.feature1': 'Free sample collection from your home',
+  'lab.feature2': 'NABL-accredited partner laboratories',
+  'lab.feature3': 'Digital report delivered within 24 hours',
+  'lab.comprehensive.name': 'Comprehensive Health Checkup',
+  'lab.comprehensive.meta': '68 Tests Included',
+  'lab.comprehensive.tag': 'Full Body Screening',
+  'lab.panel.name': 'Disease Specific Panel',
+  'lab.panel.meta': '24 Tests Included',
+  'lab.panel.tag': 'Diabetes & Thyroid',
+  'lab.heart.name': 'Heart Health Checkup',
+  'lab.heart.meta': '18 Tests Included',
+  'lab.heart.tag': 'Cardiac Risk Profile',
 };
 
 const bn: Record<string, string> = {
@@ -191,7 +247,7 @@ const bn: Record<string, string> = {
 
   // ---- ল্যাব টেস্ট ----
   'lab.title': 'বাসায় ডায়াগনস্টিক টেস্ট',
-  'lab.subtitle': 'বাসা থেকে নমুনা সংগ্রহ এবং ২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট।',
+  'lab.oldSubtitle': 'বাসা থেকে নমুনা সংগ্রহ এবং ২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট।',
 
   // ---- হেলথ প্ল্যান ----
   'plans.title': 'প্রতিটি পরিবারের জন্য সাশ্রয়ী হেলথ প্ল্যান',
@@ -221,6 +277,126 @@ const bn: Record<string, string> = {
   'booking.age': 'বয়স',
   'booking.confirm': 'বুকিং নিশ্চিত করুন',
   'booking.success': 'অ্যাপয়েন্টমেন্ট সফলভাবে বুক হয়েছে!',
+
+  // ---- ট্রাস্ট ব্যাজ সারি ----
+  'trust.bmdc': '১০০% বিএমডিসি সনদপ্রাপ্ত ডাক্তার',
+  'trust.eprescription': 'ইনস্ট্যান্ট ডিজিটাল ই-প্রেসক্রিপশন',
+  'trust.private': '১০০% প্রাইভেট ও এনক্রিপ্টেড',
+
+  // ---- কুইক সার্ভিস কার্ড ----
+  'services.video.title': 'ভিডিও পরামর্শ',
+  'services.video.desc': 'এইচডি ভিডিওর মাধ্যমে মিনিটেই বিশেষজ্ঞের সাথে সংযোগ করুন, সাথে ডিজিটাল ই-প্রেসক্রিপশন।',
+  'services.lab.title': 'হোম ল্যাব টেস্ট',
+  'services.lab.desc': 'প্রশিক্ষিত কর্মীরা আপনার বাসা থেকে নমুনা সংগ্রহ করবেন। ২৪ ঘণ্টায় ডিজিটাল রিপোর্ট।',
+  'services.med.title': 'ঔষধ ডেলিভারি',
+  'services.med.desc': 'দ্রুত বাসায় ডেলিভারি সহ খাঁটি ঔষধ অর্ডার করুন, ফ্ল্যাট ১০% ছাড়।',
+  'services.sub.title': 'সাবস্ক্রিপশন',
+  'services.sub.desc': 'আনলিমিটেড পরামর্শ সহ আপনার পুরো পরিবারের জন্য সম্পূর্ণ হেলথকেয়ার প্যাকেজ।',
+  'cta.bookNow': 'এখনই বুক করুন',
+  'cta.learnMore': 'আরও জানুন',
+  'cta.shopNow': 'কিনুন',
+  'cta.seePlans': 'প্ল্যান দেখুন',
+
+  // ---- ডাক্তার সার্চ / লিস্ট সেকশন ----
+  'search.title': 'সনদপ্রাপ্ত বিএমডিসি ডাক্তারের পরামর্শ নিন',
+  'search.showing': 'আজ ভিডিও পরামর্শের জন্য {n} জন ডাক্তার উপলব্ধ — গড় সাড়া ৪ মিনিটের কম।',
+  'search.onlineOnly': 'শুধু এখন অনলাইনে',
+  'gender.all': 'সব',
+  'gender.female': 'মহিলা',
+  'gender.male': 'পুরুষ',
+  'sort.label': 'সাজান:',
+  'sort.recommended': 'প্রস্তাবিত',
+  'sort.rating': 'সর্বোচ্চ রেটিং',
+  'sort.consulted': 'সর্বাধিক পরামর্শ',
+  'sort.fee': 'সর্বনিম্ন ফি',
+  'search.noDoctors': 'বর্তমান ফিল্টারে কোনো ডাক্তার মেলেনি',
+  'search.tryReset': 'সম্পূর্ণ যাচাইকৃত ডাক্তার তালিকা দেখতে "শুধু এখন অনলাইনে" বন্ধ করুন বা লিঙ্গ ফিল্টার রিসেট করুন।',
+  'search.resetFilters': 'ফিল্টার রিসেট করুন',
+
+  // ---- ল্যাব টেস্ট সেকশন ----
+  'lab.eyebrow': 'হোম ডায়াগনস্টিক সেবা',
+  'lab.heading': 'হোম নমুনা সংগ্রহ সহ স্বীকৃত ল্যাব টেস্ট',
+  'lab.subtitle': 'সনদপ্রাপ্ত মেডিকেল টেকনিশিয়ান আপনার বাসার দরজা থেকে রক্ত ও প্রস্রাবের নমুনা সংগ্রহ করবেন। ১০০% জীবাণুমুক্ত যন্ত্রপাতি এবং ২৪ ঘণ্টায় ডিজিটাল রিপোর্ট।',
+  'lab.freeCollection': 'ফ্রি নমুনা সংগ্রহ',
+  'lab.accredited': 'স্বীকৃত ল্যাব রিপোর্ট',
+  'lab.mostPopular': 'সবচেয়ে জনপ্রিয়',
+  'lab.bookCollection': 'হোম সংগ্রহ বুক করুন',
+  'lab.feature1': 'আপনার বাসা থেকে ফ্রি নমুনা সংগ্রহ',
+  'lab.feature2': 'এনএবিএল-স্বীকৃত পার্টনার ল্যাবরেটরি',
+  'lab.feature3': '২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট ডেলিভারি',
+  'lab.comprehensive.name': 'সম্পূর্ণ স্বাস্থ্য পরীক্ষা',
+  'lab.comprehensive.meta': '৬৮টি টেস্ট অন্তর্ভুক্ত',
+  'lab.comprehensive.tag': 'ফুল বডি স্ক্রিনিং',
+  'lab.panel.name': 'রোগ নির্দিষ্ট প্যানেল',
+  'lab.panel.meta': '২৪টি টেস্ট অন্তর্ভুক্ত',
+  'lab.panel.tag': 'ডায়াবেটিস ও থাইরয়েড',
+  'lab.heart.name': 'হার্ট হেলথ চেকআপ',
+  'lab.heart.meta': '১৮টি টেস্ট অন্তর্ভুক্ত',
+  'lab.heart.tag': 'কার্ডিয়াক রিস্ক প্রোফাইল',
 };
 
 export const translations: Record<Lang, Record<string, string>> = { en, bn };
+
+// ============ Department / CMS-name Bangla fallback helper ============
+// CMS Department titles are free-text English. When `bn` is active we first
+// prefer an explicit `nameBn` field (if the admin saved one), then fall back
+// to this curated lookup, then the raw English title.
+export const DEPT_NAME_BN: Record<string, string> = {
+  // Common symptom labels (Symptom cards / hero popular chips)
+  'sexual problems': 'যৌন সমস্যা',
+  'period problems': 'মাসিক সমস্যা',
+  'fever, cold/flu': 'জ্বর, সর্দি/ফ্লু',
+  'fever & flu': 'জ্বর ও ফ্লু',
+  'child diseases': 'শিশু রোগ',
+  'pregnancy issues': 'গর্ভাবস্থার সমস্যা',
+  'pregnancy care': 'গর্ভাবস্থার যত্ন',
+  'stomach pain & gas': 'পেট ব্যথা ও গ্যাস',
+  'skin & acne': 'ত্বক ও ব্রণ',
+  'skin problems': 'ত্বকের সমস্যা',
+  'child cough': 'শিশুর কাশি',
+  'headache & migraine': 'মাথাব্যথা ও মাইগ্রেন',
+  'diabetes care': 'ডায়াবেটিস যত্ন',
+  'diabetes & hypertension': 'ডায়াবেটিস ও উচ্চ রক্তচাপ',
+  'high blood pressure': 'উচ্চ রক্তচাপ',
+  'chest pain': 'বুকে ব্যথা',
+  'mental health': 'মানসিক স্বাস্থ্য',
+
+  'general physician': 'জেনারেল ফিজিশিয়ান',
+  'general-physician': 'জেনারেল ফিজিশিয়ান',
+  medicine: 'মেডিসিন',
+  'gynaecology & obs': 'গাইনোকোলজি ও প্রসূতি',
+  'gynae-obs': 'গাইনোকোলজি ও প্রসূতি',
+  gynaecology: 'গাইনোকোলজি',
+  'gynaecology & pregnancy': 'গাইনোকোলজি ও প্রেগন্যান্সি',
+  pediatrics: 'শিশু বিভাগ',
+  'pediatrics (child health)': 'শিশু রোগ বিভাগ',
+  dermatology: 'চর্মরোগ বিভাগ',
+  'dermatology (skin & hair)': 'চর্ম ও চুলের রোগ',
+  cardiology: 'হৃদরোগ বিভাগ',
+  'cardiology & heart care': 'কার্ডিওলজি ও হার্ট কেয়ার',
+  psychiatry: 'মানসিক স্বাস্থ্য',
+  'psychiatry & mental health': 'সাইকিয়াট্রি ও মানসিক স্বাস্থ্য',
+  ent: 'নাক-কান-গলা',
+  orthopedics: 'হাড়-জোড়া রোগ',
+  orthopedic: 'হাড়-জোড়া রোগ',
+  neurology: 'স্নায়ুরোগ বিভাগ',
+  'neuro & spine': 'নিউরো ও স্পাইন',
+  gastroenterology: 'গ্যাস্ট্রোএন্টারোলজি',
+  pulmonology: 'বক্ষব্যাধি (ফুসফুস)',
+  nephrology: 'কিডনি বিভাগ',
+  endocrinology: 'ডায়াবেটিস ও হরমোন',
+  urology: 'ইউরোলজি',
+  ophthalmology: 'চক্ষু বিভাগ',
+  dentistry: 'ডেন্টাল (দাঁত)',
+  oncology: 'ক্যান্সার বিভাগ',
+  'physical medicine': 'ফিজিক্যাল মেডিসিন',
+  nutrition: 'পুষ্টিবিদ্যা',
+};
+
+/** Translate a free-text department/specialty name to Bangla if a match exists. */
+export function translateDept(name: string | null | undefined): string | null {
+  if (!name) return null;
+  const key = String(name).trim().toLowerCase();
+  return DEPT_NAME_BN[key] ?? null;
+}
+
