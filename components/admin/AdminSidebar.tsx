@@ -20,6 +20,8 @@ import {
   HeartPulse,
   LogOut,
   MessageSquareQuote,
+  LayoutGrid,
+  Bandage,
 } from 'lucide-react';
 
 export const AdminSidebar: React.FC = () => {
@@ -64,6 +66,8 @@ export const AdminSidebar: React.FC = () => {
     { name: 'Appointments', href: '/admin/appointments', icon: CalendarCheck, active: pathname === '/admin/appointments' },
     { name: 'Hero Banners', href: '/admin/banners', icon: ImageIcon, active: pathname === '/admin/banners' },
     { name: 'Patient Reviews', href: '/admin/reviews', icon: MessageSquareQuote, active: pathname === '/admin/reviews' },
+    { name: 'Departments CMS', href: '/admin/departments', icon: LayoutGrid, active: pathname === '/admin/departments' },
+    { name: 'Symptoms CMS', href: '/admin/symptoms', icon: Bandage, active: pathname === '/admin/symptoms' },
     { name: 'Security Settings', href: '/admin/settings', icon: KeyRound, active: pathname === '/admin/settings' },
   ];
 

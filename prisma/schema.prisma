@@ -210,6 +210,38 @@ model PatientReview {
   updatedAt DateTime @updatedAt
 }
 
+// ================= DEPARTMENTS & SYMPTOMS CMS =================
+// The homepage "Consult by Medical Specialty" section is a dual-tab block:
+// [Departments] shows department cards (icon, title, description, live doctor
+// count) and [Symptoms] shows light-blue symptom cards that deep-link into the
+// doctor search filtered by the linked department. Both are fully managed from
+// the Admin Panel (app/admin/departments, app/admin/symptoms).
+model Department {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  title    String // e.g. "General Physician"
+  subtitle String? // short description line under the title
+  slug     String   @unique // e.g. "general-physician" — used for counts & nav
+  icon     String   @default("Stethoscope") // lucide icon name
+  order    Int      @default(0)
+  isActive Boolean  @default(true)
+  symptoms Symptom[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Symptom {
+  id                 String     @id @default(auto()) @map("_id") @db.ObjectId
+  title              String // e.g. "Period problems"
+  slug               String     @unique // navigation slug if no department linked
+  image              String? // optional image URL for the card
+  linkedDepartmentId String?    @db.ObjectId
+  department         Department? @relation(fields: [linkedDepartmentId], references: [id])
+  order              Int        @default(0)
+  isActive           Boolean    @default(true)
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+}
+
 // ================= E-COMMERCE / HEALTH CATALOGUE CMS =================
 // The three catalogue collections below power the public Medicine Shop, the
 // Lab Test Packages grid and the Health Membership plans — all managed live

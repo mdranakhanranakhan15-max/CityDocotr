@@ -203,6 +203,14 @@ const POPULAR_SYMPTOMS: { label: string; slug: string }[] = [
   { label: 'Pregnancy Care', slug: 'gynae-obs' },
 ];
 
+// Maps the lucide icon name stored on a CMS Department row to the imported
+// component so Admin-editable icons render on the homepage without a dynamic
+// import. Falls back to Stethoscope for unknown names.
+const DEPT_ICON_MAP: Record<string, any> = {
+  Stethoscope, HeartPulse, Baby, Sparkles, Heart, Smile, Activity, Bone, Brain,
+  Pill, Microscope, FlaskConical, Users, ShieldCheck, Zap, Video, Clock, Lock,
+};
+
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: '100% BMDC Certified Doctors' },
   { icon: FileText, label: 'Instant Digital e-Prescription' },
@@ -551,6 +559,9 @@ export default function CityDoctorLandingPage() {
   const [onlineBadgeText, setOnlineBadgeText] = useState('');
   // Live verified-doctor counts per specialty slug (from /api/specialties).
   const [specialtyCounts, setSpecialtyCounts] = useState<Record<string, number>>({});
+  const [deptTab, setDeptTab] = useState<'departments' | 'symptoms'>('departments');
+  const [cmsDepartments, setCmsDepartments] = useState<any[]>([]);
+  const [cmsSymptoms, setCmsSymptoms] = useState<any[]>([]);
   // Patient reviews / testimonials fetched live from /api/reviews (MongoDB).
   const [testimonials, setTestimonials] = useState(TESTIMONIALS);
 
@@ -607,13 +618,27 @@ export default function CityDoctorLandingPage() {
   useEffect(() => {
     async function fetchSiteStatsAndCounts() {
       try {
-        const [cfgRes, specRes, revRes] = await Promise.all([
+        const [cfgRes, specRes, revRes, deptRes, sympRes] = await Promise.all([
           fetch('/api/settings', { cache: 'no-store' }),
           fetch('/api/specialties', { cache: 'no-store' }),
           fetch('/api/reviews', { cache: 'no-store' }),
+          fetch('/api/departments', { cache: 'no-store' }),
+          fetch('/api/symptoms', { cache: 'no-store' }),
         ]);
         const cfg = await cfgRes.json();
         const spec = await specRes.json();
+        let dept = {} as any;
+        let symp = {} as any;
+        try {
+          dept = await deptRes.json();
+        } catch {
+          /* departments feed optional */
+        }
+        try {
+          symp = await sympRes.json();
+        } catch {
+          /* symptoms feed optional */
+        }
         let rev = {} as any;
         try {
           rev = await revRes.json();
@@ -633,6 +658,12 @@ export default function CityDoctorLandingPage() {
         }
         if (spec.success && spec.counts) {
           setSpecialtyCounts(spec.counts);
+        }
+        if (dept.success && Array.isArray(dept.departments) && dept.departments.length > 0) {
+          setCmsDepartments(dept.departments);
+        }
+        if (symp.success && Array.isArray(symp.symptoms) && symp.symptoms.length > 0) {
+          setCmsSymptoms(symp.symptoms);
         }
         if (rev.success && Array.isArray(rev.reviews) && rev.reviews.length > 0) {
           const mapped = rev.reviews.map((t: any) => ({
@@ -1153,27 +1184,49 @@ export default function CityDoctorLandingPage() {
                   30+ Medical Departments
                 </span>
                 <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                  Consult by Medical Specialty
+                  {deptTab === 'departments' ? 'Consult by Medical Specialty' : 'Choose a Department or Symptom'}
                 </h2>
                 <p className="text-[14px] text-slate-500 max-w-xl">
-                  Select a department to view verified BMDC specialist doctors available right now
+                  {deptTab === 'departments'
+                    ? 'Select a department to view verified BMDC specialist doctors available right now'
+                    : 'Tell us what you are feeling and we will connect you with the right specialist'}
                 </p>
               </div>
-              <Link
-                href="/department/all"
-                className="inline-flex items-center gap-1.5 text-[14px] font-extrabold text-blue-700 hover:text-blue-800"
-              >
-                View All Departments
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+              {/* Toggle Tabs: [Departments] [Symptoms] */}
+              <div className="flex items-center gap-1.5 self-start md:self-auto bg-white border border-slate-200 rounded-full p-1 shadow-sm">
+                {([
+                  { key: 'departments', label: 'Departments' },
+                  { key: 'symptoms', label: 'Symptoms' },
+                ] as const).map((tab) => (
+                  <button
+                    key={tab.key}
+                    type="button"
+                    onClick={() => setDeptTab(tab.key)}
+                    className={`px-5 py-2 rounded-full text-[13px] font-extrabold transition-all ${
+                      deptTab === tab.key
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25'
+                        : 'text-slate-500 hover:text-blue-700 hover:bg-blue-50'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
+            {deptTab === 'departments' ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4">
-              {DEPARTMENTS.map((dept) => {
-                const Icon = dept.icon;
+              {(cmsDepartments.length > 0
+                ? cmsDepartments
+                : DEPARTMENTS.map((d) => ({ id: d.slug, title: d.name, slug: d.slug, icon: d.icon, subtitle: null }))
+              ).map((dept: any) => {
+                const Icon =
+                  typeof dept.icon === 'string'
+                    ? DEPT_ICON_MAP[dept.icon] || Stethoscope
+                    : dept.icon || Stethoscope;
                 return (
                   <button
-                    key={dept.slug}
+                    key={dept.id || dept.slug}
                     type="button"
                     onClick={() => handleSymptomClick(dept.slug)}
                     className="group bg-white rounded-3xl border border-slate-200/80 p-5 flex flex-col items-start gap-3 text-left shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-200 transition-all duration-300"
@@ -1182,8 +1235,11 @@ export default function CityDoctorLandingPage() {
                       <Icon className="w-5.5 h-5.5" />
                     </span>
                     <span className="text-[13.5px] font-extrabold text-slate-800 leading-snug group-hover:text-blue-700 transition-colors">
-                      {dept.name}
+                      {dept.title || dept.name}
                     </span>
+                    {dept.subtitle && (
+                      <span className="text-[11.5px] text-slate-500 leading-snug">{dept.subtitle}</span>
+                    )}
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       {specialtyCounts[dept.slug] !== undefined && specialtyCounts[dept.slug] > 0
@@ -1194,6 +1250,39 @@ export default function CityDoctorLandingPage() {
                 );
               })}
             </div>
+            ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 lg:gap-4">
+              {(cmsSymptoms.length > 0
+                ? cmsSymptoms
+                : POPULAR_SYMPTOMS.map((s) => ({ id: s.slug, title: s.label, slug: s.slug, image: null, departmentSlug: s.slug }))
+              ).map((symptom: any) => (
+                <button
+                  key={symptom.id || symptom.slug}
+                  type="button"
+                  onClick={() => handleSymptomClick(symptom.departmentSlug || symptom.slug)}
+                  className="group bg-blue-50 hover:bg-blue-100 rounded-3xl border border-blue-100/80 overflow-hidden flex flex-col items-center text-center shadow-sm hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-200 transition-all duration-300"
+                >
+                  <div className="w-full aspect-[4/3] flex items-center justify-center overflow-hidden">
+                    {symptom.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={symptom.image}
+                        alt={symptom.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <span className="w-16 h-16 rounded-full bg-white text-blue-600 flex items-center justify-center shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <Stethoscope className="w-7 h-7" />
+                      </span>
+                    )}
+                  </div>
+                  <span className="w-full px-3 py-3.5 text-[13px] font-extrabold text-slate-700 group-hover:text-blue-700 bg-blue-50/60 group-hover:bg-blue-100/80 transition-colors border-t border-blue-100/70">
+                    {symptom.title}
+                  </span>
+                </button>
+              ))}
+            </div>
+            )}
           </div>
         </section>
 
