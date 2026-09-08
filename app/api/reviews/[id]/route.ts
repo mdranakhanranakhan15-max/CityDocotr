@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -57,6 +58,13 @@ export async function PATCH(
       },
     });
 
+    // Refresh the homepage cache so edits publish instantly.
+    try {
+      revalidatePath('/');
+    } catch {
+      // No-op outside a hosted/incremental-cache environment (e.g. dev).
+    }
+
     return NextResponse.json({ success: true, review: updated });
   } catch (error: any) {
     console.error('Error updating review:', error);
@@ -81,6 +89,14 @@ export async function DELETE(
       );
     }
     await prisma.patientReview.delete({ where: { id } });
+
+    // Refresh the homepage cache so the removal publishes instantly.
+    try {
+      revalidatePath('/');
+    } catch {
+      // No-op outside a hosted/incremental-cache environment (e.g. dev).
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Review deleted successfully',

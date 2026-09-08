@@ -185,6 +185,9 @@ model HeroBanner {
 // "Doctors Online" badge) are managed live from Admin Panel -> Settings (Site Stats &
 // Metrics) instead of being hardcoded. Stored as a flat key/value map — see
 // app/api/settings/route.ts.
+// The Admin Panel -> Reviews "Section Settings" card also lives here under the
+// reviews.* keys (reviews.title / reviews.subtitle / reviews.countMode /
+// reviews.customCount) — see app/api/reviews/settings/route.ts.
 model SiteSetting {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   key       String   @unique // e.g. "stats.patientsServed", "stats.bmdcDoctors"
@@ -197,7 +200,8 @@ model SiteSetting {
 // ================= PATIENT REVIEWS / TESTIMONIALS CMS =================
 // Patient testimonials shown on the public homepage. Managed live from the Admin
 // Panel (app/admin/reviews). Rendered on the homepage with quote, name, the city
-// location, a 1-5 rating and a service/department tag.
+// location, a 1-5 rating and a service/department tag. The section header copy is
+// configured via SiteSetting rows (see app/api/reviews/settings/route.ts).
 model PatientReview {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String // Patient name shown next to the avatar circle

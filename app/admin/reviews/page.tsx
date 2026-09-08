@@ -9,7 +9,9 @@ import {
   Loader2,
   X,
   RefreshCw,
+  Save,
   Search,
+  Settings2,
   Star,
   CheckCircle2,
   AlertTriangle,
@@ -34,6 +36,23 @@ const emptyForm = {
   service: '',
 };
 
+type CountMode = 'auto' | 'custom';
+
+// Testimonial section header settings shown on the public homepage. The form
+// starts pre-filled with these current homepage defaults; saving persists them
+// as admin overrides (blank values keep the site's built-in bilingual copy).
+const DEFAULT_SECTION_CFG: {
+  title: string;
+  subtitle: string;
+  countMode: CountMode;
+  customCount: string;
+} = {
+  title: 'Loved by Over 500,000+ Patients',
+  subtitle: 'VERIFIED PATIENT EXPERIENCES',
+  countMode: 'auto',
+  customCount: '',
+};
+
 const starCount = (n: number) => Math.max(1, Math.min(5, Math.round(Number(n) || 5)));
 
 export default function AdminReviewsPage() {
@@ -45,13 +64,25 @@ export default function AdminReviewsPage() {
   const [form, setForm] = useState(emptyForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  // Homepage testimonial section header config (Admin -> Reviews).
+  const [sectionCfg, setSectionCfg] = useState(DEFAULT_SECTION_CFG);
+  const [publishedCount, setPublishedCount] = useState(0);
+  const [isCfgSaving, setIsCfgSaving] = useState(false);
+  const [isCfgLoading, setIsCfgLoading] = useState(true);
 
   const fetchReviews = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch('/api/reviews?all=true');
       const data = await res.json();
-      if (data.success) setReviews(data.reviews || []);
+      if (data.success) {
+        setReviews(data.reviews || []);
+        setPublishedCount(
+          Array.isArray(data.reviews)
+            ? data.reviews.filter((r: any) => r.isActive).length
+            : 0
+        );
+      }
       else setMessage({ type: 'error', text: data.message || 'Failed to load reviews' });
     } catch (err: any) {
       setMessage({ type: 'error', text: err.message || 'Network error' });
@@ -63,6 +94,75 @@ export default function AdminReviewsPage() {
   useEffect(() => {
     fetchReviews();
   }, [fetchReviews]);
+
+  // Load the homepage testimonial section header settings + live published count.
+  const fetchSectionConfig = useCallback(async () => {
+    setIsCfgLoading(true);
+    try {
+      const res = await fetch('/api/reviews/settings', { cache: 'no-store' });
+      const data = await res.json();
+      if (data.success) {
+        // Pre-fill with the homepage defaults whenever nothing has been saved
+        // in the DB yet, so the admin always sees the current section copy.
+        setSectionCfg({
+          title: String(data.config?.title || '').trim() || DEFAULT_SECTION_CFG.title,
+          subtitle:
+            String(data.config?.subtitle || '').trim() || DEFAULT_SECTION_CFG.subtitle,
+          countMode: data.config?.countMode === 'custom' ? 'custom' : 'auto',
+          customCount: String(data.config?.customCount || '').trim(),
+        });
+        if (typeof data.activeCount === 'number') setPublishedCount(data.activeCount);
+      }
+    } catch (err: any) {
+      // Non-fatal — settings just stay on their defaults.
+      console.error('Error fetching review section settings:', err);
+    } finally {
+      setIsCfgLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchSectionConfig();
+  }, [fetchSectionConfig]);
+
+  // Persist the section header settings and publish them to the homepage.
+  const handleSaveSectionConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCfgSaving(true);
+    setMessage(null);
+    try {
+      const payload = {
+        title: sectionCfg.title.trim(),
+        subtitle: sectionCfg.subtitle.trim(),
+        countMode: sectionCfg.countMode,
+        customCount:
+          sectionCfg.countMode === 'custom' ? sectionCfg.customCount.trim() : '',
+      };
+      const res = await fetch('/api/reviews/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage({
+          type: 'success',
+          text: 'Testimonial section settings published to the homepage.',
+        });
+        if (typeof data.activeCount === 'number') setPublishedCount(data.activeCount);
+        fetchSectionConfig();
+      } else {
+        setMessage({
+          type: 'error',
+          text: data.message || data.error || 'Failed to save section settings',
+        });
+      }
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.message || 'Failed to save section settings' });
+    } finally {
+      setIsCfgSaving(false);
+    }
+  };
 
   const filtered = reviews.filter((r) =>
     query.trim()
@@ -212,6 +312,174 @@ return (
           <AlertTriangle className="w-4 h-4 shrink-0" /> {message.text}
         </div>
       )}
+
+      {/* ===== Section Header Settings (published to homepage testimonials) ===== */}
+      <div className="rounded-3xl bg-slate-900/70 border border-slate-800 p-5 lg:p-6 space-y-5">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500/20 to-cyan-500/20 border border-teal-500/30 text-teal-300 flex items-center justify-center shrink-0">
+              <Settings2 className="w-5 h-5" />
+            </span>
+            <div>
+              <h2 className="text-sm font-black text-slate-100 tracking-tight">
+                Testimonial Section Settings
+              </h2>
+              <p className="text-[11px] text-slate-500 mt-0.5 leading-relaxed">
+                Control the heading shown above the patient review grid on the public homepage —
+                saved changes go live instantly.
+              </p>
+            </div>
+          </div>
+          {isCfgLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin text-slate-500" />
+          ) : (
+            <span className="px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">
+              {publishedCount} published review{publishedCount === 1 ? '' : 's'}
+            </span>
+          )}
+        </div>
+
+        <form onSubmit={handleSaveSectionConfig} className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Section Title</label>
+              <input
+                type="text"
+                value={sectionCfg.title}
+                onChange={(e) => setSectionCfg((c) => ({ ...c, title: e.target.value }))}
+                placeholder="Loved by Over 500,000+ Patients"
+                className={inputCls}
+              />
+              <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                Main heading of the homepage testimonials section. Leave empty to keep the
+                built-in copy. Use{' '}
+                <code className="text-teal-400 bg-slate-950/80 px-1.5 py-0.5 rounded-md font-mono">
+                  {'{count}'}
+                </code>{' '}
+                to insert the review number chosen below (e.g. &quot;Loved by Over{' '}
+                {'{count}'}+ Patients&quot;).
+              </p>
+            </div>
+            <div>
+              <label className={labelCls}>Section Subtitle</label>
+              <input
+                type="text"
+                value={sectionCfg.subtitle}
+                onChange={(e) => setSectionCfg((c) => ({ ...c, subtitle: e.target.value }))}
+                placeholder="VERIFIED PATIENT EXPERIENCES"
+                className={inputCls}
+              />
+              <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                Small label shown above the heading (rendered in uppercase on the site).
+                Leave empty to keep the built-in copy.
+              </p>
+            </div>
+          </div>
+          <div>
+            <span className={labelCls}>Review Count Displayed in Heading</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setSectionCfg((c) => ({ ...c, countMode: 'auto' }))}
+                className={`text-left rounded-2xl border p-3.5 transition-colors ${
+                  sectionCfg.countMode === 'auto'
+                    ? 'bg-teal-500/10 border-teal-500/50 ring-1 ring-teal-500/40'
+                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <span className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-black text-slate-100">
+                    Automatic — Live DB Count
+                  </span>
+                  <span
+                    className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                      sectionCfg.countMode === 'auto'
+                        ? 'border-teal-400 bg-teal-400'
+                        : 'border-slate-600'
+                    }`}
+                  >
+                    {sectionCfg.countMode === 'auto' && (
+                      <span className="w-1 h-1 rounded-full bg-slate-950" />
+                    )}
+                  </span>
+                </span>
+                <span className="block text-[10.5px] text-slate-500 mt-1 leading-relaxed">
+                  Use the real number of published reviews
+                  {!isCfgLoading && (
+                    <span className="text-teal-300 font-bold">
+                      {' '}
+                      ({publishedCount} now)
+                    </span>
+                  )}{' '}
+                  inside the {'{count}'} placeholder.
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSectionCfg((c) => ({ ...c, countMode: 'custom' }))}
+                className={`text-left rounded-2xl border p-3.5 transition-colors ${
+                  sectionCfg.countMode === 'custom'
+                    ? 'bg-teal-500/10 border-teal-500/50 ring-1 ring-teal-500/40'
+                    : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <span className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-black text-slate-100">
+                    Custom Display Number
+                  </span>
+                  <span
+                    className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                      sectionCfg.countMode === 'custom'
+                        ? 'border-teal-400 bg-teal-400'
+                        : 'border-slate-600'
+                    }`}
+                  >
+                    {sectionCfg.countMode === 'custom' && (
+                      <span className="w-1 h-1 rounded-full bg-slate-950" />
+                    )}
+                  </span>
+                </span>
+                <span className="block text-[10.5px] text-slate-500 mt-1 leading-relaxed">
+                  Show a fixed value such as &quot;500,000+&quot; instead of the live count.
+                </span>
+              </button>
+            </div>
+
+            {sectionCfg.countMode === 'custom' && (
+              <div className="mt-3">
+                <label className={labelCls}>Custom Number</label>
+                <input
+                  type="text"
+                  value={sectionCfg.customCount}
+                  onChange={(e) =>
+                    setSectionCfg((c) => ({ ...c, customCount: e.target.value }))
+                  }
+                  placeholder="e.g. 500,000+"
+                  className={inputCls}
+                />
+                <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                  Falls back to the live DB review count when this field is empty.
+                </p>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
+            <button
+              type="submit"
+              disabled={isCfgSaving}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-400 hover:to-cyan-400 text-slate-950 text-xs font-black shadow-lg shadow-teal-500/20 transition-all disabled:opacity-60"
+            >
+              {isCfgSaving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              Save Section Titles
+            </button>
+          </div>
+        </form>
+      </div>
 
       {/* ===== Toolbar ===== */}
       <div className="flex items-center justify-between gap-3">

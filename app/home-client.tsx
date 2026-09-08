@@ -578,6 +578,15 @@ export default function CityDoctorLandingPage() {
   const [cmsSymptoms, setCmsSymptoms] = useState<any[]>([]);
   // Patient reviews / testimonials fetched live from /api/reviews (MongoDB).
   const [testimonials, setTestimonials] = useState(TESTIMONIALS);
+  // Testimonial section header config (Admin -> Reviews -> Section Settings).
+  const [testimonialCfg, setTestimonialCfg] = useState({
+    title: '',
+    subtitle: '',
+    countMode: 'auto' as 'auto' | 'custom',
+    customCount: '',
+  });
+  // Live count of published DB reviews — feeds the automatic {count} heading token.
+  const [publishedReviewCount, setPublishedReviewCount] = useState(0);
 
   // Fetch the live doctor feed once
   useEffect(() => {
@@ -632,12 +641,13 @@ export default function CityDoctorLandingPage() {
   useEffect(() => {
     async function fetchSiteStatsAndCounts() {
       try {
-        const [cfgRes, specRes, revRes, deptRes, sympRes] = await Promise.all([
+        const [cfgRes, specRes, revRes, deptRes, sympRes, revCfgRes] = await Promise.all([
           fetch('/api/settings', { cache: 'no-store' }),
           fetch('/api/specialties', { cache: 'no-store' }),
           fetch('/api/reviews', { cache: 'no-store' }),
           fetch('/api/departments', { cache: 'no-store' }),
           fetch('/api/symptoms', { cache: 'no-store' }),
+          fetch('/api/reviews/settings', { cache: 'no-store' }),
         ]);
         const cfg = await cfgRes.json();
         const spec = await specRes.json();
@@ -659,6 +669,12 @@ export default function CityDoctorLandingPage() {
         } catch {
           /* reviews feed optional */
         }
+        let revCfg = {} as any;
+        try {
+          revCfg = await revCfgRes.json();
+        } catch {
+          /* section config optional */
+        }
 
         if (cfg.success && cfg.stats) {
           setHeroStats([
@@ -679,6 +695,9 @@ export default function CityDoctorLandingPage() {
         if (symp.success && Array.isArray(symp.symptoms) && symp.symptoms.length > 0) {
           setCmsSymptoms(symp.symptoms);
         }
+        if (rev.success && Array.isArray(rev.reviews)) {
+          setPublishedReviewCount(rev.reviews.length);
+        }
         if (rev.success && Array.isArray(rev.reviews) && rev.reviews.length > 0) {
           const mapped = rev.reviews.map((t: any) => ({
             quote: t.quote || t.text || '',
@@ -687,6 +706,14 @@ export default function CityDoctorLandingPage() {
             rating: Math.max(1, Math.min(5, Math.round(Number(t.rating) || 5))),
           }));
           setTestimonials(mapped);
+        }
+        if (revCfg.success && revCfg.config) {
+          setTestimonialCfg({
+            title: revCfg.config.title || '',
+            subtitle: revCfg.config.subtitle || '',
+            countMode: revCfg.config.countMode === 'custom' ? 'custom' : 'auto',
+            customCount: revCfg.config.customCount || '',
+          });
         }
       } catch (e) {
         console.error('Error fetching site stats, counts & reviews:', e);
@@ -779,6 +806,30 @@ export default function CityDoctorLandingPage() {
         ? '/মাস'
         : '/month';
   const moLabel = lang === 'bn' ? '/মাস' : '/mo';
+
+  // ================= Testimonials section heading (CMS-driven) =================
+  // Number token: a custom display value (e.g. "500,000+") when the admin set
+  // one, otherwise the real count of published DB reviews — formatted with
+  // thousand separators. Falls back gracefully when custom is left empty.
+  const reviewCountToken = (() => {
+    if (
+      testimonialCfg.countMode === 'custom' &&
+      String(testimonialCfg.customCount || '').trim()
+    ) {
+      return String(testimonialCfg.customCount).trim();
+    }
+    return String(publishedReviewCount || 0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  })();
+
+  // Admin subtitle/title override the translated defaults. {count} in the title
+  // is substituted with the number resolved above (real DB count or custom).
+  const testimonialsEyebrow =
+    String(testimonialCfg.subtitle || '').trim() || t('testimonials.eyebrow');
+  let testimonialsHeading = String(testimonialCfg.title || '').trim();
+  if (!testimonialsHeading) testimonialsHeading = t('testimonials.title');
+  if (testimonialsHeading.includes('{count}')) {
+    testimonialsHeading = testimonialsHeading.split('{count}').join(reviewCountToken);
+  }
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans antialiased overflow-x-hidden">
@@ -1813,10 +1864,10 @@ export default function CityDoctorLandingPage() {
           <div className="max-w-[1440px] mx-auto px-4 lg:px-6 flex flex-col gap-10">
             <div className="flex flex-col items-center gap-3 text-center">
               <span className="text-[11.5px] font-extrabold uppercase tracking-widest text-blue-600">
-                {t('testimonials.eyebrow')}
+                {testimonialsEyebrow}
               </span>
               <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                {t('testimonials.title')}
+                {testimonialsHeading}
               </h2>
             </div>
 

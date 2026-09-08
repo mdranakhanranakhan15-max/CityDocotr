@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
@@ -123,6 +124,13 @@ export async function POST(request: Request) {
         isActive: isActive === undefined ? true : Boolean(isActive),
       },
     });
+
+    // Publish the new testimonial to the homepage cache immediately.
+    try {
+      revalidatePath('/');
+    } catch {
+      // No-op outside a hosted/incremental-cache environment (e.g. dev).
+    }
 
     return NextResponse.json({ success: true, review }, { status: 201 });
   } catch (error: any) {
