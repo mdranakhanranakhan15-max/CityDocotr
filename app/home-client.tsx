@@ -41,6 +41,7 @@ import Navbar from '@/components/Navbar';
 import DoctorCard, { DoctorCardDoctor } from '@/components/DoctorCard';
 import BookingModal from '@/components/BookingModal';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 const FALLBACK_DOCTORS: DoctorCardDoctor[] = [
   {
@@ -217,10 +218,10 @@ const TRUST_BADGES = [
   { icon: Lock, label: '100% Private & Encrypted' },
 ];
 
-const HERO_STATS = [
-  { value: '500K+', label: 'Patients Served' },
-  { value: '2,500+', label: 'BMDC Doctors' },
-  { value: '98.4%', label: 'Satisfaction' },
+const HERO_STATS: { value: string; label: string; labelKey?: string }[] = [
+  { value: '500K+', label: 'Patients Served', labelKey: 'stats.patientsServed' },
+  { value: '2,500+', label: 'BMDC Doctors', labelKey: 'stats.bmdcDoctors' },
+  { value: '98.4%', label: 'Satisfaction', labelKey: 'stats.satisfaction' },
 ];
 
 const SERVICE_CARDS: {
@@ -534,6 +535,7 @@ export default function CityDoctorLandingPage() {
     openCart,
     getQty,
   } = useCart();
+  const { t } = useLanguage();
   const [doctors, setDoctors] = useState<DoctorCardDoctor[]>([]);
   const [doctorsLoaded, setDoctorsLoaded] = useState(false);
   // Doctor Time-Slot Selection Modal (payment only after a slot is chosen).
@@ -784,16 +786,16 @@ export default function CityDoctorLandingPage() {
                 <div className="inline-flex items-center gap-2 w-fit rounded-full bg-white border border-blue-100 shadow-sm px-3.5 py-1.5">
                   <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
                   <span className="text-[11px] font-extrabold text-blue-700 uppercase tracking-[0.14em]">
-                    Healthcare in 10 Minutes
+                    {t('hero.badge', 'Healthcare in 10 Minutes').toUpperCase()}
                   </span>
                 </div>
 
                 <h1 className="text-[40px] leading-[1.05] lg:text-[58px] font-extrabold tracking-tight text-slate-900">
-                  Quality Healthcare{' '}
+                  {t('hero.title1', 'Quality Healthcare')}{' '}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-blue-600 to-sky-500">
-                    in 10 Minutes.
+                    {t('hero.title2', 'in 10 Minutes.')}
                   </span>
-                  <br className="hidden sm:block" /> Anytime, Anywhere.
+                  <br className="hidden sm:block" /> {t('hero.title3', 'Anytime, Anywhere.')}
                 </h1>
 
                 <p className="text-[15px] lg:text-[16.5px] leading-relaxed text-slate-500 max-w-xl">
@@ -963,7 +965,7 @@ export default function CityDoctorLandingPage() {
                 <div className="flex items-center justify-center gap-3">
                   <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm text-[12px] font-bold text-slate-700">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    {onlineBadgeText || `${liveCount}+ Doctors Online`}
+                    {onlineBadgeText || `${liveCount}+ ${t('doctor.onlineNow')}`}
                   </span>
                   <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm text-[12px] font-bold text-slate-700">
                     <Clock className="w-3.5 h-3.5 text-blue-600" />
@@ -991,7 +993,7 @@ export default function CityDoctorLandingPage() {
                     {s.value}
                   </span>
                   <span className="text-[11px] lg:text-[12.5px] font-bold uppercase tracking-widest text-slate-400">
-                    {s.label}
+                    {s.labelKey ? t(s.labelKey) : s.label}
                   </span>
                 </div>
               ))}
@@ -1184,19 +1186,19 @@ export default function CityDoctorLandingPage() {
                   30+ Medical Departments
                 </span>
                 <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                  {deptTab === 'departments' ? 'Consult by Medical Specialty' : 'Choose a Department or Symptom'}
+                  {deptTab === 'departments' ? t('specialties.titleDepartments') : t('specialties.titleSymptoms')}
                 </h2>
                 <p className="text-[14px] text-slate-500 max-w-xl">
                   {deptTab === 'departments'
-                    ? 'Select a department to view verified BMDC specialist doctors available right now'
-                    : 'Tell us what you are feeling and we will connect you with the right specialist'}
+                    ? t('specialties.subtitleDepartments')
+                    : t('specialties.subtitleSymptoms')}
                 </p>
               </div>
               {/* Toggle Tabs: [Departments] [Symptoms] */}
               <div className="flex items-center gap-1.5 self-start md:self-auto bg-white border border-slate-200 rounded-full p-1 shadow-sm">
                 {([
-                  { key: 'departments', label: 'Departments' },
-                  { key: 'symptoms', label: 'Symptoms' },
+                  { key: 'departments', label: t('specialties.tabDepartments') },
+                  { key: 'symptoms', label: t('specialties.tabSymptoms') },
                 ] as const).map((tab) => (
                   <button
                     key={tab.key}
@@ -1243,8 +1245,8 @@ export default function CityDoctorLandingPage() {
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-0.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       {specialtyCounts[dept.slug] !== undefined && specialtyCounts[dept.slug] > 0
-                        ? `${specialtyCounts[dept.slug]} Specialists Available`
-                        : 'Doctors Available'}
+                        ? `${specialtyCounts[dept.slug]} ${t('specialties.specialistsAvailable')}`
+                        : t('specialties.doctorsAvailable')}
                     </span>
                   </button>
                 );
@@ -1950,7 +1952,7 @@ export default function CityDoctorLandingPage() {
                       City<span className="text-blue-400">Doctor</span>
                     </span>
                     <span className="text-[10px] text-blue-300/70 font-semibold mt-1">
-                      Healthcare in 10 Minutes
+                      {t('hero.badge', 'Healthcare in 10 Minutes')}
                     </span>
                   </div>
                 </div>
@@ -2028,7 +2030,7 @@ export default function CityDoctorLandingPage() {
             {/* Bottom */}
             <div className="mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-3">
               <p className="text-[12px] text-blue-100/60">
-                © 2026 CityDoctor Healthcare Bangladesh. All rights reserved.
+                {t('footer.rights')}
               </p>
               <p className="text-[12px] font-semibold text-blue-100/70">
                 DGHS Registered <span className="text-emerald-400">•</span> BMDC Compliant{' '}

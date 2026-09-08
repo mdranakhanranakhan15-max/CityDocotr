@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { X, Sun, Sunrise, Moon, CalendarDays, Zap, Clock } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 export interface BookingModalProps {
   isOpen: boolean;
@@ -136,6 +137,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 }) => {
   const router = useRouter();
   const { currentUser, openAuthModal } = useAuth();
+  const { t } = useLanguage();
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [selectedDateIdx, setSelectedDateIdx] = useState(0);
   // Flexible-slot testing: free-form 24h value from the custom time picker.
@@ -504,7 +506,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                 : 'bg-gray-300 cursor-not-allowed'
             }`}
           >
-            Confirm
+            {t('booking.confirm', 'Confirm')}
           </button>
 
           {/* Legend */}

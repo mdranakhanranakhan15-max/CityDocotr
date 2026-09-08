@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface NavbarProps {
   /** Triggered by the "Consult in 10 Mins" CTA + mobile "Consult Now" button. */
@@ -28,12 +29,12 @@ interface NavbarProps {
 }
 
 const NAV_LINKS = [
-  { label: 'Find Doctors', href: '/department/all' },
-  { label: 'Specialties', href: '#specialties' },
-  { label: 'Medicine Delivery', href: '#medicine' },
-  { label: 'Lab Tests', href: '#diagnostic' },
-  { label: 'Health Plans', href: '#health-plans' },
-  { label: 'My Consults & Rx', href: '/patient/appointments' },
+  { labelKey: 'nav.findDoctors', href: '/department/all' },
+  { labelKey: 'nav.specialties', href: '#specialties' },
+  { labelKey: 'nav.medicine', href: '#medicine' },
+  { labelKey: 'nav.labTests', href: '#diagnostic' },
+  { labelKey: 'nav.healthPlans', href: '#health-plans' },
+  { labelKey: 'nav.myConsults', href: '/patient/appointments' },
 ];
 
 // Hash-anchored section ids (rendered on the home page) used by the scroll spy
@@ -50,6 +51,7 @@ const SECTION_IDS = NAV_LINKS.filter((l) => l.href.startsWith('#')).map((l) =>
 export default function Navbar({ onConsultClick }: NavbarProps = {}) {
   const { currentUser, openAuthModal, logout } = useAuth();
   const { itemCount: cartItemCount, openCart } = useCart();
+  const { lang, toggleLang, t } = useLanguage();
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -170,12 +172,12 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
               const isActive = isNavLinkActive(link.href);
               return (
                 <Link
-                  key={link.label}
+                  key={link.labelKey}
                   href={link.href}
                   aria-current={isActive ? 'page' : undefined}
                   className={`${navBaseCls} ${isActive ? navActiveCls : navIdleCls}`}
                 >
-                  {link.label}
+                  {t(link.labelKey)}
                 </Link>
               );
             })}
@@ -198,13 +200,28 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
               )}
             </button>
 
+            {/* Language switcher — [ EN | বাংলা ] */}
+            <button
+              type="button"
+              onClick={toggleLang}
+              aria-label="Switch language"
+              className="flex items-center rounded-full border border-slate-200 bg-slate-50 p-0.5 text-[11px] font-extrabold shrink-0"
+            >
+              <span className={`px-2.5 py-1 rounded-full transition-all ${lang === 'en' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-blue-600'}`}>
+                EN
+              </span>
+              <span className={`px-2.5 py-1 rounded-full transition-all ${lang === 'bn' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-500 hover:text-blue-600'}`}>
+                বাংলা
+              </span>
+            </button>
+
             {/* Consult CTA (desktop) */}
             <button
               type="button"
               onClick={consultClick}
               className="hidden md:inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-[13.5px] font-bold pl-4 pr-2.5 py-2 rounded-full transition-all shadow-md shadow-blue-600/25 active:scale-[0.97]"
             >
-              <span>Consult in 10 Mins</span>
+              <span>{t('nav.consultCta')}</span>
               <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
                 <ArrowRight className="w-3.5 h-3.5" />
               </span>
@@ -278,7 +295,7 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
                 className="hidden sm:inline-flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-[13px] font-bold transition-colors 2xl:px-4"
               >
                 <User className="w-4 h-4" />
-                <span className="hidden 2xl:inline">Login / Sign Up</span>
+                <span className="hidden 2xl:inline">{t('nav.login')}</span>
               </button>
             )}
 
@@ -324,12 +341,12 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
             <nav className="grid grid-cols-2 gap-2">
               {NAV_LINKS.map((link) => (
                 <Link
-                  key={link.label}
+                  key={link.labelKey}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-3.5 py-3 rounded-xl bg-slate-50 text-slate-700 text-[13px] font-semibold hover:bg-blue-50 hover:text-blue-700 transition-colors flex items-center justify-between gap-1"
                 >
-                  <span>{link.label}</span>
+                  <span>{t(link.labelKey)}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 </Link>
               ))}
@@ -346,7 +363,7 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
                   className="w-full py-3 rounded-xl bg-blue-50 text-blue-700 text-[13px] font-bold flex items-center justify-center gap-2"
                 >
                   <User className="w-4 h-4" />
-                  Login / Sign Up
+                  {t('nav.login')}
                 </button>
               )}
               <button
@@ -358,7 +375,7 @@ export default function Navbar({ onConsultClick }: NavbarProps = {}) {
                 className="w-full py-3 rounded-full bg-blue-600 text-white text-[13.5px] font-bold shadow-md shadow-blue-600/25 flex items-center justify-center gap-2"
               >
                 <Video className="w-4 h-4" />
-                Consult in 10 Mins
+                {t('nav.consultCta')}
               </button>
               <Link
                 href="/admin"

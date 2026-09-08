@@ -8,6 +8,7 @@ import {
   ShieldCheck,
   Eye,
 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const FALLBACK_IMAGE =
   'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=400';
@@ -41,6 +42,7 @@ export interface DoctorCardProps {
 /** DocTime design doctor card — white rounded-3xl card w/ avatar, Live badge,
  * credentials, stats bar, promo consultation fee and call / slot actions. */
 export default function DoctorCard({ doctor, onBookClick }: DoctorCardProps) {
+  const { t } = useLanguage();
   const experienceYears = Number(doctor.experienceYears || 15);
   const degrees = doctor.degrees || 'MBBS, FCPS';
   const specialties = (doctor.specialties || doctor.specialty || 'General Physician')
@@ -171,7 +173,7 @@ export default function DoctorCard({ doctor, onBookClick }: DoctorCardProps) {
       {/* ============ CARD FOOTER ============ */}
       <div className="pt-1">
         <span className="text-[10px] text-slate-400 uppercase tracking-wide font-bold block">
-          Consultation Fee
+          {t('doctor.fee')}
         </span>
         {hasPromo ? (
           <div className="flex items-baseline gap-1.5">
@@ -207,7 +209,7 @@ export default function DoctorCard({ doctor, onBookClick }: DoctorCardProps) {
           ) : (
             <Eye className="w-4 h-4" />
           )}
-          {isOnline ? 'Book Slot' : 'View Profile'}
+          {isOnline ? t('common.bookAppointment', 'Book Slot') : t('common.viewProfile')}
         </button>
       </div>
     </div>
