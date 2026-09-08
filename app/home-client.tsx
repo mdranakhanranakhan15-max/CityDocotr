@@ -42,7 +42,7 @@ import DoctorCard, { DoctorCardDoctor } from '@/components/DoctorCard';
 import BookingModal from '@/components/BookingModal';
 import { useCart } from '@/context/CartContext';
 import { useLanguage } from '@/context/LanguageContext';
-import { translateDept } from '@/lib/translations';
+import { translateDept, UI_TEXT_BN } from '@/lib/translations';
 
 const FALLBACK_DOCTORS: DoctorCardDoctor[] = [
   {
@@ -544,6 +544,10 @@ export default function CityDoctorLandingPage() {
   // from the CMS first, then the curated lookup, then the raw title.
   const bnName = (item: any): string =>
     item?.nameBn || item?.titleBn || translateDept(item?.title || item?.name || item?.label) || item?.title || item?.name || item?.label || '';
+  // Bangla override for free-text catalogue content (plan names/features,
+  // trust points, review quotes, categories, dosage forms) via UI_TEXT_BN.
+  const ui = (s?: string | null): string =>
+    lang === 'bn' && s ? UI_TEXT_BN[s] || s : s || '';
   const [doctors, setDoctors] = useState<DoctorCardDoctor[]>([]);
   const [doctorsLoaded, setDoctorsLoaded] = useState(false);
   // Doctor Time-Slot Selection Modal (payment only after a slot is chosen).
@@ -764,6 +768,17 @@ export default function CityDoctorLandingPage() {
     'All',
     ...Array.from(new Set([...MEDICINE_CATEGORIES.slice(1), ...medicineItems.map((m) => m.cat)])),
   ];
+
+  // Localised billing-period labels used by the health-plan price cards.
+  const perLabel =
+    billing === 'yearly'
+      ? lang === 'bn'
+        ? '/বছর'
+        : '/year'
+      : lang === 'bn'
+        ? '/মাস'
+        : '/month';
+  const moLabel = lang === 'bn' ? '/মাস' : '/mo';
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans antialiased overflow-x-hidden">
@@ -1304,31 +1319,30 @@ export default function CityDoctorLandingPage() {
                   <span className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center">
                     <Pill className="w-4 h-4" />
                   </span>
-                  CityDoctor Express Pharmacy
+                  {t('pharmacy.eyebrow')}
                 </span>
                 <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                  Genuine Medicines Delivered in 2-4 Hours
+                  {t('pharmacy.title')}
                 </h2>
                 <p className="text-[14px] text-slate-500 max-w-2xl">
-                  Get flat 10% discount on every order. Sourced directly from certified
-                  pharmaceutical manufacturers like Beximco, Square, Incepta & Renata.
+                  {t('pharmacy.subtitle')}
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100 text-[11.5px] font-extrabold">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> 100% Genuine Guaranteed
+                    <CheckCircle2 className="w-3.5 h-3.5" /> {t('pharmacy.guaranteed')}
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100 text-[11.5px] font-extrabold">
-                    <Truck className="w-3.5 h-3.5" /> Free Delivery over ৳500
+                    <Truck className="w-3.5 h-3.5" /> {t('pharmacy.freeDelivery')}
                   </span>
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-[11.5px] font-extrabold">
-                    <Zap className="w-3.5 h-3.5" /> Use Code: CITYDOCTOR10
+                    <Zap className="w-3.5 h-3.5" /> {t('pharmacy.code')}
                   </span>
                 </div>
                 <Link
                   href="/shop"
                   className="inline-flex items-center gap-1.5 mt-3 text-[12px] font-extrabold text-blue-600 hover:text-blue-700 transition-colors w-fit group/shop"
                 >
-                  Browse Full Medicine Shop
+                  {t('pharmacy.browseShop')}
                   <ArrowRight className="w-3.5 h-3.5 group-hover/shop:translate-x-0.5 transition-transform" />
                 </Link>
               </div>
@@ -1339,11 +1353,10 @@ export default function CityDoctorLandingPage() {
                   <div className="flex flex-col gap-1.5">
                     <span className="inline-flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-blue-100">
                       <FileText className="w-4 h-4" />
-                      Have a Doctor&rsquo;s Prescription?
+                      {t('pharmacy.rxTitle')}
                     </span>
                     <p className="text-[12.5px] leading-relaxed text-blue-50">
-                      Simply upload a photo of your prescription. Our licensed pharmacist will
-                      verify medicines and deliver directly to your address.
+                      {t('pharmacy.rxDesc')}
                     </p>
                   </div>
                   <span className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center shrink-0">
@@ -1354,7 +1367,7 @@ export default function CityDoctorLandingPage() {
                   type="button"
                   className="mt-4 w-full inline-flex items-center justify-center gap-2 py-2.5 rounded-full bg-white text-blue-700 text-[13px] font-extrabold hover:bg-blue-50 transition-colors"
                 >
-                  Upload Prescription
+                  {t('pharmacy.uploadRx')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -1373,7 +1386,7 @@ export default function CityDoctorLandingPage() {
                       : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-700'
                   }`}
                 >
-                  {cat}
+                  {ui(cat)}
                 </button>
               ))}
             </div>
@@ -1392,7 +1405,7 @@ export default function CityDoctorLandingPage() {
                     >
                       {onSale && m.oldPrice > 0 && (
                         <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full bg-red-50 text-red-500 text-[10px] font-extrabold border border-red-100 z-10">
-                          {Math.round((1 - m.price / m.oldPrice) * 100)}% OFF
+                          {Math.round((1 - m.price / m.oldPrice) * 100)}% {t('pharmacy.off')}
                         </span>
                       )}
                       {m.image ? (
@@ -1411,7 +1424,7 @@ export default function CityDoctorLandingPage() {
                           <span className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.9),transparent_50%)]" />
                           <Pill className="w-10 h-10 rotate-[-35deg]" strokeWidth={1.6} />
                           <span className="absolute bottom-2 left-2 text-[10px] font-extrabold uppercase tracking-wide opacity-70">
-                            {m.cat}
+                            {ui(m.cat)}
                           </span>
                         </div>
                       )}
@@ -1429,7 +1442,7 @@ export default function CityDoctorLandingPage() {
                             {m.brand}
                           </span>
                           <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[9.5px] font-bold text-slate-500 uppercase shrink-0">
-                            {m.form}
+                            {ui(m.form)}
                           </span>
                         </div>
                       </div>
@@ -1453,7 +1466,7 @@ export default function CityDoctorLandingPage() {
                               : 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700'
                           }`}
                         >
-                          {added ? '✓ Added' : '+ Add'}
+                          {added ? t('pharmacy.added') : t('pharmacy.add')}
                         </button>
                       </div>
                     </div>
@@ -1530,7 +1543,7 @@ export default function CityDoctorLandingPage() {
                     ).map((f: string) => (
                       <span key={f} className="flex items-start gap-2">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                        {f}
+                        {ui(f)}
                       </span>
                     ))}
                   </div>
@@ -1564,14 +1577,13 @@ export default function CityDoctorLandingPage() {
           <div className="max-w-[1440px] mx-auto px-4 lg:px-6 flex flex-col gap-9">
             <div className="flex flex-col items-center gap-4 text-center">
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[11px] font-extrabold uppercase tracking-widest text-blue-700">
-                <HeartPulse className="w-3.5 h-3.5" /> Membership
+                <HeartPulse className="w-3.5 h-3.5" /> {t('plans.badge')}
               </span>
               <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                CityDoctor Health Membership Plans
+                {t('plans.title')}
               </h2>
               <p className="text-[14px] text-slate-500 max-w-2xl">
-                Protect your entire family with unlimited 24/7 doctor consultations, free medicine
-                delivery, and exclusive lab discounts.
+                {t('plans.subtitle')}
               </p>
 
               {/* Billing toggle */}
@@ -1585,7 +1597,7 @@ export default function CityDoctorLandingPage() {
                       : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
-                  Monthly
+                  {t('plans.monthly')}
                 </button>
                 <button
                   type="button"
@@ -1596,9 +1608,9 @@ export default function CityDoctorLandingPage() {
                       : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
-                  Yearly
+                  {t('plans.yearly')}
                   <span className="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-extrabold">
-                    Save 20%
+                    {t('plans.save')}
                   </span>
                 </button>
               </div>
@@ -1621,7 +1633,7 @@ export default function CityDoctorLandingPage() {
                   >
                     {plan.popular && (
                       <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-[10.5px] font-extrabold uppercase tracking-wider text-white shadow-lg shadow-amber-500/30 whitespace-nowrap">
-                        <Star className="w-3 h-3 fill-white" /> Most Popular Choice
+                        <Star className="w-3 h-3 fill-white" /> {t('plans.popular')}
                       </span>
                     )}
                     <div className="flex items-center justify-between gap-2">
@@ -1630,7 +1642,7 @@ export default function CityDoctorLandingPage() {
                           plan.popular ? 'text-white' : 'text-slate-900'
                         }`}
                       >
-                        {plan.name}
+                        {ui(plan.name)}
                       </h3>
                       <span
                         className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10.5px] font-extrabold shrink-0 ${
@@ -1639,7 +1651,10 @@ export default function CityDoctorLandingPage() {
                             : 'bg-blue-50 text-blue-700 border border-blue-100'
                         }`}
                       >
-                        <Users className="w-3 h-3" /> {plan.members} Member{plan.members > 1 ? 's' : ''}
+                        <Users className="w-3 h-3" />{' '}
+                        {lang === 'bn'
+                          ? `${plan.members} জন সদস্য`
+                          : `${plan.members} Member${plan.members > 1 ? 's' : ''}`}
                       </span>
                     </div>
                     <p
@@ -1647,7 +1662,7 @@ export default function CityDoctorLandingPage() {
                         plan.popular ? 'text-blue-100' : 'text-slate-500'
                       }`}
                     >
-                      {plan.tagline}
+                      {ui(plan.tagline)}
                     </p>
 
                     <div className="mt-5 flex items-baseline gap-1.5">
@@ -1663,7 +1678,7 @@ export default function CityDoctorLandingPage() {
                           plan.popular ? 'text-blue-200' : 'text-slate-400'
                         }`}
                       >
-                        /{billing === 'yearly' ? 'year' : 'month'}
+                        {perLabel}
                       </span>
                       {billing === 'yearly' && (
                         <span
@@ -1671,7 +1686,7 @@ export default function CityDoctorLandingPage() {
                             plan.popular ? 'text-emerald-300' : 'text-emerald-600'
                           }`}
                         >
-                          ~৳{monthly}/mo
+                          ~৳{monthly}{moLabel}
                         </span>
                       )}
                     </div>
@@ -1694,7 +1709,7 @@ export default function CityDoctorLandingPage() {
                               plan.popular ? 'text-blue-50' : 'text-slate-600'
                             }`}
                           >
-                            {f}
+                            {ui(f)}
                           </span>
                         </li>
                       ))}
@@ -1709,7 +1724,7 @@ export default function CityDoctorLandingPage() {
                           : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/20'
                       }`}
                     >
-                      Choose This Plan
+                      {t('plans.choose')}
                       <ArrowRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -1784,8 +1799,8 @@ export default function CityDoctorLandingPage() {
                     <span className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
                       <Icon className="w-6 h-6" />
                     </span>
-                    <h3 className="text-[17px] font-extrabold text-slate-900">{f.title}</h3>
-                    <p className="text-[13px] leading-relaxed text-slate-500">{f.desc}</p>
+                    <h3 className="text-[17px] font-extrabold text-slate-900">{ui(f.title)}</h3>
+                    <p className="text-[13px] leading-relaxed text-slate-500">{ui(f.desc)}</p>
                   </div>
                 );
               })}
@@ -1798,10 +1813,10 @@ export default function CityDoctorLandingPage() {
           <div className="max-w-[1440px] mx-auto px-4 lg:px-6 flex flex-col gap-10">
             <div className="flex flex-col items-center gap-3 text-center">
               <span className="text-[11.5px] font-extrabold uppercase tracking-widest text-blue-600">
-                Verified Patient Experiences
+                {t('testimonials.eyebrow')}
               </span>
               <h2 className="text-[30px] lg:text-[36px] font-extrabold tracking-tight text-slate-900">
-                Loved by Over 500,000+ Patients
+                {t('testimonials.title')}
               </h2>
             </div>
 
@@ -1823,7 +1838,7 @@ export default function CityDoctorLandingPage() {
                     ))}
                   </div>
                   <blockquote className="text-[14px] leading-relaxed text-slate-600 flex-1">
-                    {t.quote}
+                    {ui(t.quote)}
                   </blockquote>
                   <figcaption className="flex items-center gap-3 pt-4 border-t border-slate-200/70">
                     <span className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center font-extrabold text-sm shrink-0">
@@ -1831,7 +1846,7 @@ export default function CityDoctorLandingPage() {
                     </span>
                     <div className="flex flex-col">
                       <span className="text-[13.5px] font-extrabold text-slate-900">{t.name}</span>
-                      <span className="text-[11px] text-slate-400 font-semibold">{t.place}</span>
+                      <span className="text-[11px] text-slate-400 font-semibold">{ui(t.place)}</span>
                     </div>
                     <BadgeCheck className="w-4.5 h-4.5 text-blue-600 ml-auto shrink-0" />
                   </figcaption>
@@ -1902,14 +1917,13 @@ export default function CityDoctorLandingPage() {
               <div className="pointer-events-none absolute -bottom-28 left-1/3 w-72 h-72 bg-sky-400/20 rounded-full blur-2xl" />
               <div className="relative flex-1 flex flex-col gap-3">
                 <span className="inline-flex items-center gap-2 w-fit px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-[11px] font-extrabold uppercase tracking-widest">
-                  <Smartphone className="w-3.5 h-3.5" /> Mobile App
+                  <Smartphone className="w-3.5 h-3.5" /> {t('app.eyebrow')}
                 </span>
                 <h2 className="text-[28px] lg:text-[38px] font-extrabold tracking-tight leading-tight">
-                  Get the CityDoctor App on Your Smartphone
+                  {t('app.title')}
                 </h2>
                 <p className="text-[14.5px] leading-relaxed text-blue-100 max-w-xl">
-                  Access 24/7 doctors, store health records, and order medicines anywhere in
-                  Bangladesh.
+                  {t('app.subtitle')}
                 </p>
               </div>
               <div className="relative flex flex-col sm:flex-row gap-3 lg:flex-col xl:flex-row shrink-0">
@@ -1920,7 +1934,7 @@ export default function CityDoctorLandingPage() {
                   <span className="text-[22px] leading-none">▶</span>
                   <span className="flex flex-col text-left">
                     <span className="text-[9.5px] font-bold text-slate-300 uppercase tracking-wider">
-                      Available On
+                      {t('app.availableOn')}
                     </span>
                     <span className="text-[14px] font-extrabold">Google Play</span>
                   </span>
@@ -1932,7 +1946,7 @@ export default function CityDoctorLandingPage() {
                   <span className="text-[22px] leading-none">🍎</span>
                   <span className="flex flex-col text-left">
                     <span className="text-[9.5px] font-bold text-slate-300 uppercase tracking-wider">
-                      Download On The
+                      {t('app.downloadOnThe')}
                     </span>
                     <span className="text-[14px] font-extrabold">App Store</span>
                   </span>
@@ -1962,19 +1976,17 @@ export default function CityDoctorLandingPage() {
                   </div>
                 </div>
                 <p className="text-[13px] leading-relaxed text-blue-100/70 max-w-sm">
-                  CityDoctor is Bangladesh&rsquo;s pioneering digital telehealth ecosystem bringing
-                  verified medical care, prescription medicine delivery, and home diagnostic
-                  pathology within everyone&rsquo;s reach.
+                  {t('footer.brandDesc')}
                 </p>
                 <div className="flex flex-col gap-2 text-[12.5px] font-semibold text-blue-100/80 mt-1">
                   <a href="tel:+8809612345678" className="inline-flex items-center gap-2 hover:text-white transition-colors w-fit">
-                    <PhoneCall className="w-4 h-4 text-blue-400" /> 24/7 Hotline: 09612-345678
+                    <PhoneCall className="w-4 h-4 text-blue-400" /> {t('footer.hotline')}
                   </a>
                   <a href="mailto:care@citydoctor.com" className="inline-flex items-center gap-2 hover:text-white transition-colors w-fit">
                     <Mail className="w-4 h-4 text-blue-400" /> care@citydoctor.com
                   </a>
                   <span className="inline-flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-blue-400" /> Gulshan-1, Dhaka-1212, Bangladesh
+                    <MapPin className="w-4 h-4 text-blue-400" /> {t('footer.address')}
                   </span>
                 </div>
               </div>
@@ -1982,40 +1994,40 @@ export default function CityDoctorLandingPage() {
               {/* Our services */}
               <div className="lg:col-span-2 flex flex-col gap-3">
                 <h4 className="text-[12px] font-extrabold uppercase tracking-widest text-white mb-2">
-                  Our Services
+                  {t('footer.headServices')}
                 </h4>
-                <a href="#doctors" className="text-[13px] hover:text-white transition-colors">Online Doctor Video Call</a>
-                <a href="#medicine" className="text-[13px] hover:text-white transition-colors">Doorstep Medicine (10% Off)</a>
-                <a href="#diagnostic" className="text-[13px] hover:text-white transition-colors">Home Sample Collection</a>
-                <a href="#health-plans" className="text-[13px] hover:text-white transition-colors">Family Health Subscriptions</a>
-                <a href="#specialties" className="text-[13px] hover:text-white transition-colors">Specialist Appointments</a>
+                <a href="#doctors" className="text-[13px] hover:text-white transition-colors">{t('footer.linkVideoCall')}</a>
+                <a href="#medicine" className="text-[13px] hover:text-white transition-colors">{t('footer.linkMedicine')}</a>
+                <a href="#diagnostic" className="text-[13px] hover:text-white transition-colors">{t('footer.linkLab')}</a>
+                <a href="#health-plans" className="text-[13px] hover:text-white transition-colors">{t('footer.linkPlans')}</a>
+                <a href="#specialties" className="text-[13px] hover:text-white transition-colors">{t('footer.linkSpecialists')}</a>
               </div>
 
               {/* Professionals & trust */}
               <div className="lg:col-span-3 flex flex-col gap-3">
                 <h4 className="text-[12px] font-extrabold uppercase tracking-widest text-white mb-2">
-                  Professionals &amp; Trust
+                  {t('footer.headProfessionals')}
                 </h4>
-                <Link href="/department/general-physician" className="text-[13px] hover:text-white transition-colors">General Physician (Medicine)</Link>
-                <Link href="/department/gynae-obs" className="text-[13px] hover:text-white transition-colors">Gynaecology &amp; Pregnancy</Link>
-                <Link href="/department/pediatrics" className="text-[13px] hover:text-white transition-colors">Pediatrics (Child Health)</Link>
-                <Link href="/department/dermatology" className="text-[13px] hover:text-white transition-colors">Dermatology (Skin &amp; Hair)</Link>
-                <Link href="/department/cardiology" className="text-[13px] hover:text-white transition-colors">Cardiology &amp; Heart Care</Link>
-                <Link href="/department/psychiatry" className="text-[13px] hover:text-white transition-colors">Psychiatry &amp; Mental Health</Link>
+                <Link href="/department/general-physician" className="text-[13px] hover:text-white transition-colors">{t('footer.linkGeneral')}</Link>
+                <Link href="/department/gynae-obs" className="text-[13px] hover:text-white transition-colors">{t('footer.linkGynae')}</Link>
+                <Link href="/department/pediatrics" className="text-[13px] hover:text-white transition-colors">{t('footer.linkPeds')}</Link>
+                <Link href="/department/dermatology" className="text-[13px] hover:text-white transition-colors">{t('footer.linkDerma')}</Link>
+                <Link href="/department/cardiology" className="text-[13px] hover:text-white transition-colors">{t('footer.linkCardio')}</Link>
+                <Link href="/department/psychiatry" className="text-[13px] hover:text-white transition-colors">{t('footer.linkPsych')}</Link>
               </div>
 
               {/* Compliance */}
               <div className="lg:col-span-3 flex flex-col gap-3">
                 <h4 className="text-[12px] font-extrabold uppercase tracking-widest text-white mb-2">
-                  Privacy &amp; Compliance
+                  {t('footer.headCompliance')}
                 </h4>
-                <a href="#" className="text-[13px] hover:text-white transition-colors">Privacy &amp; HIPAA Security</a>
-                <a href="#" className="text-[13px] hover:text-white transition-colors">Terms of Consultation</a>
-                <a href="#" className="text-[13px] hover:text-white transition-colors">Prescription Verification</a>
-                <a href="#" className="text-[13px] hover:text-white transition-colors">Corporate Health Coverage</a>
+                <a href="#" className="text-[13px] hover:text-white transition-colors">{t('footer.linkHipaa')}</a>
+                <a href="#" className="text-[13px] hover:text-white transition-colors">{t('footer.linkTerms')}</a>
+                <a href="#" className="text-[13px] hover:text-white transition-colors">{t('footer.linkRxVerify')}</a>
+                <a href="#" className="text-[13px] hover:text-white transition-colors">{t('footer.linkCorporate')}</a>
                 <div className="flex items-center gap-2 mt-3 px-3.5 py-2.5 rounded-2xl bg-white/5 border border-white/10 text-[12px] font-semibold w-fit">
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  BMDC Certified Doctors Only
+                  {t('footer.bmdcOnly')}
                 </div>
               </div>
             </div>
@@ -2023,12 +2035,8 @@ export default function CityDoctorLandingPage() {
             {/* Disclaimer */}
             <div className="mt-12 rounded-2xl bg-white/[0.04] border border-white/10 px-5 py-4">
               <p className="text-[11.5px] leading-relaxed text-blue-100/60">
-                <span className="font-extrabold text-blue-100/90">Medical Disclaimer:</span>{' '}
-                CityDoctor provides digital telemedicine consultation for primary and non-emergency
-                health conditions. If you or a family member are experiencing a life-threatening
-                medical emergency (such as severe chest pain, acute respiratory arrest, active
-                bleeding, or loss of consciousness), please dial 999 immediately or proceed to the
-                nearest hospital emergency room.
+                <span className="font-extrabold text-blue-100/90">{t('footer.disclaimerTitle')}</span>{' '}
+                {t('footer.disclaimer')}
               </p>
             </div>
 
@@ -2038,8 +2046,8 @@ export default function CityDoctorLandingPage() {
                 {t('footer.rights')}
               </p>
               <p className="text-[12px] font-semibold text-blue-100/70">
-                DGHS Registered <span className="text-emerald-400">•</span> BMDC Compliant{' '}
-                <span className="text-emerald-400">•</span> SSL Secured Gateway
+                {t('footer.dghs')} <span className="text-emerald-400">•</span> {t('footer.bmdcCompliant')}{' '}
+                <span className="text-emerald-400">•</span> {t('footer.ssl')}
               </p>
             </div>
           </div>

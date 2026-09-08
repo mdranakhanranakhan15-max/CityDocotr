@@ -77,7 +77,7 @@ const en: Record<string, string> = {
   // ---- Pharmacy ----
   'pharmacy.eyebrow': 'CityDoctor Express Pharmacy',
   'pharmacy.title': 'Genuine Medicines Delivered in 2-4 Hours',
-  'pharmacy.subtitle': 'Order authentic medicines with a valid e-prescription and get them delivered to your doorstep.',
+  'pharmacy.subtitle': 'Get flat 10% discount on every order. Sourced directly from certified pharmaceutical manufacturers like Beximco, Square, Incepta & Renata.',
   'pharmacy.orderNow': 'Order Medicines',
 
   // ---- Lab tests ----
@@ -85,8 +85,8 @@ const en: Record<string, string> = {
   'lab.oldSubtitle': 'Sample collection from home and digital reports within 24 hours.',
 
   // ---- Health plans ----
-  'plans.title': 'Affordable Health Plans for Every Family',
-  'plans.subtitle': 'Subscribe once and consult anytime — discounts on medicines and lab tests included.',
+  'plans.title': 'CityDoctor Health Membership Plans',
+  'plans.subtitle': 'Protect your entire family with unlimited 24/7 doctor consultations, free medicine delivery, and exclusive lab discounts.',
 
   // ---- Footer ----
   'footer.tagline': 'Healthcare in 10 minutes — online doctor consultation, medicine delivery & home diagnostics across Bangladesh.',
@@ -168,6 +168,66 @@ const en: Record<string, string> = {
   'lab.heart.name': 'Heart Health Checkup',
   'lab.heart.meta': '18 Tests Included',
   'lab.heart.tag': 'Cardiac Risk Profile',
+
+  // ---- Pharmacy / medicine delivery section extras ----
+  'pharmacy.guaranteed': '100% Genuine Guaranteed',
+  'pharmacy.freeDelivery': 'Free Delivery over ৳500',
+  'pharmacy.code': 'Use Code: CITYDOCTOR10',
+  'pharmacy.browseShop': 'Browse Full Medicine Shop',
+  'pharmacy.rxTitle': 'Have a Doctor’s Prescription?',
+  'pharmacy.rxDesc': 'Simply upload a photo of your prescription. Our licensed pharmacist will verify medicines and deliver directly to your address.',
+  'pharmacy.uploadRx': 'Upload Prescription',
+  'pharmacy.off': 'OFF',
+  'pharmacy.add': '+ Add',
+  'pharmacy.added': '✓ Added',
+
+  // ---- Health membership plans section extras ----
+  'plans.badge': 'Membership',
+  'plans.monthly': 'Monthly',
+  'plans.yearly': 'Yearly',
+  'plans.save': 'Save 20%',
+  'plans.choose': 'Choose This Plan',
+  'plans.popular': 'Most Popular Choice',
+
+  // ---- Testimonials section ----
+  'testimonials.eyebrow': 'Verified Patient Experiences',
+  'testimonials.title': 'Loved by Over 500,000+ Patients',
+
+  // ---- App download banner ----
+  'app.eyebrow': 'Mobile App',
+  'app.title': 'Get the CityDoctor App on Your Smartphone',
+  'app.subtitle': 'Access 24/7 doctors, store health records, and order medicines anywhere in Bangladesh.',
+  'app.availableOn': 'Available On',
+  'app.downloadOnThe': 'Download On The',
+
+  // ---- Footer links & legal ----
+  'footer.brandDesc': 'CityDoctor is Bangladesh’s pioneering digital telehealth ecosystem bringing verified medical care, prescription medicine delivery, and home diagnostic pathology within everyone’s reach.',
+  'footer.hotline': '24/7 Hotline: 09612-345678',
+  'footer.address': 'Gulshan-1, Dhaka-1212, Bangladesh',
+  'footer.headServices': 'Our Services',
+  'footer.linkVideoCall': 'Online Doctor Video Call',
+  'footer.linkMedicine': 'Doorstep Medicine (10% Off)',
+  'footer.linkLab': 'Home Sample Collection',
+  'footer.linkPlans': 'Family Health Subscriptions',
+  'footer.linkSpecialists': 'Specialist Appointments',
+  'footer.headProfessionals': 'Professionals & Trust',
+  'footer.linkGeneral': 'General Physician (Medicine)',
+  'footer.linkGynae': 'Gynaecology & Pregnancy',
+  'footer.linkPeds': 'Pediatrics (Child Health)',
+  'footer.linkDerma': 'Dermatology (Skin & Hair)',
+  'footer.linkCardio': 'Cardiology & Heart Care',
+  'footer.linkPsych': 'Psychiatry & Mental Health',
+  'footer.headCompliance': 'Privacy & Compliance',
+  'footer.linkHipaa': 'Privacy & HIPAA Security',
+  'footer.linkTerms': 'Terms of Consultation',
+  'footer.linkRxVerify': 'Prescription Verification',
+  'footer.linkCorporate': 'Corporate Health Coverage',
+  'footer.bmdcOnly': 'BMDC Certified Doctors Only',
+  'footer.disclaimerTitle': 'Medical Disclaimer:',
+  'footer.disclaimer': 'CityDoctor provides digital telemedicine consultation for primary and non-emergency health conditions. If you or a family member are experiencing a life-threatening medical emergency (such as severe chest pain, acute respiratory arrest, active bleeding, or loss of consciousness), please dial 999 immediately or proceed to the nearest hospital emergency room.',
+  'footer.dghs': 'DGHS Registered',
+  'footer.bmdcCompliant': 'BMDC Compliant',
+  'footer.ssl': 'SSL Secured Gateway',
 };
 
 const bn: Record<string, string> = {
@@ -241,8 +301,8 @@ const bn: Record<string, string> = {
 
   // ---- ফার্মেসি ----
   'pharmacy.eyebrow': 'CityDoctor এক্সপ্রেস ফার্মেসি',
-  'pharmacy.title': 'খাঁটি ঔষধ ২-৪ ঘণ্টায় ডেলিভারি',
-  'pharmacy.subtitle': 'বৈধ ই-প্রেসক্রিপশন সহ খাঁটি ঔষধ অর্ডার করুন এবং বাসায় ডেলিভারি পান।',
+  'pharmacy.title': '২-৪ ঘণ্টায় আসল ওষুধ ডেলিভারি',
+  'pharmacy.subtitle': 'প্রতি অর্ডারে ফ্ল্যাট ১০% ছাড়। বেক্সিমকো, স্কয়ার, ইনসেপ্টা ও রেনাটাসহ সনদপ্রাপ্ত ফার্মাসিউটিক্যাল প্রতিষ্ঠান থেকে সরাসরি সংগ্রহ করা হয়।',
   'pharmacy.orderNow': 'ঔষধ অর্ডার করুন',
 
   // ---- ল্যাব টেস্ট ----
@@ -250,8 +310,8 @@ const bn: Record<string, string> = {
   'lab.oldSubtitle': 'বাসা থেকে নমুনা সংগ্রহ এবং ২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট।',
 
   // ---- হেলথ প্ল্যান ----
-  'plans.title': 'প্রতিটি পরিবারের জন্য সাশ্রয়ী হেলথ প্ল্যান',
-  'plans.subtitle': 'একবার সাবস্ক্রাইব করুন, যেকোনো সময় পরামর্শ নিন — ঔষধ ও ল্যাব টেস্টে ছাড় সহ।',
+  'plans.title': 'সিটিডক্টর হেলথ মেম্বারশিপ প্ল্যান',
+  'plans.subtitle': 'আনলিমিটেড ২৪/৭ ডাক্তার পরামর্শ, ফ্রি ঔষধ ডেলিভারি এবং ল্যাব টেস্টে বিশেষ ছাড়সহ আপনার পুরো পরিবারকে সুরক্ষিত রাখুন।',
 
   // ---- ফুটার ----
   'footer.tagline': '১০ মিনিটেই স্বাস্থ্যসেবা — অনলাইন ডাক্তার পরামর্শ, ঔষধ ডেলিভারি ও হোম ডায়াগনস্টিকস সারা বাংলাদেশে।',
@@ -321,9 +381,9 @@ const bn: Record<string, string> = {
   'lab.accredited': 'স্বীকৃত ল্যাব রিপোর্ট',
   'lab.mostPopular': 'সবচেয়ে জনপ্রিয়',
   'lab.bookCollection': 'হোম সংগ্রহ বুক করুন',
-  'lab.feature1': 'আপনার বাসা থেকে ফ্রি নমুনা সংগ্রহ',
+  'lab.feature1': 'বাসা থেকে ফ্রি নমুনা সংগ্রহ',
   'lab.feature2': 'এনএবিএল-স্বীকৃত পার্টনার ল্যাবরেটরি',
-  'lab.feature3': '২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট ডেলিভারি',
+  'lab.feature3': '২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট',
   'lab.comprehensive.name': 'সম্পূর্ণ স্বাস্থ্য পরীক্ষা',
   'lab.comprehensive.meta': '৬৮টি টেস্ট অন্তর্ভুক্ত',
   'lab.comprehensive.tag': 'ফুল বডি স্ক্রিনিং',
@@ -333,6 +393,66 @@ const bn: Record<string, string> = {
   'lab.heart.name': 'হার্ট হেলথ চেকআপ',
   'lab.heart.meta': '১৮টি টেস্ট অন্তর্ভুক্ত',
   'lab.heart.tag': 'কার্ডিয়াক রিস্ক প্রোফাইল',
+
+  // ---- ফার্মেসি / ঔষধ ডেলিভারি সেকশন এক্সট্রা ----
+  'pharmacy.guaranteed': '১০০% আসল ওষুধের নিশ্চয়তা',
+  'pharmacy.freeDelivery': '৳৫০০ টাকার বেশি অর্ডারে ফ্রি ডেলিভারি',
+  'pharmacy.code': 'কোড ব্যবহার করুন: CITYDOCTOR10',
+  'pharmacy.browseShop': 'সম্পূর্ণ ঔষধ শপ দেখুন',
+  'pharmacy.rxTitle': 'ডাক্তারের প্রেসক্রিপশন আছে?',
+  'pharmacy.rxDesc': 'আপনার প্রেসক্রিপশনের একটি ছবি আপলোড করুন। আমাদের লাইসেন্সপ্রাপ্ত ফার্মাসিস্ট ওষুধ যাচাই করে সরাসরি আপনার ঠিকানায় ডেলিভারি করবেন।',
+  'pharmacy.uploadRx': 'প্রেসক্রিপশন আপলোড করুন',
+  'pharmacy.off': 'ছাড়',
+  'pharmacy.add': '+ যোগ করুন',
+  'pharmacy.added': '✓ যোগ হয়েছে',
+
+  // ---- হেলথ মেম্বারশিপ প্ল্যান সেকশন এক্সট্রা ----
+  'plans.badge': 'মেম্বারশিপ',
+  'plans.monthly': 'মাসিক',
+  'plans.yearly': 'বার্ষিক',
+  'plans.save': '২০% সাশ্রয়',
+  'plans.choose': 'এই প্ল্যানটি নির্বাচন করুন',
+  'plans.popular': 'সবচেয়ে জনপ্রিয় পছন্দ',
+
+  // ---- টেস্টিমোনিয়াল সেকশন ----
+  'testimonials.eyebrow': 'যাচাইকৃত রোগীর অভিজ্ঞতা',
+  'testimonials.title': '৫,০০,০০০+ মানুষের আস্থা ও ভালোবাসা',
+
+  // ---- অ্যাপ ডাউনলোড ব্যানার ----
+  'app.eyebrow': 'মোবাইল অ্যাপ',
+  'app.title': 'আপনার স্মার্টফোনে সিটিডক্টর অ্যাপটি ডাউনলোড করুন',
+  'app.subtitle': 'সারাদেশে যেকোনো জায়গা থেকে ২৪/৭ ডাক্তার, হেলথ রেকর্ড সংরক্ষণ এবং ঔষধ অর্ডার করুন।',
+  'app.availableOn': 'পাবেন এখানে',
+  'app.downloadOnThe': 'ডাউনলোড করুন',
+
+  // ---- ফুটার লিংক ও আইনি ----
+  'footer.brandDesc': 'সিটিডক্টর বাংলাদেশের অগ্রগামী ডিজিটাল টেলিহেলথ ইকোসিস্টেম — যাচাইকৃত চিকিৎসা সেবা, প্রেসক্রিপশন ঔষধ ডেলিভারি এবং হোম ডায়াগনস্টিক প্যাথলজি সবার নাগালের মধ্যে নিয়ে এসেছে।',
+  'footer.hotline': '২৪/৭ হটলাইন: ০৯৬১২-৩৪৫৬৭৮',
+  'footer.address': 'গুলশান-১, ঢাকা-১২১২, বাংলাদেশ',
+  'footer.headServices': 'আমাদের সেবাসমূহ',
+  'footer.linkVideoCall': 'অনলাইন ডাক্তার ভিডিও কল',
+  'footer.linkMedicine': 'বাসায় ঔষধ ডেলিভারি (১০% ছাড়)',
+  'footer.linkLab': 'বাসা থেকে নমুনা সংগ্রহ',
+  'footer.linkPlans': 'ফ্যামিলি হেলথ সাবস্ক্রিপশন',
+  'footer.linkSpecialists': 'বিশেষজ্ঞ অ্যাপয়েন্টমেন্ট',
+  'footer.headProfessionals': 'বিশেষজ্ঞ ও সুরক্ষা',
+  'footer.linkGeneral': 'জেনারেল ফিজিশিয়ান (মেডিসিন)',
+  'footer.linkGynae': 'গাইনোকোলজি ও প্রেগন্যান্সি',
+  'footer.linkPeds': 'পেডিয়াট্রিক্স (শিশু স্বাস্থ্য)',
+  'footer.linkDerma': 'ডার্মাটোলজি (ত্বক ও চুল)',
+  'footer.linkCardio': 'কার্ডিওলজি ও হার্ট কেয়ার',
+  'footer.linkPsych': 'সাইকিয়াট্রি ও মানসিক স্বাস্থ্য',
+  'footer.headCompliance': 'প্রাইভেসি ও পলিসি',
+  'footer.linkHipaa': 'প্রাইভেসি ও HIPAA সিকিউরিটি',
+  'footer.linkTerms': 'পরামর্শের শর্তাবলী',
+  'footer.linkRxVerify': 'প্রেসক্রিপশন যাচাইকরণ',
+  'footer.linkCorporate': 'কর্পোরেট হেলথ কভারেজ',
+  'footer.bmdcOnly': 'শুধুমাত্র বিএমডিসি সনদপ্রাপ্ত ডাক্তার',
+  'footer.disclaimerTitle': 'মেডিকেল ডিসক্লেইমার:',
+  'footer.disclaimer': 'সিটিডক্টর প্রাথমিক ও জরুরি নয় এমন স্বাস্থ্য সমস্যার জন্য ডিজিটাল টেলিমেডিসিন পরামর্শ প্রদান করে। আপনার বা পরিবারের কারো প্রাণঘাতী মেডিকেল ইমারজেন্সি (যেমন গুরুতর বুকে ব্যথা, তীব্র শ্বাসকষ্ট, অতিরিক্ত রক্তক্ষরণ বা জ্ঞান হারানো) হলে দয়া করে সাথে সাথে ৯৯৯ নম্বরে কল করুন বা নিকটস্থ হাসপাতালের ইমারজেন্সি বিভাগে যান।',
+  'footer.dghs': 'ডিজিএইচএস নিবন্ধিত',
+  'footer.bmdcCompliant': 'বিএমডিসি কমপ্লায়েন্ট',
+  'footer.ssl': 'এসএসএল সুরক্ষিত গেটওয়ে',
 };
 
 export const translations: Record<Lang, Record<string, string>> = { en, bn };
@@ -400,3 +520,74 @@ export function translateDept(name: string | null | undefined): string | null {
   return DEPT_NAME_BN[key] ?? null;
 }
 
+// ============ Free-text homepage string → Bangla lookup ============
+// The homepage renders a lot of catalogue/free-text content (plan names &
+// features, trust-points, patient review quotes, medicine categories/forms,
+// etc.). Those strings live in static arrays AND in the MongoDB CMS, so they
+// can't rely on `t()` keys. When Bangla is active we look each one up here
+// (exact match) and fall back to the raw English value.
+export const UI_TEXT_BN: Record<string, string> = {
+  // --- Medicine delivery: categories ---
+  All: 'সব',
+  'General': 'জেনারেল',
+  'Fever & Pain': 'জ্বর ও ব্যথা',
+  'Gastric & Acidity': 'গ্যাস্ট্রিক ও এসিডিটি',
+  'Vitamins & Supplements': 'ভিটামিন ও সাপ্লিমেন্ট',
+  'Respiratory & Allergy': 'শ্বাসকষ্ট ও অ্যালার্জি',
+  'Allergy & Cold': 'অ্যালার্জি ও সর্দি',
+
+  // --- Medicine delivery: dosage forms ---
+  Tablet: 'ট্যাবলেট',
+  Capsule: 'ক্যাপসুল',
+  Medicine: 'ঔষধ',
+
+  // --- Lab test feature bullets (also used by CMS rows) ---
+  'Free sample collection from your home': 'বাসা থেকে ফ্রি নমুনা সংগ্রহ',
+  'NABL-accredited partner laboratories': 'এনএবিএল-স্বীকৃত পার্টনার ল্যাবরেটরি',
+  'Digital report delivered within 24 hours': '২৪ ঘণ্টার মধ্যে ডিজিটাল রিপোর্ট',
+
+  // --- Health membership plans: names & taglines ---
+  'Individual Health Shield': 'একক হেলথ শিল্ড',
+  'DocTime Plus Care': 'সিটিডক্টর প্লাস কেয়ার',
+  'Family Total Protection': 'ফ্যামিলি টোটাল প্রোটেকশন',
+  'Ideal for young professionals & individuals': 'তরুণ পেশাজীবী ও ব্যক্তিদের জন্য উপযুক্ত',
+  'Our most popular comprehensive healthcare package': 'আমাদের সবচেয়ে জনপ্রিয় সম্পূর্ণ হেলথকেয়ার প্যাকেজ',
+  'Complete medical safety net for parents and children': 'বাবা-মা ও সন্তানদের জন্য সম্পূর্ণ মেডিকেল নিরাপত্তা',
+
+  // --- Health membership plans: features ---
+  '6 Free Video Consultations with General Physicians': 'জেনারেল ফিজিশিয়ানের সাথে ৬টি ফ্রি ভিডিও পরামর্শ',
+  '10% Flat Discount on all doorstep medicine orders': 'সব বাসায় ঔষধ অর্ডারে ১০% ফ্ল্যাট ছাড়',
+  '15% Discount on all home diagnostic lab tests': 'সব হোম ডায়াগনস্টিক ল্যাব টেস্টে ১৫% ছাড়',
+  'Digital health records vault with lifetime storage': 'আজীবন স্টোরেজসহ ডিজিটাল হেলথ রেকর্ড ভল্ট',
+  'Unlimited Video Consultations with General Physicians': 'জেনারেল ফিজিশিয়ানের সাথে আনলিমিটেড ভিডিও পরামর্শ',
+  '4 Free Specialist Doctor Consultations per year': 'প্রতি বছর ৪টি ফ্রি বিশেষজ্ঞ ডাক্তার পরামর্শ',
+  '15% Flat Discount on all medicines with free delivery': 'ফ্রি ডেলিভারিসহ সব ঔষধে ১৫% ফ্ল্যাট ছাড়',
+  '25% Discount on home diagnostic lab tests': 'হোম ডায়াগনস্টিক ল্যাব টেস্টে ২৫% ছাড়',
+  'Priority appointment scheduling & 24/7 hotline access': 'অগ্রাধিকার অ্যাপয়েন্টমেন্ট ও ২৪/৭ হটলাইন সুবিধা',
+  'Unlimited 24/7 video consultations with General Physicians': 'জেনারেল ফিজিশিয়ানের সাথে আনলিমিটেড ২৪/৭ ভিডিও পরামর্শ',
+  '10 Specialist Doctor consultations across all departments': 'সব বিভাগে ১০টি বিশেষজ্ঞ ডাক্তার পরামর্শ',
+  'Covers up to 5 family members (Parents, Spouse & Children)': 'সর্বোচ্চ ৫ জন পরিবারের সদস্য কভার (বাবা-মা, স্ত্রী/স্বামী ও সন্তান)',
+  '20% Flat discount on all medicines with free delivery': 'ফ্রি ডেলিভারিসহ সব ঔষধে ২০% ফ্ল্যাট ছাড়',
+  'Digital health vault for the whole family': 'পুরো পরিবারের জন্য ডিজিটাল হেলথ ভল্ট',
+
+  // --- Trust / why-choose-us feature cards ---
+  '100% BMDC Certified Doctors': '১০০% বিএমডিসি সনদপ্রাপ্ত ডাক্তার',
+  'Every doctor on our platform is strictly verified against the Bangladesh Medical & Dental Council registry before onboarding.': 'আমাদের প্ল্যাটফর্মের প্রতিটি ডাক্তার নিয়োগের আগে বাংলাদেশ মেডিকেল অ্যান্ড ডেন্টাল কাউন্সিল রেজিস্ট্রির বিরুদ্ধে কঠোরভাবে যাচাই করা হয়।',
+  'Confidential & Encrypted': 'গোপনীয় ও এনক্রিপ্টেড',
+  'End-to-end encrypted video streams and private cloud storage for all your medical reports and electronic prescriptions.': 'আপনার সকল মেডিকেল রিপোর্ট ও ইলেকট্রনিক প্রেসক্রিপশনের জন্য এন্ড-টু-এন্ড এনক্রিপ্টেড ভিডিও স্ট্রিম এবং প্রাইভেট ক্লাউড স্টোরেজ।',
+  '24/7 Availability Across BD': 'সারাদেশে ২৪/৭ সেবা',
+  'Doctors available day and night, even on national holidays. Express medicine delivery active across all major metropolitan areas.': 'জাতীয় ছুটির দিনেও দিনরাত ডাক্তার উপলব্ধ। সব প্রধান মেট্রোপলিটন এলাকায় এক্সপ্রেস ঔষধ ডেলিভারি সচল।',
+
+  // --- Patient review quotes (seeded defaults & CMS identical rows) ---
+  '“CityDoctor is a lifesaver for our family. When my 4-year-old had sudden midnight fever, Dr. Rafiqul was online within 6 minutes. The e-prescription was clear and medicine arrived in the morning.”': '“সিটিডক্টর আমাদের পরিবারের জন্য জীবন রক্ষাকারী। আমার ৪ বছরের সন্তানের রাত ১২টায় হঠাৎ জ্বর উঠলে ডা. রফিকুল ৬ মিনিটের মধ্যে অনলাইনে ছিলেন। ই-প্রেসক্রিপশনটি পরিষ্কার ছিল এবং সকালে ওষুধ পৌঁছে যায়।”',
+  '“Living outside Dhaka, getting an appointment with a BSMMU doctor used to take weeks. With CityDoctor, we consulted Prof. Mahmudul Alam for my mother’s cardiac checkup right from our living room.”': '“ঢাকার বাইরে থাকায় বিএসএমএমইউ ডাক্তারের অ্যাপয়েন্টমেন্ট পেতে আগে কয়েক সপ্তাহ লেগে যেত। সিটিডক্টরের মাধ্যমে আমরা আমাদের বসার ঘর থেকেই মায়ের হার্ট চেকআপের জন্য অধ্যাপক মাহমুদুল আলমের পরামর্শ নিয়েছি।”',
+  '“The home sample collection service for diabetes checkup was so seamless. Phlebotomist came at 7:30 AM in PPE, and I received digital reports by 6 PM. Highly recommended!”': '“ডায়াবেটিস চেকআপের জন্য হোম নমুনা সংগ্রহ সেবাটি ছিল অত্যন্ত সহজ। ফ্লেবোটোমিস্ট পিপিই পরে সকাল ৭:৩০টায় আসেন এবং সন্ধ্যা ৬টার মধ্যে আমি ডিজিটাল রিপোর্ট পেয়ে যাই। সবার কাছে সুপারিশ করব!”',
+
+  // --- Patient review locations / service labels ---
+  'Uttara, Dhaka': 'উত্তরা, ঢাকা',
+  'Sylhet Sadar': 'সিলেট সদর',
+  'Gulshan, Dhaka': 'গুলশান, ঢাকা',
+  'Uttara, Dhaka • Pediatrics Consultation': 'উত্তরা, ঢাকা • শিশু বিশেষজ্ঞ পরামর্শ',
+  'Sylhet Sadar • Cardiology Review': 'সিলেট সদর • কার্ডিওলজি রিভিউ',
+  'Gulshan, Dhaka • Executive Full Body Checkup': 'গুলশান, ঢাকা • সম্পূর্ণ বডি চেকআপ',
+};
